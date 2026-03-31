@@ -67,7 +67,7 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect(`/check-email?email=${encodeURIComponent(email)}`)
+  redirect('/buyer')
 }
 
 export async function logout() {
