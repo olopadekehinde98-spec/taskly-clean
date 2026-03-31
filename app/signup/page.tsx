@@ -61,6 +61,17 @@ export default function SignupPage() {
 
             <form className="space-y-5">
               <div>
+                <label className="mb-1.5 block text-sm font-semibold text-slate-700">Full Name</label>
+                <input
+                  name="full_name"
+                  type="text"
+                  required
+                  placeholder="Your full name"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 transition-all"
+                />
+              </div>
+
+              <div>
                 <label className="mb-1.5 block text-sm font-semibold text-slate-700">Email Address</label>
                 <input
                   name="email"

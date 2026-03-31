@@ -32,6 +32,7 @@ export async function signup(formData: FormData) {
 
   const email = String(formData.get('email') || '').trim()
   const password = String(formData.get('password') || '').trim()
+  const fullName = String(formData.get('full_name') || '').trim()
 
   if (!email || !password) {
     redirect('/error?message=Email and password are required')
@@ -53,12 +54,13 @@ export async function signup(formData: FormData) {
 
   // Auto-create profile row for new user
   if (data.user) {
-    const displayName = email.split('@')[0]
+    const displayName = fullName || email.split('@')[0]
+    const usernameBase = displayName.toLowerCase().replace(/[^a-z0-9]/g, '')
     await supabase.from('profiles').upsert({
       id: data.user.id,
       email,
       display_name: displayName,
-      username: displayName.toLowerCase().replace(/[^a-z0-9]/g, '') + Math.floor(Math.random() * 1000),
+      username: usernameBase + Math.floor(Math.random() * 1000),
       is_seller: false,
       is_admin: false,
     }, { onConflict: 'id' })
