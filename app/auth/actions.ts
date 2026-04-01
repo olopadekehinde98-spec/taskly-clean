@@ -14,13 +14,22 @@ export async function login(formData: FormData) {
     redirect('/error?message=Email and password are required')
   }
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   })
 
   if (error) {
     redirect(`/error?message=${encodeURIComponent(error.message)}`)
+  }
+
+  // Redirect admin to admin panel, everyone else to buyer
+  if (data.user) {
+    const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', data.user.id).single()
+    if (profile?.is_admin) {
+      revalidatePath('/', 'layout')
+      redirect('/admin')
+    }
   }
 
   revalidatePath('/', 'layout')
