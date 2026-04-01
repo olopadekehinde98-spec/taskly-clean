@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).single()
     if (!profile?.is_admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-    const { ticket_id, reply, status } = await req.json()
+    const { ticket_id, reply, status, attachments } = await req.json()
     if (!ticket_id || !reply) return NextResponse.json({ error: 'ticket_id and reply required' }, { status: 400 })
 
     // Fetch existing ticket
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     if (fetchErr) throw fetchErr
 
     const replies = ticket.admin_replies ?? []
-    replies.push({ text: reply, created_at: new Date().toISOString() })
+    replies.push({ text: reply, created_at: new Date().toISOString(), attachments: attachments ?? [] })
 
     const { error } = await supabase
       .from('support_tickets')

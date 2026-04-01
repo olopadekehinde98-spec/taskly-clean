@@ -12,20 +12,29 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (!profile?.is_admin) redirect('/buyer')
 
   // Pending counts for badges
-  const [{ count: pendingMod }, { count: openDisputes }] = await Promise.all([
+  const since24h = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+  const [
+    { count: pendingMod },
+    { count: openDisputes },
+    { count: openTickets },
+    { count: newEvents },
+  ] = await Promise.all([
     supabase.from('listings').select('*', { count: 'exact', head: true }).eq('moderation_status', 'pending'),
     supabase.from('disputes').select('*', { count: 'exact', head: true }).eq('status', 'open'),
+    supabase.from('support_tickets').select('*', { count: 'exact', head: true }).eq('status', 'open'),
+    supabase.from('profiles').select('*', { count: 'exact', head: true }).gte('created_at', since24h),
   ])
 
   const nav = [
     { href: '/admin', label: 'Overview', icon: '📊' },
+    { href: '/admin/notifications', label: 'Notifications', icon: '🔔', badge: (newEvents ?? 0) > 0 ? newEvents : null },
     { href: '/admin/users', label: 'Users', icon: '👥' },
     { href: '/admin/moderation', label: 'Moderation Queue', icon: '🔍', badge: pendingMod },
     { href: '/admin/services', label: 'All Services', icon: '💼' },
     { href: '/admin/disputes', label: 'Disputes', icon: '⚖️', badge: openDisputes },
     { href: '/admin/violations', label: 'Rule Violators', icon: '🚨' },
     { href: '/admin/reviews', label: 'Reviews', icon: '⭐' },
-    { href: '/admin/support', label: 'Support Tickets', icon: '💬' },
+    { href: '/admin/support', label: 'Support Tickets', icon: '💬', badge: openTickets },
     { href: '/admin/security', label: 'Security & Threats', icon: '🛡️' },
   ]
 

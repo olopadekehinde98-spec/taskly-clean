@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import FileAttach, { type Attachment } from '@/components/FileAttach'
 
 type Ticket = {
   id: string
@@ -8,7 +9,7 @@ type Ticket = {
   status: string
   created_at: string
   conversation: { role: string; text: string }[]
-  admin_replies: { text: string; created_at: string }[]
+  admin_replies: { text: string; created_at: string; attachments?: Attachment[] }[]
   profiles: { display_name?: string; email?: string; avatar_url?: string } | null
 }
 
@@ -17,6 +18,7 @@ export default function AdminSupportTickets({ tickets }: { tickets: Ticket[] }) 
   const [reply, setReply] = useState('')
   const [status, setStatus] = useState('open')
   const [loading, setLoading] = useState(false)
+  const [attachments, setAttachments] = useState<Attachment[]>([])
   const [localTickets, setLocalTickets] = useState(tickets)
 
   async function sendReply() {
@@ -26,16 +28,17 @@ export default function AdminSupportTickets({ tickets }: { tickets: Ticket[] }) 
       await fetch('/api/support/reply', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ticket_id: selected.id, reply: reply.trim(), status }),
+        body: JSON.stringify({ ticket_id: selected.id, reply: reply.trim(), status, attachments }),
       })
       // Update local state
-      const newReply = { text: reply.trim(), created_at: new Date().toISOString() }
+      const newReply = { text: reply.trim(), created_at: new Date().toISOString(), attachments }
       setLocalTickets(prev => prev.map(t => t.id === selected.id
         ? { ...t, status, admin_replies: [...(t.admin_replies ?? []), newReply] }
         : t
       ))
       setSelected(prev => prev ? { ...prev, status, admin_replies: [...(prev.admin_replies ?? []), newReply] } : null)
       setReply('')
+      setAttachments([])
     } finally {
       setLoading(false)
     }
@@ -109,6 +112,15 @@ export default function AdminSupportTickets({ tickets }: { tickets: Ticket[] }) 
                   <div key={i} className="flex justify-end">
                     <div className="max-w-[80%] rounded-2xl rounded-tr-sm bg-red-600 text-white px-3 py-2 text-sm">
                       <p>{r.text}</p>
+                      {r.attachments && r.attachments.length > 0 && (
+                        <div className="mt-2 space-y-1">
+                          {r.attachments.map(a => (
+                            <a key={a.url} href={a.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-red-100 hover:text-white underline">
+                              📎 {a.name}
+                            </a>
+                          ))}
+                        </div>
+                      )}
                       <p className="text-[10px] text-red-200 mt-1">{new Date(r.created_at).toLocaleString()}</p>
                     </div>
                   </div>
@@ -126,6 +138,7 @@ export default function AdminSupportTickets({ tickets }: { tickets: Ticket[] }) 
               rows={3}
               className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all resize-none"
             />
+            <FileAttach attachments={attachments} onChange={setAttachments} bucket="attachments" />
             <div className="flex items-center gap-3">
               <select
                 value={status}
