@@ -76,3 +76,43 @@ export async function logout() {
   revalidatePath('/', 'layout')
   redirect('/login')
 }
+
+export async function forgotPassword(formData: FormData) {
+  const supabase = await createClient()
+  const email = String(formData.get('email') || '').trim()
+
+  if (!email) {
+    redirect('/error?message=Email is required')
+  }
+
+  const origin = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+
+  await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${origin}/auth/reset-callback`,
+  })
+
+  redirect('/forgot-password?success=1')
+}
+
+export async function resetPassword(formData: FormData) {
+  const supabase = await createClient()
+  const password = String(formData.get('password') || '').trim()
+  const confirmPassword = String(formData.get('confirm_password') || '').trim()
+
+  if (!password || !confirmPassword) {
+    redirect('/error?message=Both fields are required')
+  }
+
+  if (password !== confirmPassword) {
+    redirect('/error?message=Passwords do not match')
+  }
+
+  const { error } = await supabase.auth.updateUser({ password })
+
+  if (error) {
+    redirect(`/error?message=${encodeURIComponent(error.message)}`)
+  }
+
+  revalidatePath('/', 'layout')
+  redirect('/login?message=Password updated — please sign in')
+}
