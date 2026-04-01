@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import AdminAIChat from '@/components/AdminAIChat'
 
 export default async function AdminDashboardPage() {
   const supabase = await createClient()
@@ -115,6 +116,8 @@ export default async function AdminDashboardPage() {
           )}
         </section>
       </div>
+
+      <AdminAIChat />
 
       <section className="rounded-3xl border bg-white p-6 shadow-sm">
         <h2 className="mb-4 text-lg font-bold text-slate-900">Admin Priorities (from Platform Blueprint)</h2>
