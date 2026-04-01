@@ -5,16 +5,19 @@ import { useState, useRef, useEffect } from 'react'
 type Message = { role: 'user' | 'ai'; text: string }
 
 const QUICK_QUESTIONS = [
-  'Who signed up recently?',
-  'Who created gigs today?',
-  'Are there any rule violations?',
-  'How many open disputes are there?',
   'Give me a full platform summary',
+  'Show me revenue report',
+  'Who signed up recently?',
+  'Any suspicious or flagged users?',
+  'Show recent support tickets',
+  'Any violations or disputes?',
+  'Show recent orders',
+  'Who applied to be a seller?',
 ]
 
 export default function AdminAIChat() {
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'ai', text: "Hi! I'm your admin AI. Ask me anything about the platform — who signed up, who created gigs, violations, disputes, orders, anything." }
+    { role: 'ai', text: "Hi! I'm your admin AI with full platform access. I can report on revenue, orders, users, gigs, violations, disputes, support tickets, messages, seller applications, flagged accounts, and more. What do you need?" }
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)

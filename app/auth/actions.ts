@@ -23,9 +23,15 @@ export async function login(formData: FormData) {
     redirect(`/error?message=${encodeURIComponent(error.message)}`)
   }
 
-  // Redirect admin to admin panel, everyone else to buyer
+  // Log login to audit_logs
   if (data.user) {
     const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', data.user.id).single()
+
+    await supabase.from('audit_logs').insert({
+      user_id: data.user.id,
+      action: `LOGIN: ${email} signed in`,
+    })
+
     if (profile?.is_admin) {
       revalidatePath('/', 'layout')
       redirect('/admin')
