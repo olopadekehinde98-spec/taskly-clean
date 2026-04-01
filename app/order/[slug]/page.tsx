@@ -252,58 +252,62 @@ export default async function OrderPage({ params }: Props) {
           <aside className="h-fit rounded-3xl border bg-white p-6 shadow-sm">
             <h2 className="mb-5 text-xl font-bold text-slate-900">Order Summary</h2>
 
-            <div className="space-y-4 text-sm text-slate-600">
-              <div className="flex justify-between">
-                <span>Package</span>
-                <span className="font-medium text-slate-900">
-                  {selectedPackage.name}
-                </span>
-              </div>
+            {(() => {
+              const subtotal = Number(selectedPackage.price.replace('$', ''))
+              const buyerFee = Math.round(subtotal * 0.05 * 100) / 100
+              const total = subtotal + buyerFee
+              return (
+                <>
+                  <div className="space-y-4 text-sm text-slate-600">
+                    <div className="flex justify-between">
+                      <span>Package</span>
+                      <span className="font-medium text-slate-900">{selectedPackage.name}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Delivery</span>
+                      <span className="font-medium text-slate-900">{selectedPackage.delivery}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Seller</span>
+                      <span className="font-medium text-slate-900">{service.seller}</span>
+                    </div>
+                  </div>
 
-              <div className="flex justify-between">
-                <span>Delivery</span>
-                <span className="font-medium text-slate-900">
-                  {selectedPackage.delivery}
-                </span>
-              </div>
+                  <div className="mt-6 border-t pt-6 space-y-3">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-600">Subtotal</span>
+                      <span className="font-medium text-slate-900">${subtotal.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <div>
+                        <span className="text-slate-600">Buyer Service Fee </span>
+                        <span className="rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold px-1.5 py-0.5">5%</span>
+                      </div>
+                      <span className="font-medium text-slate-900">${buyerFee.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-base font-bold text-slate-900 border-t pt-3">
+                      <span>Total</span>
+                      <span>${total.toFixed(2)}</span>
+                    </div>
+                  </div>
 
-              <div className="flex justify-between">
-                <span>Seller</span>
-                <span className="font-medium text-slate-900">
-                  {service.seller}
-                </span>
-              </div>
-            </div>
+                  <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50 p-4">
+                    <p className="text-xs text-blue-800 leading-relaxed">
+                      <span className="font-semibold">💡 Fee breakdown:</span><br />
+                      The 5% buyer fee helps us maintain the platform, secure payments, and provide support.
+                      Sellers also pay a separate platform fee on their earnings.
+                    </p>
+                  </div>
 
-            <div className="mt-6 border-t pt-6">
-              <div className="mb-3 flex justify-between text-sm">
-                <span className="text-slate-600">Subtotal</span>
-                <span className="font-medium text-slate-900">
-                  {selectedPackage.price}
-                </span>
-              </div>
-
-              <div className="mb-3 flex justify-between text-sm">
-                <span className="text-slate-600">Service Fee</span>
-                <span className="font-medium text-slate-900">$5</span>
-              </div>
-
-              <div className="flex justify-between text-base font-bold text-slate-900">
-                <span>Total</span>
-                <span>
-                  ${Number(selectedPackage.price.replace('$', '')) + 5}
-                </span>
-              </div>
-            </div>
-
-            <div className="mt-6 rounded-2xl bg-slate-50 p-4">
-              <p className="mb-2 text-sm font-semibold text-slate-900">
-                Payment Notice
-              </p>
-              <p className="text-sm leading-6 text-slate-600">
-                Real payment integration will be connected later through Stripe or Paystack.
-              </p>
-            </div>
+                  <div className="mt-4 rounded-2xl bg-slate-50 p-4">
+                    <p className="mb-1 text-sm font-semibold text-slate-900">🔒 Secure Escrow</p>
+                    <p className="text-xs leading-5 text-slate-600">
+                      Your payment is held safely in escrow and only released to the seller after you accept the delivery.
+                    </p>
+                  </div>
+                </>
+              )
+            })()}
           </aside>
         </div>
       </div>

@@ -23,27 +23,31 @@ export default function PaymentTermsPage() {
           body: 'Seller earnings become available for withdrawal after a 14-day clearing period following order completion. This period allows for disputes and quality reviews. Sellers can withdraw to their linked bank account or supported payout method.',
         },
         {
-          title: '4. Platform Service Fee',
-          body: 'TasklyClean charges a service fee on each completed transaction. The current fee structure is: 10% for New sellers, 8% for Level 1 sellers, 6% for Level 2 sellers, and 5% for Top Rated sellers. Fees are deducted from the seller\'s earnings before payout.',
+          title: '4. Buyer Service Fee',
+          body: 'Buyers are charged a 5% service fee on top of the gig price at checkout. This fee is added to the order total and is non-refundable except in cases where the order was never started. The buyer fee covers platform maintenance, payment processing, escrow protection, and customer support.',
         },
         {
-          title: '5. Tips and Bonuses',
+          title: '5. Seller Platform Fee',
+          body: 'TasklyClean charges sellers a platform fee on each completed transaction. The current fee structure is: 10% for New sellers, 8% for Level 1 sellers, 6% for Level 2 sellers, and 5% for Top Rated sellers. Fees are deducted from the seller\'s earnings before payout.',
+        },
+        {
+          title: '6. Tips and Bonuses',
           body: 'Buyers may leave optional tips for sellers after order completion. Tips are not subject to platform fees and are paid out in full to the seller during the next payout cycle.',
         },
         {
-          title: '6. Escrow Protection',
+          title: '7. Escrow Protection',
           body: 'All buyer payments are held in escrow throughout the order lifecycle. Funds are only released to the seller after the buyer accepts the delivery or the auto-accept period (3 days) expires without a dispute.',
         },
         {
-          title: '7. Refunds and Cancellations',
+          title: '8. Refunds and Cancellations',
           body: 'Refund eligibility is governed by our Refund Policy. Cancelled orders before work begins receive a full refund. Disputes are resolved through our admin review process.',
         },
         {
-          title: '8. Tax Responsibilities',
+          title: '9. Tax Responsibilities',
           body: 'Sellers are responsible for reporting and paying any applicable taxes on their earnings. TasklyClean may provide earnings reports for tax purposes but does not offer tax advice. Consult a tax professional for your specific situation.',
         },
         {
-          title: '9. Chargebacks',
+          title: '10. Chargebacks',
           body: 'Fraudulent chargebacks are a violation of our Terms of Service. Buyers who file chargebacks in bad faith may have their accounts suspended and be liable for chargeback fees.',
         },
       ].map(s => (
