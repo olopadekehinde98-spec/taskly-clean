@@ -85,7 +85,7 @@ SAFETY & TRUST:
 
     if (feature === "support_chat") {
       // Check if AI wants to escalate to human support
-      const escalateMatch = text.match(/\{"escalate":true.*?\}/s)
+      const escalateMatch = text.match(/\{"escalate":true[\s\S]*?\}/)
       let escalate = false
       let summary = ""
       let cleanText = text
