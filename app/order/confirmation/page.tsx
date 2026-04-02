@@ -12,7 +12,7 @@ export default async function OrderConfirmationPage({ searchParams }: Props) {
 
   if (session_id && process.env.STRIPE_SECRET_KEY) {
     try {
-      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2025-03-31.basil' })
+      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2026-03-25.dahlia' })
       const session = await stripe.checkout.sessions.retrieve(session_id)
       sessionInfo = {
         amount: (session.amount_total ?? 0) / 100,
