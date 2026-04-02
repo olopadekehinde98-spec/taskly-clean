@@ -39,7 +39,7 @@ export async function updateUserStatus(formData: FormData) {
     action_type: action,
     reason,
     target_type: 'user',
-  }).then(() => {})
+  }).then(({ error }) => { if (error) console.error('Audit log failed:', error.message) })
 
   revalidatePath('/admin/users')
   revalidatePath('/admin')
@@ -69,7 +69,7 @@ export async function updateListingStatus(formData: FormData) {
     action_type: action,
     reason,
     target_type: 'listing',
-  }).then(() => {})
+  }).then(({ error }) => { if (error) console.error('Audit log failed:', error.message) })
 
   revalidatePath('/admin/services')
   revalidatePath('/admin/moderation')
@@ -141,7 +141,7 @@ export async function resolveDispute(formData: FormData) {
     action_type: 'resolve_dispute',
     reason: `Decision: ${decision}. ${note}`,
     target_type: 'dispute',
-  }).then(() => {})
+  }).then(({ error }) => { if (error) console.error('Audit log failed:', error.message) })
 
   revalidatePath('/admin/disputes')
 }

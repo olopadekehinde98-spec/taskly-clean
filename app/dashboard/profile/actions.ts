@@ -32,7 +32,11 @@ export async function saveSellerProfile(formData: FormData) {
   // response_rate and member_since are read-only / system-managed, never saved from form
 
   // Only set member_since on first-time seller setup if not already set
-  const { data: existing } = await supabase.from('profiles').select('member_since, is_seller').eq('id', user.id).single()
+  const { data: existing, error: fetchError } = await supabase.from('profiles').select('member_since, is_seller').eq('id', user.id).single()
+  if (fetchError && fetchError.code !== 'PGRST116') {
+    // PGRST116 = no rows found, which is fine for new profiles
+    console.error('Profile fetch failed:', fetchError.message)
+  }
   const shouldSetMemberSince = !existing?.member_since
 
   const updateData: Record<string, unknown> = {

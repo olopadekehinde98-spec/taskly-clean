@@ -51,7 +51,7 @@ export async function login(formData: FormData) {
       ip_address: ip,
       user_agent: userAgent,
       reason: 'User login',
-    }).then(() => {})
+    }).then(({ error }) => { if (error) console.error('Audit log failed:', error.message) })
 
     if (profile?.is_admin) {
       revalidatePath('/', 'layout')
@@ -91,15 +91,23 @@ export async function signup(formData: FormData) {
   // Auto-create profile row for new user
   if (data.user) {
     const displayName = fullName || email.split('@')[0]
-    const usernameBase = displayName.toLowerCase().replace(/[^a-z0-9]/g, '')
-    await supabase.from('profiles').upsert({
+    const usernameBase = displayName.toLowerCase().replace(/[^a-z0-9]/g, '') || 'user'
+    // Use timestamp + random to make username unique (avoids collisions)
+    const uniqueSuffix = Date.now().toString(36) + Math.floor(Math.random() * 100)
+    const username = usernameBase + uniqueSuffix
+
+    const { error: profileError } = await supabase.from('profiles').upsert({
       id: data.user.id,
       email,
       display_name: displayName,
-      username: usernameBase + Math.floor(Math.random() * 1000),
+      username,
       is_seller: false,
       is_admin: false,
     }, { onConflict: 'id' })
+
+    if (profileError) {
+      console.error('Profile creation failed:', profileError.message)
+    }
   }
 
   revalidatePath('/', 'layout')

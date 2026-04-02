@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 type Notification = {
   id: string
@@ -27,16 +27,29 @@ export default function BuyerNotificationsClient({ notifications: initialNotific
   const [notifications, setNotifications] = useState(initialNotifications)
   const [loading, setLoading] = useState<string | null>(null)
 
+  // Sync state if parent passes fresh data (e.g. after navigation)
+  useEffect(() => {
+    setNotifications(initialNotifications)
+  }, [initialNotifications])
+
   async function markAsRead(id: string) {
     if (loading) return
     setLoading(id)
+    // Optimistic update
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n))
     try {
-      await fetch('/api/notifications', {
+      const res = await fetch('/api/notifications', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ notification_id: id }),
       })
-      setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n))
+      if (!res.ok) {
+        // Rollback on failure
+        setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: false } : n))
+      }
+    } catch {
+      // Rollback on network error
+      setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: false } : n))
     } finally {
       setLoading(null)
     }
@@ -45,13 +58,20 @@ export default function BuyerNotificationsClient({ notifications: initialNotific
   async function markAllRead() {
     if (loading) return
     setLoading('all')
+    const prev = notifications
+    // Optimistic update
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })))
     try {
-      await fetch('/api/notifications', {
+      const res = await fetch('/api/notifications', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mark_all: true }),
       })
-      setNotifications(prev => prev.map(n => ({ ...n, read: true })))
+      if (!res.ok) {
+        setNotifications(prev) // rollback
+      }
+    } catch {
+      setNotifications(prev) // rollback
     } finally {
       setLoading(null)
     }

@@ -84,26 +84,31 @@ SAFETY & TRUST:
     const text = (textBlock && "text" in textBlock ? textBlock.text : "")?.trim() ?? ""
 
     if (feature === "support_chat") {
-      // Check if AI wants to escalate to human support
-      const escalateMatch = text.match(/\{"escalate":true[\s\S]*?\}/)
+      // Robustly find escalation JSON — look for last {...} block containing "escalate":true
       let escalate = false
       let summary = ""
       let cleanText = text
 
-      if (escalateMatch) {
+      const jsonMatches = [...text.matchAll(/\{[^{}]*"escalate"\s*:\s*true[^{}]*\}/g)]
+      if (jsonMatches.length > 0) {
+        const lastMatch = jsonMatches[jsonMatches.length - 1]
         try {
-          const parsed = JSON.parse(escalateMatch[0])
+          const parsed = JSON.parse(lastMatch[0])
           escalate = parsed.escalate === true
           summary = parsed.summary ?? ""
-          cleanText = text.replace(escalateMatch[0], "").trim()
-        } catch { /* ignore parse errors */ }
+          cleanText = text.slice(0, lastMatch.index).trimEnd()
+        } catch {
+          // JSON parse failed — don't escalate, show full text
+        }
       }
 
       return NextResponse.json({ result: cleanText, escalate, summary })
     }
 
     try {
-      const parsed = JSON.parse(text.replace(/```json|```/g, "").trim())
+      // Strip only leading/trailing markdown code fences, not inline backticks
+      const cleaned = text.replace(/^```(?:json)?\s*/m, "").replace(/\s*```$/m, "").trim()
+      const parsed = JSON.parse(cleaned)
       return NextResponse.json({ result: parsed })
     } catch {
       return NextResponse.json({ error: "AI returned invalid JSON", raw: text }, { status: 500 })
