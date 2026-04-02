@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { saveSellerProfile } from './actions'
+import ProfileImageUpload from '@/components/ProfileImageUpload'
 
 export default async function SellerProfileEditPage({
   searchParams,
@@ -27,6 +28,7 @@ export default async function SellerProfileEditPage({
     .single()
 
   const displayName = profile?.display_name || (user.email ?? '').split('@')[0]
+  const avatarUrl = profile?.avatar_url || null
   // Auto-suggest username from email if not set yet
   const emailBase = (profile?.email || user.email || '').split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '')
   const username = profile?.username || emailBase
@@ -57,26 +59,10 @@ export default async function SellerProfileEditPage({
         <section className="rounded-3xl border bg-white p-8 shadow-sm">
           <form action={saveSellerProfile} className="space-y-8">
             <div className="grid gap-6 md:grid-cols-[180px_1fr]">
-              <div>
-                <p className="mb-3 text-sm font-medium text-slate-700">
-                  Profile Image
-                </p>
-
-                <div className="flex h-36 w-36 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-4xl font-bold text-white">
-                  {displayName ? displayName.charAt(0).toUpperCase() : 'S'}
-                </div>
-
-                <button
-                  type="button"
-                  className="mt-4 rounded-2xl border px-4 py-2 text-sm font-medium text-slate-700"
-                >
-                  Upload Image
-                </button>
-
-                <p className="mt-2 text-xs text-slate-500">
-                  Real upload will be connected later.
-                </p>
-              </div>
+              <ProfileImageUpload
+                currentLetter={displayName ? displayName.charAt(0).toUpperCase() : 'S'}
+                currentAvatarUrl={avatarUrl}
+              />
 
               <div className="grid gap-6 md:grid-cols-2">
                 <div>

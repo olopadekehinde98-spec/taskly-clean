@@ -13,9 +13,9 @@ export default async function AdminSecurityPage() {
     { data: recentLogins },
   ] = await Promise.all([
     supabase.from('profiles').select('id, display_name, email, account_status, created_at').eq('account_status', 'flagged').order('created_at', { ascending: false }),
-    supabase.from('audit_logs').select('action, created_at, ip_address, profiles(display_name, email)').ilike('action', 'SECURITY_FLAG%').order('created_at', { ascending: false }).limit(50),
+    supabase.from('audit_logs').select('action, created_at, ip_address, actor_id, profiles!audit_logs_actor_id_fkey(display_name, email)').ilike('action_type', 'security%').order('created_at', { ascending: false }).limit(50),
     supabase.from('profiles').select('id, display_name, email, account_status, created_at').eq('account_status', 'banned').order('created_at', { ascending: false }),
-    supabase.from('audit_logs').select('action, created_at, ip_address, profiles(display_name, email)').ilike('action', 'LOGIN%').order('created_at', { ascending: false }).limit(30),
+    supabase.from('audit_logs').select('action, created_at, ip_address, actor_id, profiles!audit_logs_actor_id_fkey(display_name, email)').eq('action_type', 'login').order('created_at', { ascending: false }).limit(30),
   ])
 
   return (

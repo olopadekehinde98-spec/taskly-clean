@@ -11,7 +11,7 @@ export default async function Navbar() {
   if (user) {
     const { data } = await supabase.from("profiles").select("display_name, email, username, is_seller, is_admin, avatar_url").eq("id", user.id).single()
     profile = data
-    const { count } = await supabase.from("notifications").select("*", { count: "exact", head: true }).eq("user_id", user.id).eq("is_read", false)
+    const { count } = await supabase.from("notifications").select("*", { count: "exact", head: true }).eq("user_id", user.id).eq("read", false)
     unreadCount = count ?? 0
   }
 

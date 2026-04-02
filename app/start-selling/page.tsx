@@ -9,6 +9,21 @@ export default async function StartSellingPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
+  // Pre-fill from existing profile
+  const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single()
+  if (profile?.is_seller) redirect('/dashboard') // Already a seller
+
+  const emailBase = (profile?.email || user.email || '').split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '')
+  const prefill = {
+    display_name: profile?.display_name || '',
+    username: profile?.username || emailBase,
+    bio: profile?.bio || '',
+    skills: Array.isArray(profile?.skills) ? profile.skills.join(', ') : '',
+    languages: Array.isArray(profile?.languages) ? profile.languages.join(', ') : '',
+    response_time: profile?.response_time || '',
+    professional_title: profile?.professional_title || '',
+  }
+
   return (
     <main className="min-h-screen bg-slate-50">
       {/* Hero banner */}
@@ -42,14 +57,14 @@ export default async function StartSellingPage() {
               <div className="grid gap-5 md:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block text-sm font-semibold text-slate-700">Display Name / Brand</label>
-                  <input name="display_name" type="text" placeholder="e.g. Taskly Studio"
+                  <input name="display_name" type="text" placeholder="e.g. Taskly Studio" defaultValue={prefill.display_name}
                     className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 transition-all" />
                 </div>
                 <div>
                   <label className="mb-1.5 block text-sm font-semibold text-slate-700">Username</label>
                   <div className="flex rounded-xl border border-slate-200 bg-slate-50 overflow-hidden focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
                     <span className="flex items-center px-3 text-sm text-slate-400 bg-slate-100 border-r border-slate-200">@</span>
-                    <input name="username" type="text" placeholder="tasklystudio"
+                    <input name="username" type="text" placeholder="tasklystudio" defaultValue={prefill.username}
                       className="flex-1 bg-transparent px-3 py-3 text-sm outline-none" />
                   </div>
                 </div>
@@ -58,33 +73,33 @@ export default async function StartSellingPage() {
               <div>
                 <label className="mb-1.5 block text-sm font-semibold text-slate-700">Professional Title</label>
                 <input name="professional_title" type="text"
-                  placeholder="e.g. Publishing & Amazon Business Expert"
+                  placeholder="e.g. Publishing & Amazon Business Expert" defaultValue={prefill.professional_title}
                   className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 transition-all" />
               </div>
 
               <div>
                 <label className="mb-1.5 block text-sm font-semibold text-slate-700">Skills <span className="text-slate-400 font-normal">(comma separated)</span></label>
                 <input name="skills" type="text"
-                  placeholder="Kindle Formatting, Amazon Appeal Writing, Proofreading, Banner Design"
+                  placeholder="Kindle Formatting, Amazon Appeal Writing, Proofreading, Banner Design" defaultValue={prefill.skills}
                   className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 transition-all" />
               </div>
 
               <div>
                 <label className="mb-1.5 block text-sm font-semibold text-slate-700">Professional Bio</label>
                 <textarea name="bio" rows={5}
-                  placeholder="Tell buyers who you are, what you specialise in, and why they should work with you. Be specific and professional."
+                  placeholder="Tell buyers who you are, what you specialise in, and why they should work with you. Be specific and professional." defaultValue={prefill.bio}
                   className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 transition-all resize-none" />
               </div>
 
               <div className="grid gap-5 md:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block text-sm font-semibold text-slate-700">Languages <span className="text-slate-400 font-normal">(comma separated)</span></label>
-                  <input name="languages" type="text" placeholder="English, French"
+                  <input name="languages" type="text" placeholder="English, French" defaultValue={prefill.languages}
                     className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 transition-all" />
                 </div>
                 <div>
                   <label className="mb-1.5 block text-sm font-semibold text-slate-700">Avg Response Time</label>
-                  <input name="response_time" type="text" placeholder="Under 1 hour"
+                  <input name="response_time" type="text" placeholder="Under 1 hour" defaultValue={prefill.response_time}
                     className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 transition-all" />
                 </div>
               </div>
