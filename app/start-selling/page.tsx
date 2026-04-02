@@ -7,11 +7,11 @@ export const metadata = { title: 'Become a Seller — TasklyClean' }
 export default async function StartSellingPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  if (!user) redirect('/signup?next=/start-selling')
 
   // Pre-fill from existing profile
   const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single()
-  if (profile?.is_seller) redirect('/dashboard') // Already a seller
+  if (profile?.is_seller) redirect('/dashboard')
 
   const emailBase = (profile?.email || user.email || '').split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '')
   const prefill = {

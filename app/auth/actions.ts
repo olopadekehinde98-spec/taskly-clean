@@ -69,6 +69,7 @@ export async function signup(formData: FormData) {
   const email = String(formData.get('email') || '').trim()
   const password = String(formData.get('password') || '').trim()
   const fullName = String(formData.get('full_name') || '').trim()
+  const next = String(formData.get('next') || '').trim()
 
   if (!email || !password) {
     redirect('/error?message=Email and password are required')
@@ -111,7 +112,7 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/buyer')
+  redirect(next && next.startsWith('/') ? next : '/buyer')
 }
 
 export async function logout() {

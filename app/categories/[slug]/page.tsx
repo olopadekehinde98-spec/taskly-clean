@@ -1,248 +1,124 @@
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
 
-type Props = {
-  params: Promise<{ slug: string }>
-}
-
-const categoryMap: Record<
-  string,
-  {
-    title: string
-    description: string
-    subcategories: string[]
-    services: {
-      slug: string
-      title: string
-      seller: string
-      price: string
-      rating: string
-      tags: string[]
-    }[]
-  }
-> = {
-  publishing: {
-    title: 'Publishing & Formatting',
-    description:
-      'Services for Kindle formatting, ebook layout, PDF cleanup, and digital publishing preparation.',
-    subcategories: [
-      'Kindle Formatting',
-      'Ebook Layout',
-      'KDP Setup',
-      'PDF Cleanup',
-      'Manuscript Formatting',
-    ],
-    services: [
-      {
-        slug: 'kindle-ebook-formatting',
-        title: 'I will format your Kindle ebook professionally for Amazon KDP',
-        seller: 'Taskly Studio',
-        price: '$50',
-        rating: '4.9',
-        tags: ['Kindle Formatting', 'KDP', 'Ebook Layout'],
-      },
-    ],
-  },
-  'amazon-support': {
-    title: 'Amazon Support',
-    description:
-      'Services for appeal letters, POA writing, account review, and policy support.',
-    subcategories: [
-      'Appeal Letters',
-      'POA Writing',
-      'Account Review',
-      'Policy Guidance',
-      'Seller Support',
-    ],
-    services: [
-      {
-        slug: 'amazon-appeal-letter',
-        title: 'I will write a strong Amazon appeal letter and POA',
-        seller: 'Taskly Studio',
-        price: '$45',
-        rating: '4.8',
-        tags: ['Amazon Appeal', 'POA', 'Seller Support'],
-      },
-    ],
-  },
-  'writing-editing': {
-    title: 'Writing & Editing',
-    description:
-      'Services for proofreading, editing, rewriting, and manuscript polishing.',
-    subcategories: [
-      'Proofreading',
-      'Book Editing',
-      'Rewriting',
-      'Grammar Cleanup',
-      'Manuscript Review',
-    ],
-    services: [
-      {
-        slug: 'ebook-editing-service',
-        title: 'I will edit and proofread your ebook professionally',
-        seller: 'Taskly Studio',
-        price: '$30',
-        rating: '4.9',
-        tags: ['Proofreading', 'Editing', 'Manuscript Review'],
-      },
-    ],
-  },
-  'design-services': {
-    title: 'Design Services',
-    description:
-      'Services for banners, gig images, thumbnails, and digital branding.',
-    subcategories: [
-      'Gig Images',
-      'Banners',
-      'Branding',
-      'Thumbnails',
-      'Social Graphics',
-    ],
-    services: [],
-  },
-  'web-tech': {
-    title: 'Web & Tech Help',
-    description:
-      'Services for websites, landing pages, bug fixes, and deployment help.',
-    subcategories: [
-      'Landing Pages',
-      'Bug Fixes',
-      'Website Edits',
-      'Deployment',
-      'Technical Setup',
-    ],
-    services: [],
-  },
-  'business-services': {
-    title: 'Business Services',
-    description:
-      'Services for admin support, documents, virtual tasks, and business help.',
-    subcategories: [
-      'Admin Support',
-      'Document Preparation',
-      'Virtual Assistance',
-      'Presentation Cleanup',
-      'Business Tasks',
-    ],
-    services: [],
-  },
-}
+type Props = { params: Promise<{ slug: string }> }
 
 export default async function CategoryDetailsPage({ params }: Props) {
   const { slug } = await params
-  const category = categoryMap[slug]
+  const supabase = await createClient()
 
-  if (!category) {
-    return (
-      <main className="min-h-screen bg-slate-50 px-6 py-20">
-        <div className="mx-auto max-w-3xl rounded-3xl border bg-white p-10 text-center shadow-sm">
-          <h1 className="mb-4 text-3xl font-bold text-slate-900">Category not found</h1>
-          <p className="text-slate-600">
-            This category does not exist yet.
-          </p>
-        </div>
-      </main>
-    )
-  }
+  const { data: category } = await supabase
+    .from('categories')
+    .select('id, name, slug, icon, description')
+    .eq('slug', slug)
+    .single()
+
+  if (!category) notFound()
+
+  const { data: listings } = await supabase
+    .from('listings')
+    .select(`
+      id, title, slug, short_description, cover_image_url,
+      average_rating, total_reviews,
+      listing_packages(tier, price_usd),
+      profiles!listings_seller_id_fkey(display_name, avatar_url, trust_tier)
+    `)
+    .eq('category_id', category.id)
+    .eq('listing_status', 'live')
+    .order('total_orders', { ascending: false })
+    .limit(24)
 
   return (
     <main className="min-h-screen bg-slate-50">
       <section className="border-b bg-white">
-        <div className="mx-auto max-w-7xl px-6 py-16">
-          <Link href="/categories" className="mb-4 inline-block text-sm font-medium text-blue-600">
-            ← Back to Categories
+        <div className="mx-auto max-w-7xl px-6 py-12">
+          <Link href="/categories" className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:underline">
+            ← All Categories
           </Link>
-
-          <h1 className="mb-4 text-4xl font-bold text-slate-900">
-            {category.title}
-          </h1>
-
-          <p className="max-w-3xl text-slate-600">
-            {category.description}
-          </p>
+          <div className="flex items-center gap-4 mt-2">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-2xl">
+              {(category as any).icon ?? '💼'}
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900">{(category as any).name}</h1>
+              {(category as any).description && (
+                <p className="mt-1 text-slate-500 text-sm max-w-xl">{(category as any).description}</p>
+              )}
+            </div>
+          </div>
         </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-6 py-10">
-        <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
-          <aside className="rounded-3xl border bg-white p-6 shadow-sm">
-            <h2 className="mb-5 text-xl font-bold text-slate-900">Subcategories</h2>
-
-            <div className="space-y-3">
-              {category.subcategories.map((item) => (
-                <div
-                  key={item}
-                  className="rounded-2xl bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700"
-                >
-                  {item}
-                </div>
-              ))}
-            </div>
-          </aside>
-
-          <div className="space-y-8">
-            <section className="rounded-3xl border bg-white p-8 shadow-sm">
-              <h2 className="mb-6 text-2xl font-bold text-slate-900">
-                Services in {category.title}
-              </h2>
-
-              {category.services.length === 0 ? (
-                <div className="rounded-2xl bg-slate-50 p-6 text-sm text-slate-600">
-                  No services attached yet for this category.
-                </div>
-              ) : (
-                <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-                  {category.services.map((service) => (
-                    <div
-                      key={service.slug}
-                      className="rounded-2xl border bg-slate-50 p-5"
-                    >
-                      <h3 className="mb-3 text-lg font-semibold text-slate-900">
-                        {service.title}
-                      </h3>
-
-                      <p className="mb-2 text-sm text-slate-600">
-                        by {service.seller}
-                      </p>
-
-                      <div className="mb-4 flex flex-wrap gap-2">
-                        {service.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="rounded-full bg-white px-3 py-1 text-xs text-slate-600"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-
-                      <div className="mb-4 flex items-center justify-between text-sm text-slate-600">
-                        <span>⭐ {service.rating}</span>
-                        <span>{service.price}</span>
-                      </div>
-
-                      <Link
-                        href={`/services/${service.slug}`}
-                        className="font-medium text-blue-600"
-                      >
-                        View Service
-                      </Link>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </section>
-
-            <section className="rounded-3xl border bg-white p-8 shadow-sm">
-              <h2 className="mb-4 text-xl font-bold text-slate-900">
-                Category Growth Note
-              </h2>
-
-              <p className="text-sm leading-7 text-slate-600">
-                This category page structure is stronger than the old one because each category now has its own dedicated page, its own subcategories, and attached services. That is much closer to how a real marketplace should behave.
-              </p>
-            </section>
-          </div>
+        <div className="mb-6 flex items-center justify-between">
+          <p className="text-sm text-slate-500">{listings?.length ?? 0} services in {(category as any).name}</p>
+          <Link href={`/services?category=${slug}`} className="text-sm font-medium text-blue-600 hover:underline">
+            View with filters →
+          </Link>
         </div>
+
+        {!listings || listings.length === 0 ? (
+          <div className="rounded-3xl border bg-white p-16 text-center shadow-sm">
+            <p className="text-4xl mb-4">🔍</p>
+            <h2 className="text-xl font-semibold text-slate-900 mb-2">No services yet in this category</h2>
+            <p className="text-slate-500 text-sm mb-6">Be the first to offer a service here.</p>
+            <Link href="/start-selling" className="rounded-2xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700">
+              Start Selling
+            </Link>
+          </div>
+        ) : (
+          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            {listings.map((listing: any) => {
+              const pkg = listing.listing_packages?.find((p: any) => p.tier === 'basic') ?? listing.listing_packages?.[0]
+              const sellerName = listing.profiles?.display_name || 'Seller'
+              const rating = Number(listing.average_rating ?? 0)
+              const reviews = Number(listing.total_reviews ?? 0)
+              return (
+                <Link
+                  key={listing.id}
+                  href={`/services/${listing.slug ?? listing.id}`}
+                  className="group rounded-2xl bg-white border overflow-hidden hover:shadow-md transition-shadow"
+                >
+                  <div className="aspect-video bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden">
+                    {listing.cover_image_url ? (
+                      <img src={listing.cover_image_url} alt={listing.title} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    ) : (
+                      <div className="h-full w-full flex items-center justify-center text-4xl">{(category as any).icon ?? '💼'}</div>
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="h-7 w-7 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-xs font-bold text-white overflow-hidden">
+                        {listing.profiles?.avatar_url ? (
+                          <img src={listing.profiles.avatar_url} alt={sellerName} className="h-full w-full object-cover" />
+                        ) : sellerName[0].toUpperCase()}
+                      </div>
+                      <span className="text-xs text-slate-500">{sellerName}</span>
+                      {listing.profiles?.trust_tier === 'top' && (
+                        <span className="ml-auto text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">Top Seller</span>
+                      )}
+                    </div>
+                    <h3 className="text-sm font-semibold text-slate-900 line-clamp-2 mb-2">{listing.title}</h3>
+                    {reviews > 0 && (
+                      <div className="flex items-center gap-1 mb-3">
+                        <span className="text-amber-400 text-xs">★</span>
+                        <span className="text-xs font-semibold">{rating.toFixed(1)}</span>
+                        <span className="text-xs text-slate-400">({reviews})</span>
+                      </div>
+                    )}
+                    <div className="flex items-center justify-between border-t pt-3 mt-3">
+                      <span className="text-xs text-slate-400">Starting at</span>
+                      <span className="text-sm font-bold text-slate-900">
+                        {pkg ? `$${Number(pkg.price_usd).toFixed(2)}` : 'Contact seller'}
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              )
+            })}
+          </div>
+        )}
       </section>
     </main>
   )

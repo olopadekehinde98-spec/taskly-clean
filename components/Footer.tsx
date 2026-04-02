@@ -23,22 +23,20 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="mb-4 font-semibold">Explore</h3>
+            <h3 className="mb-4 font-semibold">Marketplace</h3>
             <ul className="space-y-2 text-sm text-slate-400">
               <li><Link href="/services" className="hover:text-white transition-colors">Browse Services</Link></li>
               <li><Link href="/categories" className="hover:text-white transition-colors">Categories</Link></li>
               <li><Link href="/start-selling" className="hover:text-white transition-colors">Become a Seller</Link></li>
-              <li><Link href="/help" className="hover:text-white transition-colors">Help Center</Link></li>
             </ul>
           </div>
 
           <div>
-            <h3 className="mb-4 font-semibold">Company</h3>
+            <h3 className="mb-4 font-semibold">Support</h3>
             <ul className="space-y-2 text-sm text-slate-400">
-              <li><Link href="/help" className="hover:text-white transition-colors">About Us</Link></li>
-              <li><Link href="/help" className="hover:text-white transition-colors">How It Works</Link></li>
-              <li><Link href="/help#contact" className="hover:text-white transition-colors">Contact</Link></li>
-              <li><Link href="/help" className="hover:text-white transition-colors">Support</Link></li>
+              <li><Link href="/help" className="hover:text-white transition-colors">Help Center</Link></li>
+              <li><Link href="/buyer/support" className="hover:text-white transition-colors">Contact Support</Link></li>
+              <li><Link href="/refund" className="hover:text-white transition-colors">Refund Policy</Link></li>
             </ul>
           </div>
 
@@ -47,7 +45,6 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-slate-400">
               <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
               <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
-              <li><Link href="/refund" className="hover:text-white transition-colors">Refund Policy</Link></li>
               <li><Link href="/acceptable-use" className="hover:text-white transition-colors">Acceptable Use</Link></li>
               <li><Link href="/payment-terms" className="hover:text-white transition-colors">Payment Terms</Link></li>
               <li><Link href="/cookies" className="hover:text-white transition-colors">Cookie Policy</Link></li>

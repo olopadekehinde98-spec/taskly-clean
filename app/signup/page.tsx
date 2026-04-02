@@ -3,7 +3,8 @@ import { signup } from '@/app/auth/actions'
 
 export const metadata = { title: 'Create Account — TasklyClean' }
 
-export default function SignupPage() {
+export default async function SignupPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
+  const { next } = await searchParams
   return (
     <main className="min-h-screen flex">
       {/* Left brand panel */}
@@ -60,6 +61,7 @@ export default function SignupPage() {
             </div>
 
             <form className="space-y-5">
+              {next && <input type="hidden" name="next" value={next} />}
               <div>
                 <label className="mb-1.5 block text-sm font-semibold text-slate-700">Full Name</label>
                 <input
