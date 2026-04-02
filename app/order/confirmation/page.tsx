@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import Stripe from 'stripe'
 
+export const dynamic = 'force-dynamic'
+
 type Props = {
   searchParams: Promise<{ session_id?: string }>
 }
