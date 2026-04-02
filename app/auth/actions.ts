@@ -2,7 +2,17 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
+
+function getRealIP(headersList: Awaited<ReturnType<typeof headers>>): string {
+  return (
+    headersList.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    headersList.get('x-real-ip') ||
+    headersList.get('cf-connecting-ip') ||
+    'unknown'
+  )
+}
 
 export async function login(formData: FormData) {
   const supabase = await createClient()
@@ -23,14 +33,25 @@ export async function login(formData: FormData) {
     redirect(`/error?message=${encodeURIComponent(error.message)}`)
   }
 
-  // Log login to audit_logs
+  // Log login to audit_logs with IP address
   if (data.user) {
+    const headersList = await headers()
+    const ip = getRealIP(headersList)
+    const userAgent = headersList.get('user-agent') ?? ''
+
     const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', data.user.id).single()
 
     await supabase.from('audit_logs').insert({
       user_id: data.user.id,
-      action: `LOGIN: ${email} signed in`,
-    })
+      actor_id: data.user.id,
+      action_type: 'login',
+      action: `LOGIN: ${email} signed in from IP ${ip}`,
+      target_type: 'user',
+      target_id: data.user.id,
+      ip_address: ip,
+      user_agent: userAgent,
+      reason: 'User login',
+    }).then(() => {})
 
     if (profile?.is_admin) {
       revalidatePath('/', 'layout')
@@ -125,9 +146,13 @@ export async function resetPassword(formData: FormData) {
   const { error } = await supabase.auth.updateUser({ password })
 
   if (error) {
-    redirect(`/error?message=${encodeURIComponent(error.message)}`)
+    // Redirect back to reset-password page with error message for better UX
+    redirect(`/reset-password?error=${encodeURIComponent(error.message)}`)
   }
 
+  // Sign out after password reset so user must log in with new password
+  await supabase.auth.signOut()
+
   revalidatePath('/', 'layout')
-  redirect('/login?message=Password updated — please sign in')
+  redirect('/login?message=Password+updated+successfully+%E2%80%94+please+sign+in+with+your+new+password')
 }

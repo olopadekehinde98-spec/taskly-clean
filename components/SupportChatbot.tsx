@@ -21,6 +21,7 @@ export default function SupportChatbot() {
   const [loading, setLoading] = useState(false)
   const [escalated, setEscalated] = useState(false)
   const [ticketCreated, setTicketCreated] = useState(false)
+  const [ticketNumber, setTicketNumber] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -47,15 +48,20 @@ export default function SupportChatbot() {
 
       setMessages(prev => [...prev, { role: 'ai', text: aiText }])
 
-      if (data.escalate && !ticketCreated) {
-        setEscalated(true)
-        const conversation = newMessages.map(m => ({ role: m.role, text: m.text }))
-        conversation.push({ role: 'ai', text: aiText })
-        await fetch('/api/support', {
+      const allMessages = [...newMessages, { role: 'ai' as const, text: aiText }]
+
+      // Auto-save ticket when conversation reaches 3+ messages or AI escalates
+      const shouldSave = (data.escalate && !ticketCreated) || (!ticketCreated && allMessages.length >= 4)
+      if (shouldSave) {
+        if (data.escalate) setEscalated(true)
+        const conversation = allMessages.map(m => ({ role: m.role, text: m.text }))
+        const ticketRes = await fetch('/api/support', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ summary: data.summary || msg, conversation }),
+          body: JSON.stringify({ summary: data.summary || msg, conversation, auto_save: !data.escalate }),
         })
+        const ticketData = await ticketRes.json()
+        if (ticketData.ticket_number) setTicketNumber(ticketData.ticket_number)
         setTicketCreated(true)
       }
     } catch {
@@ -113,7 +119,7 @@ export default function SupportChatbot() {
             ))}
             {ticketCreated && (
               <div className="rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 text-center">
-                ✅ Sent to our support team. We will get back to you soon.
+                ✅ {escalated ? 'Connected to human support.' : 'Conversation saved.'} {ticketNumber && <span className="font-bold">Ticket: {ticketNumber}</span>}
               </div>
             )}
             {loading && (

@@ -14,8 +14,10 @@ export async function POST(req: NextRequest) {
     const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).single()
     if (!profile?.is_admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-    const { message } = await req.json()
+    const { message, history } = await req.json()
     if (!message) return NextResponse.json({ error: 'Message required' }, { status: 400 })
+
+    // history is an array of { role: 'user' | 'assistant', content: string }
 
     // Fetch ALL platform data in parallel
     const [
@@ -91,8 +93,8 @@ export async function POST(req: NextRequest) {
       // Messages/Conversations
       supabase.from('conversations').select('created_at, profiles!conversations_buyer_id_fkey(display_name), profiles!conversations_seller_id_fkey(display_name)').order('created_at', { ascending: false }).limit(10),
 
-      // Audit logs
-      supabase.from('audit_logs').select('action, created_at, profiles(display_name, email)').order('created_at', { ascending: false }).limit(15),
+      // Audit logs with IP addresses
+      supabase.from('audit_logs').select('action, action_type, ip_address, created_at, profiles(display_name, email)').order('created_at', { ascending: false }).limit(15),
 
       // Security-flagged users
       supabase.from('profiles').select('display_name, email, account_status, created_at').eq('account_status', 'flagged').limit(10),
@@ -176,7 +178,7 @@ ${recentConversations?.map((c: any) => `• Buyer: ${c['profiles']?.[0]?.display
 ╔══════════════════════════════╗
 ║    AUDIT LOG (last 15)       ║
 ╚══════════════════════════════╝
-${auditLogs?.map(a => `• ${(a.profiles as any)?.display_name ?? 'Unknown'} (${(a.profiles as any)?.email}) — ${a.action} — ${new Date(a.created_at).toLocaleString()}`).join('\n') ?? 'No audit logs'}
+${auditLogs?.map((a: any) => `• ${(a.profiles as any)?.display_name ?? 'Unknown'} (${(a.profiles as any)?.email}) — ${a.action} — IP: ${a.ip_address ?? 'n/a'} — ${new Date(a.created_at).toLocaleString()}`).join('\n') ?? 'No audit logs'}
 
 ╔══════════════════════════════╗
 ║   FLAGGED/SUSPICIOUS USERS   ║
@@ -192,6 +194,21 @@ ${flaggedUsers && flaggedUsers.length > 0 ? flaggedUsers.map(u => `⚠️ ${u.di
 - Listings require moderation approval before going live
 - Disputes: admin decision is final
 - Users can be warned, restricted, suspended, or permanently banned
+
+╔══════════════════════════════╗
+║   ADMIN ACTIONS YOU CAN DO   ║
+╚══════════════════════════════╝
+You can guide the admin to take these actions on the /admin/users page:
+- BAN a user: Find the user in the users table and click the "Ban" button. Status → banned.
+- RESTRICT a user: Click "Restrict" button. Status → restricted (limited access).
+- SUSPEND a user: Click "Suspend" button. Status → suspended (temporary lockout).
+- RESTORE a user: If banned/suspended, click "Restore" to set status → active.
+- FLAG a user manually: Click "Flag" button. Status → flagged (marked suspicious).
+- UNFLAG a user: If status is flagged, click "Unflag" to restore to active.
+
+When the admin says "ban [username/email]", "flag [user]", "unflag [user]", "suspend [user]", etc.,
+provide the exact action: "Go to /admin/users, find [user email], and click [ACTION]."
+You can identify users from the platform data above and give precise instructions.
 `
 
     const aiResponse = await client.messages.create({

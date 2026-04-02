@@ -76,9 +76,9 @@ export default async function StartSellingPage() {
                   className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 transition-all resize-none" />
               </div>
 
-              <div className="grid gap-5 md:grid-cols-3">
+              <div className="grid gap-5 md:grid-cols-2">
                 <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-slate-700">Languages</label>
+                  <label className="mb-1.5 block text-sm font-semibold text-slate-700">Languages <span className="text-slate-400 font-normal">(comma separated)</span></label>
                   <input name="languages" type="text" placeholder="English, French"
                     className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 transition-all" />
                 </div>
@@ -87,18 +87,8 @@ export default async function StartSellingPage() {
                   <input name="response_time" type="text" placeholder="Under 1 hour"
                     className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 transition-all" />
                 </div>
-                <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-slate-700">Response Rate %</label>
-                  <input name="response_rate" type="text" placeholder="96"
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 transition-all" />
-                </div>
               </div>
-
-              <div>
-                <label className="mb-1.5 block text-sm font-semibold text-slate-700">Member Since</label>
-                <input name="member_since" type="text" placeholder="March 2026"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 transition-all" />
-              </div>
+              <p className="text-xs text-slate-400">Response rate and member date are set automatically by the platform.</p>
 
               <div className="flex flex-wrap gap-3 pt-2">
                 <button type="submit"

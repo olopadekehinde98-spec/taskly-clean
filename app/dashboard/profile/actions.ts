@@ -29,27 +29,32 @@ export async function saveSellerProfile(formData: FormData) {
   const skills = splitCommaText(String(formData.get('skills') || ''))
   const languages = splitCommaText(String(formData.get('languages') || ''))
   const response_time = String(formData.get('response_time') || '').trim()
-  const response_rate_raw = String(formData.get('response_rate') || '').trim()
-  const member_since = String(formData.get('member_since') || '').trim()
+  // response_rate and member_since are read-only / system-managed, never saved from form
 
-  const response_rate = Number(response_rate_raw.replace('%', '')) || 0
+  // Only set member_since on first-time seller setup if not already set
+  const { data: existing } = await supabase.from('profiles').select('member_since, is_seller').eq('id', user.id).single()
+  const shouldSetMemberSince = !existing?.member_since
+
+  const updateData: Record<string, unknown> = {
+    is_seller: true,
+    display_name,
+    username,
+    professional_title,
+    bio,
+    skills,
+    languages,
+    response_time,
+    updated_at: new Date().toISOString(),
+  }
+
+  if (shouldSetMemberSince) {
+    const now = new Date()
+    updateData.member_since = now.toLocaleString('en-US', { month: 'long', year: 'numeric' })
+  }
 
   const { error } = await supabase
     .from('profiles')
-    .update({
-      role: 'buyer',
-      is_seller: true,
-      display_name,
-      username,
-      professional_title,
-      bio,
-      skills,
-      languages,
-      response_time,
-      response_rate,
-      member_since,
-      updated_at: new Date().toISOString(),
-    })
+    .update(updateData)
     .eq('id', user.id)
 
   if (error) {

@@ -3,7 +3,13 @@ import { resetPassword } from '@/app/auth/actions'
 
 export const metadata = { title: 'Reset Password — TasklyClean' }
 
-export default function ResetPasswordPage() {
+export default async function ResetPasswordPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>
+}) {
+  const params = await searchParams
+  const errorMsg = params?.error
   return (
     <main className="min-h-screen flex">
       {/* Left brand panel */}
@@ -39,6 +45,12 @@ export default function ResetPasswordPage() {
               <h1 className="text-3xl font-extrabold text-slate-900">New password</h1>
               <p className="mt-2 text-sm text-slate-500">Enter your new password below.</p>
             </div>
+
+            {errorMsg && (
+              <div className="mb-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {errorMsg}
+              </div>
+            )}
 
             <form className="space-y-5">
               <div>

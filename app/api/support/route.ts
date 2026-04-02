@@ -1,25 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
+// Generate sequential ticket number like TKT-0001
+async function generateTicketNumber(supabase: Awaited<ReturnType<typeof createClient>>) {
+  const { count } = await supabase
+    .from('support_tickets')
+    .select('*', { count: 'exact', head: true })
+
+  const nextNum = ((count ?? 0) + 1)
+  return `TKT-${String(nextNum).padStart(4, '0')}`
+}
+
 // Create a support ticket
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
-    const { summary, conversation } = await req.json()
+    const { summary, conversation, auto_save } = await req.json()
     if (!summary) return NextResponse.json({ error: 'Summary required' }, { status: 400 })
+
+    const ticket_number = await generateTicketNumber(supabase)
 
     const { data, error } = await supabase.from('support_tickets').insert({
       user_id: user?.id ?? null,
+      ticket_number,
       summary,
       conversation: conversation ?? [],
-      status: 'open',
+      status: auto_save ? 'open' : 'open',
+      auto_saved: auto_save === true,
     }).select().single()
 
     if (error) throw error
 
-    return NextResponse.json({ ticket: data })
+    return NextResponse.json({ ticket: data, ticket_number })
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 })
   }
