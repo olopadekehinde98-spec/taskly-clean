@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { logout } from '@/app/auth/actions'
+import AssistLoop from '@/components/AssistLoop'
 
 export default async function BuyerLayout({
   children,
@@ -16,6 +17,8 @@ export default async function BuyerLayout({
   if (!user) {
     redirect('/login')
   }
+
+  const { data: profile } = await supabase.from('profiles').select('display_name').eq('id', user.id).single()
 
   return (
     <main className="min-h-screen bg-slate-50">
@@ -65,6 +68,7 @@ export default async function BuyerLayout({
 
         <section>{children}</section>
       </div>
+      <AssistLoop context="Buyer Dashboard" userName={profile?.display_name || user.email?.split('@')[0]} role="buyer" />
     </main>
   )
 }

@@ -7,7 +7,10 @@
       "Bash(git commit -m \"Fix regex flag incompatibility in support chat escalation:*)",
       "Bash(git push:*)",
       "Bash(npx vercel:*)",
-      "Bash(find /c/Users/SAMUEL/taskly-clean -name *.sql -not -path */node_modules/*)"
+      "Bash(find /c/Users/SAMUEL/taskly-clean -name *.sql -not -path */node_modules/*)",
+      "Bash(npx claude:*)",
+      "Bash(npm install:*)",
+      "Bash(npm list:*)"
     ]
   }
 }

@@ -1,10 +1,14 @@
 ﻿import { NextRequest, NextResponse } from "next/server"
 import Anthropic from "@anthropic-ai/sdk"
+import { createClient } from "@/lib/supabase/server"
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
 export async function POST(req: NextRequest) {
   try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
     const { feature, payload } = await req.json()
     if (!feature || !payload) return NextResponse.json({ error: "Missing feature or payload" }, { status: 400 })
 
@@ -100,6 +104,15 @@ SAFETY & TRUST:
         } catch {
           // JSON parse failed — don't escalate, show full text
         }
+      }
+
+      // Store support chat conversation in DB (admin-viewable)
+      if (user) {
+        const sid = payload.session_id || crypto.randomUUID()
+        supabase.from('ai_conversations').insert([
+          { user_id: user.id, session_id: sid, role: 'user', message: payload.message, feature: 'support_chat', metadata: {} },
+          { user_id: user.id, session_id: sid, role: 'assistant', message: cleanText, feature: 'support_chat', metadata: { escalate, summary } },
+        ]).then(({ error }) => { if (error) console.error('support_chat store failed:', error.message) })
       }
 
       return NextResponse.json({ result: cleanText, escalate, summary })

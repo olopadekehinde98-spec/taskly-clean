@@ -26,8 +26,10 @@ export default async function SellerProfileEditPage({
     .eq('id', user.id)
     .single()
 
-  const displayName = profile?.display_name || ''
-  const username = profile?.username || ''
+  const displayName = profile?.display_name || (user.email ?? '').split('@')[0]
+  // Auto-suggest username from email if not set yet
+  const emailBase = (profile?.email || user.email || '').split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '')
+  const username = profile?.username || emailBase
   const professionalTitle = profile?.professional_title || ''
   const bio = profile?.bio || ''
   const skills = Array.isArray(profile?.skills) ? profile.skills.join(', ') : ''
