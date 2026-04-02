@@ -58,8 +58,7 @@ export async function saveSellerProfile(formData: FormData) {
 
   const { error } = await supabase
     .from('profiles')
-    .update(updateData)
-    .eq('id', user.id)
+    .upsert({ id: user.id, email: user.email, ...updateData }, { onConflict: 'id' })
 
   if (error) {
     redirect(`/error?message=${encodeURIComponent(error.message)}`)

@@ -45,7 +45,7 @@ export default async function BuyerNotificationsPage() {
         </div>
       </div>
 
-      <BuyerNotificationsClient notifications={items} />
+      <BuyerNotificationsClient notifications={items} userId={user.id} />
     </div>
   )
 }

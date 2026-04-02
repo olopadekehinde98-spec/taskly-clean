@@ -48,6 +48,9 @@ export default async function BuyerLayout({
             <Link href="/buyer/notifications" className="block rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-100">
               Notifications
             </Link>
+            <Link href="/buyer/support" className="block rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-100">
+              Support Tickets
+            </Link>
             <Link href="/buyer/settings" className="block rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-100">
               Account Settings
             </Link>

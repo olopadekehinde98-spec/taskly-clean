@@ -13,10 +13,10 @@ export async function POST(req: NextRequest) {
     const { ticket_id, reply, status, attachments } = await req.json()
     if (!ticket_id || !reply) return NextResponse.json({ error: 'ticket_id and reply required' }, { status: 400 })
 
-    // Fetch existing ticket
+    // Fetch existing ticket (include user_id and ticket_number to notify buyer)
     const { data: ticket, error: fetchErr } = await supabase
       .from('support_tickets')
-      .select('admin_replies')
+      .select('admin_replies, user_id, ticket_number')
       .eq('id', ticket_id)
       .single()
 
@@ -35,6 +35,17 @@ export async function POST(req: NextRequest) {
       .eq('id', ticket_id)
 
     if (error) throw error
+
+    // Notify the user that admin replied to their support ticket
+    if (ticket.user_id) {
+      await supabase.from('notifications').insert({
+        user_id: ticket.user_id,
+        type: 'support',
+        title: 'Support Reply Received',
+        message: `Admin has replied to your support ticket ${ticket.ticket_number ?? ''}. Open Support in your dashboard to read the reply.`,
+        read: false,
+      }).then(({ error: nErr }) => { if (nErr) console.error('Notification failed:', nErr.message) })
+    }
 
     return NextResponse.json({ ok: true })
   } catch (err: any) {

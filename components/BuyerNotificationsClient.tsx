@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { createClient } from '@/lib/supabase/client'
 
 type Notification = {
   id: string
@@ -23,20 +24,63 @@ function getTypeClasses(type: string) {
   return 'bg-amber-50 text-amber-700'
 }
 
-export default function BuyerNotificationsClient({ notifications: initialNotifications }: { notifications: Notification[] }) {
+export default function BuyerNotificationsClient({
+  notifications: initialNotifications,
+  userId,
+}: {
+  notifications: Notification[]
+  userId: string
+}) {
   const [notifications, setNotifications] = useState(initialNotifications)
   const [loading, setLoading] = useState<string | null>(null)
 
-  // Sync state if parent passes fresh data (e.g. after navigation)
+  // Sync state if parent passes fresh data
   useEffect(() => {
     setNotifications(initialNotifications)
   }, [initialNotifications])
 
+  // Supabase Realtime — subscribe to new notifications for this user
+  useEffect(() => {
+    const supabase = createClient()
+    const channel = supabase
+      .channel('buyer-notifications')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload) => {
+          setNotifications((prev) => [payload.new as Notification, ...prev])
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload) => {
+          setNotifications((prev) =>
+            prev.map((n) => (n.id === (payload.new as Notification).id ? (payload.new as Notification) : n))
+          )
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [userId])
+
   async function markAsRead(id: string) {
     if (loading) return
     setLoading(id)
-    // Optimistic update
-    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n))
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)))
     try {
       const res = await fetch('/api/notifications', {
         method: 'POST',
@@ -44,12 +88,10 @@ export default function BuyerNotificationsClient({ notifications: initialNotific
         body: JSON.stringify({ notification_id: id }),
       })
       if (!res.ok) {
-        // Rollback on failure
-        setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: false } : n))
+        setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: false } : n)))
       }
     } catch {
-      // Rollback on network error
-      setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: false } : n))
+      setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: false } : n)))
     } finally {
       setLoading(null)
     }
@@ -58,31 +100,35 @@ export default function BuyerNotificationsClient({ notifications: initialNotific
   async function markAllRead() {
     if (loading) return
     setLoading('all')
-    const prev = notifications
-    // Optimistic update
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })))
+    const snapshot = notifications
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
     try {
       const res = await fetch('/api/notifications', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mark_all: true }),
       })
-      if (!res.ok) {
-        setNotifications(prev) // rollback
-      }
+      if (!res.ok) setNotifications(snapshot)
     } catch {
-      setNotifications(prev) // rollback
+      setNotifications(snapshot)
     } finally {
       setLoading(null)
     }
   }
 
-  const unreadCount = notifications.filter(n => !n.read).length
+  const unreadCount = notifications.filter((n) => !n.read).length
 
   return (
     <div className="rounded-3xl border bg-white p-8 shadow-sm">
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-xl font-bold text-slate-900">Recent Notifications</h2>
+        <div className="flex items-center gap-3">
+          <h2 className="text-xl font-bold text-slate-900">Recent Notifications</h2>
+          {unreadCount > 0 && (
+            <span className="rounded-full bg-red-500 px-2 py-0.5 text-xs font-bold text-white">
+              {unreadCount}
+            </span>
+          )}
+        </div>
         {unreadCount > 0 && (
           <button
             onClick={markAllRead}
@@ -101,7 +147,7 @@ export default function BuyerNotificationsClient({ notifications: initialNotific
         </div>
       ) : (
         <div className="space-y-4">
-          {notifications.map(item => (
+          {notifications.map((item) => (
             <div
               key={item.id}
               onClick={() => !item.read && markAsRead(item.id)}
@@ -117,10 +163,8 @@ export default function BuyerNotificationsClient({ notifications: initialNotific
                   {new Date(item.created_at).toLocaleString()}
                 </span>
               </div>
-
               <h3 className="mb-2 text-lg font-semibold text-slate-900">{item.title}</h3>
               <p className="text-sm leading-6 text-slate-600">{item.message}</p>
-
               {!item.read && (
                 <div className="mt-4 inline-flex rounded-full bg-red-50 px-3 py-1 text-xs font-medium text-red-600">
                   Unread — click to mark as read

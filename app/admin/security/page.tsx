@@ -13,9 +13,9 @@ export default async function AdminSecurityPage() {
     { data: recentLogins },
   ] = await Promise.all([
     supabase.from('profiles').select('id, display_name, email, account_status, created_at').eq('account_status', 'flagged').order('created_at', { ascending: false }),
-    supabase.from('audit_logs').select('action, created_at, profiles(display_name, email)').ilike('action', 'SECURITY_FLAG%').order('created_at', { ascending: false }).limit(50),
+    supabase.from('audit_logs').select('action, created_at, ip_address, profiles(display_name, email)').ilike('action', 'SECURITY_FLAG%').order('created_at', { ascending: false }).limit(50),
     supabase.from('profiles').select('id, display_name, email, account_status, created_at').eq('account_status', 'banned').order('created_at', { ascending: false }),
-    supabase.from('audit_logs').select('action, created_at, profiles(display_name, email)').ilike('action', 'LOGIN%').order('created_at', { ascending: false }).limit(30),
+    supabase.from('audit_logs').select('action, created_at, ip_address, profiles(display_name, email)').ilike('action', 'LOGIN%').order('created_at', { ascending: false }).limit(30),
   ])
 
   return (
@@ -74,7 +74,9 @@ export default async function AdminSecurityPage() {
                 <div key={i} className="rounded-xl bg-red-50 border border-red-100 px-4 py-3">
                   <p className="text-xs font-semibold text-red-800">{log.action}</p>
                   <p className="text-[10px] text-slate-500 mt-0.5">
-                    {(log.profiles as any)?.display_name ?? 'Unknown'} ({(log.profiles as any)?.email}) · {new Date(log.created_at).toLocaleString()}
+                    {(log.profiles as any)?.display_name ?? 'Unknown'} ({(log.profiles as any)?.email})
+                    {(log as any).ip_address && <> · IP: <span className="font-mono">{(log as any).ip_address}</span></>}
+                    {' '}· {new Date(log.created_at).toLocaleString()}
                   </p>
                 </div>
               ))}
@@ -112,7 +114,10 @@ export default async function AdminSecurityPage() {
               {recentLogins.map((log, i) => (
                 <div key={i} className="rounded-xl bg-slate-50 border px-4 py-2.5">
                   <p className="text-xs text-slate-700">{log.action}</p>
-                  <p className="text-[10px] text-slate-400 mt-0.5">{new Date(log.created_at).toLocaleString()}</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5">
+                    {(log as any).ip_address && <span className="font-mono mr-2">{(log as any).ip_address}</span>}
+                    {new Date(log.created_at).toLocaleString()}
+                  </p>
                 </div>
               ))}
             </div>
