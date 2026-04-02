@@ -43,6 +43,8 @@ export async function POST(req: NextRequest) {
       if (cat) categoryName = cat.name
     }
 
+    const coverImage = String(formData.get('cover_image') || '').trim()
+
     const { data: listing, error: listingError } = await supabase
       .from('listings')
       .insert({
@@ -54,6 +56,7 @@ export async function POST(req: NextRequest) {
         short_description,
         full_description: short_description,
         tags,
+        cover_image: coverImage || null,
         listing_status: 'draft',
         moderation_status: 'pending',
         visibility_status: 'hidden',

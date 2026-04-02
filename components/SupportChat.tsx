@@ -12,7 +12,7 @@ const QUICK_QUESTIONS = [
   'How do I report a user?',
 ]
 
-export default function SupportChatbot() {
+export default function SupportChat() {
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
     { role: 'ai', text: "Hi! 👋 I'm the TasklyClean support assistant. Ask me anything about orders, payments, disputes, or platform rules — or I'll connect you to a real person if needed." }
@@ -25,7 +25,7 @@ export default function SupportChatbot() {
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (open) bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, loading, open])
 
   async function send(text?: string) {
@@ -50,15 +50,17 @@ export default function SupportChatbot() {
 
       const allMessages = [...newMessages, { role: 'ai' as const, text: aiText }]
 
-      // Auto-save ticket when conversation reaches 3+ messages or AI escalates
+      // Auto-save ticket when conversation reaches 3+ messages (auto_save) or AI escalates
       const shouldSave = (data.escalate && !ticketCreated) || (!ticketCreated && allMessages.length >= 4)
       if (shouldSave) {
         if (data.escalate) setEscalated(true)
         const conversation = allMessages.map(m => ({ role: m.role, text: m.text }))
+        const summary = data.summary || msg
+
         const ticketRes = await fetch('/api/support', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ summary: data.summary || msg, conversation, auto_save: !data.escalate }),
+          body: JSON.stringify({ summary, conversation, auto_save: !data.escalate }),
         })
         const ticketData = await ticketRes.json()
         if (ticketData.ticket_number) setTicketNumber(ticketData.ticket_number)
@@ -73,6 +75,7 @@ export default function SupportChatbot() {
 
   return (
     <>
+      {/* Floating button */}
       <button
         onClick={() => setOpen(o => !o)}
         className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-2xl shadow-lg shadow-blue-500/40 hover:from-blue-700 hover:to-indigo-700 transition-all"
@@ -81,8 +84,10 @@ export default function SupportChatbot() {
         {open ? '✕' : '💬'}
       </button>
 
+      {/* Chat window */}
       {open && (
-        <div className="fixed bottom-24 right-6 z-50 w-[360px] max-w-[calc(100vw-2rem)] rounded-3xl border bg-white shadow-2xl overflow-hidden flex flex-col">
+        <div className="fixed bottom-24 right-6 z-50 w-[360px] max-w-[calc(100vw-2rem)] rounded-3xl border bg-white shadow-2xl shadow-slate-200 overflow-hidden flex flex-col">
+          {/* Header */}
           <div className="flex items-center gap-3 px-5 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/20 text-lg">🤖</div>
             <div>
@@ -93,17 +98,23 @@ export default function SupportChatbot() {
             </div>
           </div>
 
+          {/* Quick questions */}
           {messages.length <= 1 && (
             <div className="px-4 py-3 border-b bg-slate-50 flex gap-2 flex-wrap">
               {QUICK_QUESTIONS.map(q => (
-                <button key={q} onClick={() => send(q)} disabled={loading}
-                  className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600 hover:border-blue-300 hover:text-blue-700 transition-colors">
+                <button
+                  key={q}
+                  onClick={() => send(q)}
+                  disabled={loading}
+                  className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600 hover:border-blue-300 hover:text-blue-700 transition-colors"
+                >
                   {q}
                 </button>
               ))}
             </div>
           )}
 
+          {/* Messages */}
           <div className="h-72 overflow-y-auto px-4 py-4 space-y-3 flex flex-col">
             {messages.map((m, i) => (
               <div key={i} className={`flex gap-2 ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -114,14 +125,18 @@ export default function SupportChatbot() {
                   m.role === 'user'
                     ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-tr-sm'
                     : 'bg-slate-100 text-slate-800 rounded-tl-sm'
-                }`}>{m.text}</div>
+                }`}>
+                  {m.text}
+                </div>
               </div>
             ))}
+
             {ticketCreated && (
               <div className="rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 text-center">
                 ✅ {escalated ? 'Connected to human support.' : 'Conversation saved.'} {ticketNumber && <span className="font-bold">Ticket: {ticketNumber}</span>}
               </div>
             )}
+
             {loading && (
               <div className="flex gap-2 justify-start">
                 <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 text-sm">🤖</div>
@@ -135,6 +150,7 @@ export default function SupportChatbot() {
             <div ref={bottomRef} />
           </div>
 
+          {/* Input */}
           <div className="border-t px-3 py-3 flex gap-2">
             <input
               value={input}
@@ -144,8 +160,11 @@ export default function SupportChatbot() {
               disabled={loading}
               className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all disabled:opacity-50"
             />
-            <button onClick={() => send()} disabled={loading || !input.trim()}
-              className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-3 py-2 text-sm font-bold text-white hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-40">
+            <button
+              onClick={() => send()}
+              disabled={loading || !input.trim()}
+              className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-3 py-2 text-sm font-bold text-white hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-40"
+            >
               →
             </button>
           </div>

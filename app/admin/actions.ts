@@ -75,6 +75,50 @@ export async function updateListingStatus(formData: FormData) {
   revalidatePath('/admin/moderation')
 }
 
+export async function flagUser(formData: FormData) {
+  const { supabase, adminId } = await requireAdmin()
+  const userId = String(formData.get('user_id') || '')
+  const reason = String(formData.get('reason') || 'Manual flag by admin')
+
+  if (!userId) return
+
+  await supabase.from('profiles').update({ account_status: 'flagged' }).eq('id', userId)
+
+  await supabase.from('audit_logs').insert({
+    actor_id: adminId,
+    target_id: userId,
+    action_type: 'flag',
+    reason,
+    target_type: 'user',
+  })
+
+  revalidatePath('/admin/users')
+  revalidatePath('/admin/security')
+  revalidatePath('/admin')
+}
+
+export async function unflagUser(formData: FormData) {
+  const { supabase, adminId } = await requireAdmin()
+  const userId = String(formData.get('user_id') || '')
+  const reason = String(formData.get('reason') || 'Manually unflagged by admin')
+
+  if (!userId) return
+
+  await supabase.from('profiles').update({ account_status: 'active' }).eq('id', userId).eq('account_status', 'flagged')
+
+  await supabase.from('audit_logs').insert({
+    actor_id: adminId,
+    target_id: userId,
+    action_type: 'unflag',
+    reason,
+    target_type: 'user',
+  })
+
+  revalidatePath('/admin/users')
+  revalidatePath('/admin/security')
+  revalidatePath('/admin')
+}
+
 export async function resolveDispute(formData: FormData) {
   const { supabase, adminId } = await requireAdmin()
   const disputeId = String(formData.get('dispute_id') || '')

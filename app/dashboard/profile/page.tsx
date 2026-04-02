@@ -173,27 +173,23 @@ export default async function SellerProfileEditPage({
               </div>
 
               <div className="rounded-2xl bg-slate-50 p-5">
-                <label className="mb-2 block text-sm font-medium text-slate-700">
-                  Response Rate
+                <label className="mb-2 block text-sm font-medium text-slate-500">
+                  Response Rate <span className="text-xs text-slate-400">(auto-calculated)</span>
                 </label>
-                <input
-                  name="response_rate"
-                  type="text"
-                  defaultValue={responseRate}
-                  className="w-full rounded-2xl border bg-white px-4 py-3 outline-none"
-                />
+                <p className="w-full rounded-2xl border bg-slate-100 px-4 py-3 text-sm text-slate-600 cursor-not-allowed">
+                  {responseRate ? `${responseRate}%` : 'Not yet calculated'}
+                </p>
+                <p className="mt-1 text-xs text-slate-400">This is calculated automatically based on your reply history.</p>
               </div>
 
               <div className="rounded-2xl bg-slate-50 p-5">
-                <label className="mb-2 block text-sm font-medium text-slate-700">
-                  Member Since
+                <label className="mb-2 block text-sm font-medium text-slate-500">
+                  Member Since <span className="text-xs text-slate-400">(read-only)</span>
                 </label>
-                <input
-                  name="member_since"
-                  type="text"
-                  defaultValue={memberSince}
-                  className="w-full rounded-2xl border bg-white px-4 py-3 outline-none"
-                />
+                <p className="w-full rounded-2xl border bg-slate-100 px-4 py-3 text-sm text-slate-600 cursor-not-allowed">
+                  {memberSince || 'Set automatically on signup'}
+                </p>
+                <p className="mt-1 text-xs text-slate-400">This is set automatically and cannot be edited.</p>
               </div>
             </div>
 

@@ -21,7 +21,53 @@ export async function POST(req: NextRequest) {
       systemPrompt = `You are a listing quality analyst for TasklyClean. Score and give feedback. Respond ONLY with valid JSON: {"overall_score":0,"scores":{"title_clarity":0,"description_quality":0,"pricing_competitiveness":0,"niche_fit":0},"strengths":[],"improvements":[],"rewritten_title":"","rewritten_description_intro":""}`
       userPrompt = `Title: "${payload.title}". Category: "${payload.category}". Description: "${payload.description}". Price: $${payload.price}. Delivery: ${payload.delivery_days} days.`
     } else if (feature === "support_chat") {
-      systemPrompt = `You are a helpful support agent for TasklyClean, a freelancing marketplace. Help users with orders, payments, disputes, accounts, and how to use the platform. Be concise, friendly, and clear. Max 3 short paragraphs. If serious issue say: contact our human support team.`
+      systemPrompt = `You are a friendly, knowledgeable support assistant for TasklyClean — a freelance services marketplace.
+
+=== PLATFORM RULES & POLICIES ===
+
+TERMS OF SERVICE (key points):
+- Users must be 18+
+- Sellers must deliver services as described and communicate professionally
+- Buyers must provide clear lawful requirements and cannot bypass the platform to pay sellers directly
+- TasklyClean charges a service fee: 10% for new sellers, 5% for Top Rated sellers
+- Earnings are released after a 14-day clearing period after order completion
+- Admin dispute decisions are final and binding
+- Accounts may be suspended or banned for violations
+
+ACCEPTABLE USE — PROHIBITED:
+- Illegal activity, fraud, deception
+- Plagiarised or stolen intellectual property
+- Hate speech, violence, adult/obscene content
+- Fake reviews or ratings
+- Off-platform transactions (bypassing the marketplace)
+- Multiple accounts to evade bans
+- Bots or scrapers without authorisation
+- Harassing other users
+
+ORDERS & DELIVERY:
+- After placing an order, seller is notified immediately
+- Buyer can request revisions (number included in each package)
+- If unsatisfied, buyer can open a dispute from the order page
+- Admin reviews disputes and makes a final decision
+
+PAYMENTS & REFUNDS:
+- Payments held in escrow until delivery is accepted
+- Full refund if order cancelled before work begins
+- Refund eligibility for disputes depends on the situation
+- Accepted payment methods: Visa, Mastercard, Amex, supported digital wallets
+
+SAFETY & TRUST:
+- All listings go through moderation before going live
+- Users can report listings or profiles using the report button
+- Trust team email: trust@tasklyclean.com
+- Legal/terms questions: legal@tasklyclean.com
+
+=== YOUR BEHAVIOUR ===
+- Be friendly, concise, and clear
+- Answer questions using the above platform knowledge
+- If a user has a complaint, account issue, payment problem, or dispute that needs human review, tell them you will connect them to a human support agent and respond with this exact JSON at the END of your message (after your normal reply): {"escalate":true,"summary":"<brief summary of the issue>"}
+- Only include the JSON if escalation is truly needed (not for simple FAQ questions)
+- Never make up policies — only use what is stated above`
       userPrompt = payload.message
     } else {
       return NextResponse.json({ error: "Unknown feature" }, { status: 400 })
@@ -37,7 +83,24 @@ export async function POST(req: NextRequest) {
     const textBlock = message.content.find((b) => b.type === "text")
     const text = (textBlock && "text" in textBlock ? textBlock.text : "")?.trim() ?? ""
 
-    if (feature === "support_chat") return NextResponse.json({ result: text })
+    if (feature === "support_chat") {
+      // Check if AI wants to escalate to human support
+      const escalateMatch = text.match(/\{"escalate":true[\s\S]*?\}/)
+      let escalate = false
+      let summary = ""
+      let cleanText = text
+
+      if (escalateMatch) {
+        try {
+          const parsed = JSON.parse(escalateMatch[0])
+          escalate = parsed.escalate === true
+          summary = parsed.summary ?? ""
+          cleanText = text.replace(escalateMatch[0], "").trim()
+        } catch { /* ignore parse errors */ }
+      }
+
+      return NextResponse.json({ result: cleanText, escalate, summary })
+    }
 
     try {
       const parsed = JSON.parse(text.replace(/```json|```/g, "").trim())
