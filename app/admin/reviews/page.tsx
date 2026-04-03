@@ -11,7 +11,7 @@ export default async function AdminReviewsPage({
   let query = supabase
     .from('reviews')
     .select(`
-      id, rating, comment, is_flagged, created_at,
+      id, rating, title, body, is_public, created_at,
       listings ( title, slug ),
       reviewer:profiles!reviews_reviewer_id_fkey ( display_name, email ),
       seller:profiles!reviews_seller_id_fkey ( display_name, email )
@@ -19,18 +19,19 @@ export default async function AdminReviewsPage({
     .order('created_at', { ascending: false })
     .limit(100)
 
-  if (flagged === '1') query = query.eq('is_flagged', true)
+  // "flagged" filter = hidden reviews (is_public = false)
+  if (flagged === '1') query = query.eq('is_public', false)
 
   const { data: reviews, error } = await query
 
-  async function flagReview(formData: FormData) {
+  async function toggleReviewVisibility(formData: FormData) {
     'use server'
     const id = String(formData.get('review_id') || '')
-    const flag = formData.get('flag') === '1'
+    const hide = formData.get('hide') === '1'
     if (!id) return
     const { createClient: sc } = await import('@/lib/supabase/server')
     const sup = await sc()
-    await sup.from('reviews').update({ is_flagged: flag }).eq('id', id)
+    await sup.from('reviews').update({ is_public: !hide }).eq('id', id)
     const { revalidatePath } = await import('next/cache')
     revalidatePath('/admin/reviews')
   }
@@ -79,7 +80,7 @@ export default async function AdminReviewsPage({
                 {reviews.map((r: any) => (
                   <tr key={r.id} className="border-t hover:bg-slate-50 transition-colors">
                     <td className="px-5 py-4 max-w-xs">
-                      <p className="text-sm text-slate-700 line-clamp-2">{r.comment ?? '—'}</p>
+                      <p className="text-sm text-slate-700 line-clamp-2">{r.body ?? r.title ?? '—'}</p>
                       <p className="text-xs text-slate-400 mt-0.5">{new Date(r.created_at).toLocaleDateString()}</p>
                     </td>
                     <td className="px-5 py-4 text-sm text-slate-600">
@@ -94,16 +95,16 @@ export default async function AdminReviewsPage({
                       <span className="text-xs text-slate-400 ml-1">{r.rating}/5</span>
                     </td>
                     <td className="px-5 py-4">
-                      <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${r.is_flagged ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'}`}>
-                        {r.is_flagged ? '🚩 Flagged' : 'Published'}
+                      <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${!r.is_public ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                        {!r.is_public ? '🚩 Hidden' : 'Published'}
                       </span>
                     </td>
                     <td className="px-5 py-4">
-                      <form action={flagReview}>
+                      <form action={toggleReviewVisibility}>
                         <input type="hidden" name="review_id" value={r.id} />
-                        <input type="hidden" name="flag" value={r.is_flagged ? '0' : '1'} />
-                        <button className={`rounded-lg border px-3 py-1 text-xs font-medium transition-colors ${r.is_flagged ? 'border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100' : 'border-red-300 bg-red-50 text-red-700 hover:bg-red-100'}`}>
-                          {r.is_flagged ? 'Unflag' : '🚩 Flag'}
+                        <input type="hidden" name="hide" value={r.is_public ? '1' : '0'} />
+                        <button className={`rounded-lg border px-3 py-1 text-xs font-medium transition-colors ${!r.is_public ? 'border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100' : 'border-red-300 bg-red-50 text-red-700 hover:bg-red-100'}`}>
+                          {!r.is_public ? 'Publish' : '🚩 Hide'}
                         </button>
                       </form>
                     </td>
