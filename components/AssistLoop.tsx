@@ -29,19 +29,46 @@ export default function AssistLoop({ context, userName, role = 'buyer' }: Props)
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const [sessionId] = useState(() => crypto.randomUUID())
+  // Persist session_id in localStorage so history survives page reloads
+  const [sessionId] = useState(() => {
+    if (typeof window === 'undefined') return crypto.randomUUID()
+    const key = `assist_session_${role}`
+    const stored = localStorage.getItem(key)
+    if (stored) return stored
+    const fresh = crypto.randomUUID()
+    localStorage.setItem(key, fresh)
+    return fresh
+  })
+  const [historyLoaded, setHistoryLoaded] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
   const quickPrompts = role === 'seller' ? SELLER_PROMPTS : BUYER_PROMPTS
 
   useEffect(() => {
-    if (open && messages.length === 0) {
-      setMessages([{
-        role: 'assistant',
-        content: `Hi ${userName || 'there'}! 👋 I'm your TasklyClean assistant. I'm here to help you with anything on this page. What do you need?`,
-      }])
-    }
+    if (!open) return
+    if (historyLoaded) return
+    setHistoryLoaded(true)
+
+    // Try to load previous session from API
+    fetch('/api/ai/assist/history?session_id=' + sessionId)
+      .then(r => r.json())
+      .then(data => {
+        if (data.messages && data.messages.length > 0) {
+          setMessages(data.messages)
+        } else {
+          setMessages([{
+            role: 'assistant',
+            content: `Hi ${userName || 'there'}! 👋 I'm your TasklyClean assistant. What do you need help with?`,
+          }])
+        }
+      })
+      .catch(() => {
+        setMessages([{
+          role: 'assistant',
+          content: `Hi ${userName || 'there'}! 👋 I'm your TasklyClean assistant. What do you need help with?`,
+        }])
+      })
   }, [open])
 
   useEffect(() => {

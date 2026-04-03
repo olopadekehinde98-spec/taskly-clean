@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
 import { logout } from "@/app/auth/actions"
+import NavbarMobile from "@/components/NavbarMobile"
 
 export default async function Navbar() {
   const supabase = await createClient()
@@ -48,6 +49,9 @@ export default async function Navbar() {
             <Link href="/admin" className="rounded-xl bg-red-50 px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-100">Admin Panel</Link>
           )}
         </nav>
+
+        {/* Mobile hamburger */}
+        <NavbarMobile isSeller={isSeller} isAdmin={isAdmin} isLoggedIn={!!user} />
 
         {/* Right side */}
         <div className="flex items-center gap-2 shrink-0">

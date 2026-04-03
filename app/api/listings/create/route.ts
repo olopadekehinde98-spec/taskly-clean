@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
         full_description: short_description,
         tags,
         cover_image_url: coverImageUrl || null,
-        listing_status: 'draft',
+        listing_status: 'in_review',
         moderation_status: 'pending',
       })
       .select()

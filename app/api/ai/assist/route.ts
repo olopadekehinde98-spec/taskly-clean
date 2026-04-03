@@ -10,8 +10,23 @@ export async function POST(req: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const { message, context, history = [], session_id } = await req.json()
+    const { message, context, history: clientHistory = [], session_id } = await req.json()
     if (!message) return NextResponse.json({ error: 'Message required' }, { status: 400 })
+
+    // Load previous conversation from DB if session_id provided and no client history
+    let history = clientHistory
+    if (session_id && clientHistory.length === 0) {
+      const { data: past } = await supabase
+        .from('ai_conversations')
+        .select('role, message')
+        .eq('session_id', session_id)
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: true })
+        .limit(40)
+      if (past && past.length > 0) {
+        history = past.map(r => ({ role: r.role as 'user' | 'assistant', content: r.message }))
+      }
+    }
 
     const { data: profile } = await supabase
       .from('profiles')
