@@ -19,10 +19,10 @@ export default async function AdminDisputesPage({
   let query = supabase
     .from('disputes')
     .select(`
-      id, reason, status, decision, admin_note, created_at, resolved_at,
-      orders ( id, amount_usd ),
-      buyer:profiles!disputes_buyer_id_fkey ( display_name, email ),
-      seller:profiles!disputes_seller_id_fkey ( display_name, email )
+      id, description, issue_type, status, resolution, requested_outcome,
+      created_at, resolved_at,
+      opener:profiles!disputes_opened_by_fkey ( display_name, email ),
+      orders ( id, subtotal_amount, buyer_id, seller_id )
     `)
     .order('created_at', { ascending: false })
     .limit(100)
@@ -31,6 +31,22 @@ export default async function AdminDisputesPage({
   else query = query.neq('status', 'resolved')
 
   const { data: disputes } = await query
+
+  // Fetch buyer/seller names for orders
+  const orderUserIds = new Set<string>()
+  for (const d of disputes ?? []) {
+    if ((d as any).orders?.buyer_id) orderUserIds.add((d as any).orders.buyer_id)
+    if ((d as any).orders?.seller_id) orderUserIds.add((d as any).orders.seller_id)
+  }
+
+  const profileMap: Record<string, { display_name: string | null; email: string | null }> = {}
+  if (orderUserIds.size > 0) {
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, display_name, email')
+      .in('id', Array.from(orderUserIds))
+    for (const p of profiles ?? []) profileMap[p.id] = p
+  }
 
   return (
     <div className="space-y-6">
@@ -72,70 +88,83 @@ export default async function AdminDisputesPage({
         </div>
       ) : (
         <div className="space-y-4">
-          {disputes.map((d: any) => (
-            <div key={d.id} className="rounded-3xl border bg-white p-6 shadow-sm">
-              <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-2 flex-wrap">
-                    <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${STATUS_STYLES[d.status] ?? 'bg-slate-100 text-slate-600'}`}>
-                      {d.status?.replace('_', ' ')}
-                    </span>
-                    <span className="text-xs text-slate-400">{new Date(d.created_at).toLocaleDateString()}</span>
-                    {d.orders?.amount_usd && (
-                      <span className="text-xs text-slate-500">💰 ${Number(d.orders.amount_usd).toFixed(2)} order</span>
+          {disputes.map((d: any) => {
+            const order = d.orders
+            const buyer = order?.buyer_id ? profileMap[order.buyer_id] : null
+            const seller = order?.seller_id ? profileMap[order.seller_id] : null
+            return (
+              <div key={d.id} className="rounded-3xl border bg-white p-6 shadow-sm">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
+                      <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${STATUS_STYLES[d.status] ?? 'bg-slate-100 text-slate-600'}`}>
+                        {d.status?.replace('_', ' ')}
+                      </span>
+                      {d.issue_type && (
+                        <span className="rounded-full bg-slate-100 text-slate-600 px-2.5 py-0.5 text-xs font-medium capitalize">
+                          {d.issue_type.replace(/_/g, ' ')}
+                        </span>
+                      )}
+                      <span className="text-xs text-slate-400">{new Date(d.created_at).toLocaleDateString()}</span>
+                      {order?.subtotal_amount && (
+                        <span className="text-xs text-slate-500">💰 ${Number(order.subtotal_amount).toFixed(2)} order</span>
+                      )}
+                    </div>
+                    <p className="font-semibold text-slate-900 mb-2">{d.description}</p>
+                    <div className="flex gap-6 text-xs text-slate-500 flex-wrap">
+                      <span>👤 Opened by: <span className="text-slate-700">{d.opener?.display_name ?? d.opener?.email ?? 'Unknown'}</span></span>
+                      {buyer && <span>🛒 Buyer: <span className="text-slate-700">{buyer.display_name ?? buyer.email ?? 'Unknown'}</span></span>}
+                      {seller && <span>🏪 Seller: <span className="text-slate-700">{seller.display_name ?? seller.email ?? 'Unknown'}</span></span>}
+                    </div>
+                    {d.requested_outcome && (
+                      <p className="text-xs text-slate-500 mt-1">Requested: <span className="text-slate-700 capitalize">{d.requested_outcome.replace(/_/g, ' ')}</span></p>
+                    )}
+                    {d.resolution && (
+                      <div className="mt-3 rounded-xl bg-slate-50 px-4 py-2 text-sm">
+                        <span className="font-medium text-slate-700">Resolution: </span>
+                        <span className="text-slate-600">{d.resolution}</span>
+                      </div>
                     )}
                   </div>
-                  <p className="font-semibold text-slate-900 mb-2">{d.reason}</p>
-                  <div className="flex gap-6 text-xs text-slate-500 flex-wrap">
-                    <span>🛒 Buyer: <span className="text-slate-700">{d.buyer?.display_name ?? d.buyer?.email ?? 'Unknown'}</span></span>
-                    <span>🏪 Seller: <span className="text-slate-700">{d.seller?.display_name ?? d.seller?.email ?? 'Unknown'}</span></span>
-                  </div>
-                  {d.decision && (
-                    <div className="mt-3 rounded-xl bg-slate-50 px-4 py-2 text-sm">
-                      <span className="font-medium text-slate-700">Decision: </span>
-                      <span className="text-slate-600">{d.decision}</span>
-                      {d.admin_note && <p className="text-slate-500 mt-1 text-xs">{d.admin_note}</p>}
-                    </div>
+
+                  {d.status !== 'resolved' && (
+                    <form action={resolveDispute} className="shrink-0 flex flex-col gap-2 min-w-[240px]">
+                      <input type="hidden" name="dispute_id" value={d.id} />
+                      <textarea
+                        name="note"
+                        placeholder="Admin note (optional)..."
+                        rows={2}
+                        className="w-full rounded-xl border px-3 py-2 text-xs outline-none focus:border-blue-500 resize-none"
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          name="decision"
+                          value="refund_buyer"
+                          className="flex-1 rounded-xl bg-blue-600 px-3 py-2 text-xs font-medium text-white hover:bg-blue-700"
+                        >
+                          Refund Buyer
+                        </button>
+                        <button
+                          name="decision"
+                          value="release_to_seller"
+                          className="flex-1 rounded-xl bg-emerald-600 px-3 py-2 text-xs font-medium text-white hover:bg-emerald-700"
+                        >
+                          Release to Seller
+                        </button>
+                        <button
+                          name="decision"
+                          value="split"
+                          className="flex-1 rounded-xl border border-slate-300 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50"
+                        >
+                          Split
+                        </button>
+                      </div>
+                    </form>
                   )}
                 </div>
-
-                {d.status !== 'resolved' && (
-                  <form action={resolveDispute} className="shrink-0 flex flex-col gap-2 min-w-[240px]">
-                    <input type="hidden" name="dispute_id" value={d.id} />
-                    <textarea
-                      name="note"
-                      placeholder="Admin note (optional)..."
-                      rows={2}
-                      className="w-full rounded-xl border px-3 py-2 text-xs outline-none focus:border-blue-500 resize-none"
-                    />
-                    <div className="flex gap-2">
-                      <button
-                        name="decision"
-                        value="refund_buyer"
-                        className="flex-1 rounded-xl bg-blue-600 px-3 py-2 text-xs font-medium text-white hover:bg-blue-700"
-                      >
-                        Refund Buyer
-                      </button>
-                      <button
-                        name="decision"
-                        value="release_to_seller"
-                        className="flex-1 rounded-xl bg-emerald-600 px-3 py-2 text-xs font-medium text-white hover:bg-emerald-700"
-                      >
-                        Release to Seller
-                      </button>
-                      <button
-                        name="decision"
-                        value="split"
-                        className="flex-1 rounded-xl border border-slate-300 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50"
-                      >
-                        Split
-                      </button>
-                    </div>
-                  </form>
-                )}
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>

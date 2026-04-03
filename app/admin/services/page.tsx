@@ -21,10 +21,11 @@ export default async function AdminServicesPage({
   let query = supabase
     .from('listings')
     .select(`
-      id, title, slug, listing_status, moderation_status, category,
+      id, title, slug, listing_status, moderation_status,
       total_orders, average_rating, created_at,
       profiles ( display_name, email ),
-      listing_packages ( price_usd, tier )
+      listing_packages ( price_usd, tier ),
+      categories ( name )
     `)
     .order('created_at', { ascending: false })
     .limit(100)
@@ -98,7 +99,7 @@ export default async function AdminServicesPage({
                       <p className="text-sm text-slate-700">{seller?.display_name ?? 'Unknown'}</p>
                       <p className="text-xs text-slate-400">{seller?.email}</p>
                     </td>
-                    <td className="px-5 py-4 text-sm text-slate-600">{l.category ?? '—'}</td>
+                    <td className="px-5 py-4 text-sm text-slate-600">{(l.categories as any)?.name ?? '—'}</td>
                     <td className="px-5 py-4 text-sm text-slate-700">
                       {basicPkg ? `$${Number(basicPkg.price_usd).toFixed(2)}` : '—'}
                     </td>

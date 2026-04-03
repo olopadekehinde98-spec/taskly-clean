@@ -7,9 +7,10 @@ export default async function AdminModerationPage() {
   const { data: listings } = await supabase
     .from('listings')
     .select(`
-      id, title, slug, listing_status, moderation_status, category, tags, short_description, created_at,
+      id, title, slug, listing_status, moderation_status, tags, short_description, created_at,
       profiles ( display_name, email, username ),
-      listing_packages ( price_usd, tier )
+      listing_packages ( price_usd, tier ),
+      categories ( name )
     `)
     .eq('moderation_status', 'pending')
     .order('created_at', { ascending: true })
@@ -47,7 +48,7 @@ export default async function AdminModerationPage() {
                     <p className="text-sm text-slate-600 line-clamp-2 mb-3">{listing.short_description}</p>
                     <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500">
                       <span>👤 {seller?.display_name ?? seller?.email ?? 'Unknown'}</span>
-                      {listing.category && <span>📂 {listing.category}</span>}
+                      {(listing as any).categories?.name && <span>📂 {(listing as any).categories.name}</span>}
                       {basicPkg && <span>💰 from ${Number(basicPkg.price_usd).toFixed(2)}</span>}
                     </div>
                     {Array.isArray(listing.tags) && listing.tags.length > 0 && (

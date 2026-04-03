@@ -36,6 +36,7 @@ export async function updateUserStatus(formData: FormData) {
   await supabase.from('audit_logs').insert({
     actor_id: adminId,
     target_id: userId,
+    action: `Admin ${action} on user ${userId}`,
     action_type: action,
     reason,
     target_type: 'user',
@@ -51,11 +52,11 @@ export async function updateListingStatus(formData: FormData) {
   const action = String(formData.get('action') || '')
   const reason = String(formData.get('reason') || 'Admin moderation')
 
-  const statusMap: Record<string, { listing_status: string; visibility_status: string; moderation_status: string }> = {
-    approve: { listing_status: 'live', visibility_status: 'visible', moderation_status: 'approved' },
-    deny: { listing_status: 'denied', visibility_status: 'hidden', moderation_status: 'denied' },
-    remove: { listing_status: 'removed', visibility_status: 'hidden', moderation_status: 'removed' },
-    pause: { listing_status: 'paused', visibility_status: 'hidden', moderation_status: 'approved' },
+  const statusMap: Record<string, { listing_status: string; moderation_status: string }> = {
+    approve: { listing_status: 'live', moderation_status: 'approved' },
+    deny: { listing_status: 'denied', moderation_status: 'flagged' },
+    remove: { listing_status: 'removed', moderation_status: 'removed' },
+    pause: { listing_status: 'paused', moderation_status: 'approved' },
   }
 
   const updates = statusMap[action]
@@ -66,6 +67,7 @@ export async function updateListingStatus(formData: FormData) {
   await supabase.from('audit_logs').insert({
     actor_id: adminId,
     target_id: listingId,
+    action: `Admin ${action} on listing ${listingId}`,
     action_type: action,
     reason,
     target_type: 'listing',
@@ -87,10 +89,11 @@ export async function flagUser(formData: FormData) {
   await supabase.from('audit_logs').insert({
     actor_id: adminId,
     target_id: userId,
+    action: `Admin flagged user ${userId}`,
     action_type: 'flag',
     reason,
     target_type: 'user',
-  })
+  }).then(({ error }) => { if (error) console.error('Audit log failed:', error.message) })
 
   revalidatePath('/admin/users')
   revalidatePath('/admin/security')
@@ -109,10 +112,11 @@ export async function unflagUser(formData: FormData) {
   await supabase.from('audit_logs').insert({
     actor_id: adminId,
     target_id: userId,
+    action: `Admin unflagged user ${userId}`,
     action_type: 'unflag',
     reason,
     target_type: 'user',
-  })
+  }).then(({ error }) => { if (error) console.error('Audit log failed:', error.message) })
 
   revalidatePath('/admin/users')
   revalidatePath('/admin/security')
@@ -129,8 +133,7 @@ export async function resolveDispute(formData: FormData) {
 
   await supabase.from('disputes').update({
     status: 'resolved',
-    decision,
-    admin_note: note,
+    resolution: `${decision}${note ? ': ' + note : ''}`,
     resolved_at: new Date().toISOString(),
     resolved_by: adminId,
   }).eq('id', disputeId)
@@ -138,6 +141,7 @@ export async function resolveDispute(formData: FormData) {
   await supabase.from('audit_logs').insert({
     actor_id: adminId,
     target_id: disputeId,
+    action: `Admin resolved dispute ${disputeId}: ${decision}`,
     action_type: 'resolve_dispute',
     reason: `Decision: ${decision}. ${note}`,
     target_type: 'dispute',
