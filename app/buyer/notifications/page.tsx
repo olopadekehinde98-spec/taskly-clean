@@ -16,7 +16,13 @@ export default async function BuyerNotificationsPage() {
     .order('created_at', { ascending: false })
     .limit(50)
 
-  const items = notifications ?? []
+  // Map DB columns (is_read, body, link) to component-expected names
+  const items = (notifications ?? []).map(n => ({
+    ...n,
+    read: n.is_read,
+    message: n.body ?? '',
+    href: n.link ?? undefined,
+  }))
   const unreadCount = items.filter(n => !n.read).length
 
   return (

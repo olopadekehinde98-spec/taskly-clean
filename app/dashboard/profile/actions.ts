@@ -53,7 +53,7 @@ export async function saveSellerProfile(formData: FormData) {
 
   if (shouldSetMemberSince) {
     const now = new Date()
-    updateData.member_since = now.toLocaleString('en-US', { month: 'long', year: 'numeric' })
+    updateData.member_since = now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
   }
 
   const { error } = await supabase

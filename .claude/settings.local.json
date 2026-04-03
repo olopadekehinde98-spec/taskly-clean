@@ -10,7 +10,9 @@
       "Bash(find /c/Users/SAMUEL/taskly-clean -name *.sql -not -path */node_modules/*)",
       "Bash(npx claude:*)",
       "Bash(npm install:*)",
-      "Bash(npm list:*)"
+      "Bash(npm list:*)",
+      "mcp__supabase__list_tables",
+      "mcp__supabase__apply_migration"
     ]
   }
 }

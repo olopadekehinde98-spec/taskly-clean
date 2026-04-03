@@ -35,14 +35,14 @@ export async function POST(req: NextRequest) {
     if (mark_all) {
       const { error } = await supabase
         .from('notifications')
-        .update({ read: true })
+        .update({ is_read: true })
         .eq('user_id', user.id)
-        .eq('read', false)
+        .eq('is_read', false)
       if (error) throw error
     } else if (notification_id) {
       const { error } = await supabase
         .from('notifications')
-        .update({ read: true })
+        .update({ is_read: true })
         .eq('id', notification_id)
         .eq('user_id', user.id)
       if (error) throw error

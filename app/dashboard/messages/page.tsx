@@ -1,68 +1,74 @@
 import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
 export default async function SellerMessagesPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
 
   const { data: conversations } = await supabase
     .from('conversations')
     .select(`
-      id, updated_at, seller_unread,
-      profiles!conversations_buyer_id_fkey ( display_name, avatar_url ),
-      listings ( title, slug ),
-      messages ( content, created_at, sender_id )
+      id, last_message_at,
+      participant_a, participant_b,
+      a:profiles!conversations_participant_a_fkey ( id, display_name, avatar_url ),
+      b:profiles!conversations_participant_b_fkey ( id, display_name, avatar_url )
     `)
-    .eq('seller_id', user!.id)
-    .order('updated_at', { ascending: false })
+    .or(`participant_a.eq.${user.id},participant_b.eq.${user.id}`)
+    .order('last_message_at', { ascending: false })
+    .limit(50)
+
+  const convIds = (conversations ?? []).map((c: any) => c.id)
+
+  const { data: unreadMsgs } = convIds.length > 0
+    ? await supabase.from('messages').select('conversation_id').eq('receiver_id', user.id).eq('is_read', false).in('conversation_id', convIds)
+    : { data: [] }
+
+  const unreadMap: Record<string, number> = {}
+  for (const m of unreadMsgs ?? []) {
+    unreadMap[m.conversation_id] = (unreadMap[m.conversation_id] ?? 0) + 1
+  }
+
+  const { data: lastMsgs } = convIds.length > 0
+    ? await supabase.from('messages').select('conversation_id, body, sender_id, created_at').in('conversation_id', convIds).order('created_at', { ascending: false })
+    : { data: [] }
+
+  const lastMsgMap: Record<string, any> = {}
+  for (const m of lastMsgs ?? []) {
+    if (!lastMsgMap[m.conversation_id]) lastMsgMap[m.conversation_id] = m
+  }
 
   return (
     <div className="rounded-3xl border bg-white p-8 shadow-sm">
       <h1 className="mb-6 text-3xl font-bold text-slate-900">Messages</h1>
-
       {!conversations || conversations.length === 0 ? (
         <div className="rounded-2xl bg-slate-50 p-12 text-center">
           <div className="text-4xl mb-3">💬</div>
-          <h2 className="text-xl font-bold text-slate-900 mb-2">No conversations yet</h2>
-          <p className="text-slate-500 text-sm">Buyers will message you here about your services.</p>
+          <h2 className="text-xl font-bold text-slate-900 mb-2">No messages yet</h2>
+          <p className="text-slate-500 text-sm">Buyer messages will appear here.</p>
         </div>
       ) : (
         <div className="space-y-3">
           {conversations.map((conv: any) => {
-            const buyer = conv.profiles
-            const lastMsg = Array.isArray(conv.messages)
-              ? conv.messages.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0]
-              : null
-
+            const other = conv.participant_a === user.id ? conv.b : conv.a
+            const unreadCount = unreadMap[conv.id] ?? 0
+            const lastMsg = lastMsgMap[conv.id]
             return (
-              <Link
-                key={conv.id}
-                href={`/dashboard/messages/${conv.id}`}
-                className={`block rounded-2xl border p-5 transition hover:shadow-sm ${conv.seller_unread ? 'border-blue-200 bg-blue-50' : 'bg-slate-50'}`}
-              >
+              <Link key={conv.id} href={`/dashboard/messages/${conv.id}`}
+                className={`block rounded-2xl border p-5 transition hover:shadow-sm ${unreadCount > 0 ? 'border-blue-200 bg-blue-50/60' : 'bg-slate-50'}`}>
                 <div className="flex items-start gap-3">
-                  <div className="h-10 w-10 rounded-full bg-gradient-to-r from-emerald-400 to-teal-400 flex items-center justify-center text-sm font-bold text-white shrink-0">
-                    {(buyer?.display_name ?? 'B')[0].toUpperCase()}
+                  <div className="h-10 w-10 rounded-full bg-gradient-to-r from-emerald-400 to-teal-500 flex items-center justify-center text-sm font-bold text-white shrink-0">
+                    {(other?.display_name ?? 'U')[0].toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <p className="font-semibold text-slate-900">{buyer?.display_name ?? 'Buyer'}</p>
-                      <span className="text-xs text-slate-500">
-                        {conv.updated_at ? new Date(conv.updated_at).toLocaleDateString() : ''}
-                      </span>
+                      <p className="font-semibold text-slate-900">{other?.display_name ?? 'User'}</p>
+                      <span className="text-xs text-slate-500">{conv.last_message_at ? new Date(conv.last_message_at).toLocaleDateString() : ''}</span>
                     </div>
-                    {conv.listings && (
-                      <p className="text-xs text-blue-600 mb-1 font-medium">{conv.listings.title}</p>
-                    )}
-                    {lastMsg && (
-                      <p className="text-sm text-slate-600 line-clamp-1">
-                        {lastMsg.sender_id === user!.id ? 'You: ' : ''}{lastMsg.content}
-                      </p>
-                    )}
+                    {lastMsg && <p className="text-sm text-slate-600 line-clamp-1">{lastMsg.sender_id === user.id ? 'You: ' : ''}{lastMsg.body}</p>}
                   </div>
-                  {conv.seller_unread && (
-                    <span className="h-2.5 w-2.5 rounded-full bg-blue-600 shrink-0 mt-2" />
-                  )}
+                  {unreadCount > 0 && <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white shrink-0">{unreadCount}</span>}
                 </div>
               </Link>
             )

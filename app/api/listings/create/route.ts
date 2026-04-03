@@ -28,22 +28,17 @@ export async function POST(req: NextRequest) {
 
     const formData = await req.formData()
     const title = String(formData.get('title') || '').trim()
-    const categoryId = String(formData.get('category_id') || '').trim()
+    const categoryIdRaw = String(formData.get('category_id') || '').trim()
     const tags = String(formData.get('tags') || '').split(',').map(t => t.trim()).filter(Boolean)
     const short_description = String(formData.get('short_description') || '').trim()
+    const coverImageUrl = String(formData.get('cover_image') || '').trim()
 
     if (!title) return NextResponse.json({ error: 'Title is required' }, { status: 400 })
 
     const slug = `${slugify(title)}-${Date.now()}`
 
-    // Resolve category name for legacy category field
-    let categoryName = categoryId
-    if (categoryId && categoryId.length > 10) {
-      const { data: cat } = await supabase.from('categories').select('name').eq('id', categoryId).single()
-      if (cat) categoryName = cat.name
-    }
-
-    const coverImage = String(formData.get('cover_image') || '').trim()
+    // category_id is an integer in the DB
+    const category_id = categoryIdRaw ? parseInt(categoryIdRaw, 10) : null
 
     const { data: listing, error: listingError } = await supabase
       .from('listings')
@@ -51,15 +46,13 @@ export async function POST(req: NextRequest) {
         seller_id: user.id,
         title,
         slug,
-        category_id: categoryId.length > 10 ? categoryId : undefined,
-        category: categoryName,
+        category_id: category_id && !isNaN(category_id) ? category_id : null,
         short_description,
         full_description: short_description,
         tags,
-        cover_image: coverImage || null,
+        cover_image_url: coverImageUrl || null,
         listing_status: 'draft',
         moderation_status: 'pending',
-        visibility_status: 'hidden',
       })
       .select()
       .single()
@@ -69,13 +62,41 @@ export async function POST(req: NextRequest) {
     }
 
     const packages = [
-      { listing_id: listing.id, tier: 'basic', package_name: 'basic', title: String(formData.get('basic_title') || '').trim() || 'Basic', description: String(formData.get('basic_includes') || '').trim(), price_usd: moneyToNumber(String(formData.get('basic_price') || '0')), delivery_days: deliveryToDays(String(formData.get('basic_delivery') || '3 days')), revisions: 1 },
-      { listing_id: listing.id, tier: 'standard', package_name: 'standard', title: String(formData.get('standard_title') || '').trim() || 'Standard', description: String(formData.get('standard_includes') || '').trim(), price_usd: moneyToNumber(String(formData.get('standard_price') || '0')), delivery_days: deliveryToDays(String(formData.get('standard_delivery') || '5 days')), revisions: 2 },
-      { listing_id: listing.id, tier: 'premium', package_name: 'premium', title: String(formData.get('premium_title') || '').trim() || 'Premium', description: String(formData.get('premium_includes') || '').trim(), price_usd: moneyToNumber(String(formData.get('premium_price') || '0')), delivery_days: deliveryToDays(String(formData.get('premium_delivery') || '7 days')), revisions: 3 },
+      {
+        listing_id: listing.id,
+        tier: 'basic',
+        name: String(formData.get('basic_title') || '').trim() || 'Basic',
+        description: String(formData.get('basic_includes') || '').trim(),
+        price_usd: moneyToNumber(String(formData.get('basic_price') || '0')),
+        delivery_days: deliveryToDays(String(formData.get('basic_delivery') || '3 days')),
+        revisions: 1,
+      },
+      {
+        listing_id: listing.id,
+        tier: 'standard',
+        name: String(formData.get('standard_title') || '').trim() || 'Standard',
+        description: String(formData.get('standard_includes') || '').trim(),
+        price_usd: moneyToNumber(String(formData.get('standard_price') || '0')),
+        delivery_days: deliveryToDays(String(formData.get('standard_delivery') || '5 days')),
+        revisions: 2,
+      },
+      {
+        listing_id: listing.id,
+        tier: 'premium',
+        name: String(formData.get('premium_title') || '').trim() || 'Premium',
+        description: String(formData.get('premium_includes') || '').trim(),
+        price_usd: moneyToNumber(String(formData.get('premium_price') || '0')),
+        delivery_days: deliveryToDays(String(formData.get('premium_delivery') || '7 days')),
+        revisions: 3,
+      },
     ]
 
     const { error: pkgError } = await supabase.from('listing_packages').insert(packages)
-    if (pkgError) return NextResponse.json({ error: pkgError.message }, { status: 500 })
+    if (pkgError) {
+      // Clean up listing if packages fail
+      await supabase.from('listings').delete().eq('id', listing.id)
+      return NextResponse.json({ error: pkgError.message }, { status: 500 })
+    }
 
     return NextResponse.json({ success: true, listing_id: listing.id, slug: listing.slug })
   } catch (err: any) {
