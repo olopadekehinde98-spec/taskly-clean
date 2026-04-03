@@ -31,21 +31,21 @@ export default async function SellerAnalyticsPage() {
   // Orders breakdown
   const [{ data: todayOrders }, { data: weekOrders }, { data: monthOrders }, { data: allOrders }] = await Promise.all([
     listingIds.length > 0
-      ? supabase.from('orders').select('id, amount_usd, status').in('listing_id', listingIds).gte('created_at', todayStart)
+      ? supabase.from('orders').select('id, seller_net_amount, subtotal_amount, order_status').in('listing_id', listingIds).gte('created_at', todayStart)
       : { data: [] },
     listingIds.length > 0
-      ? supabase.from('orders').select('id, amount_usd, status').in('listing_id', listingIds).gte('created_at', weekStart)
+      ? supabase.from('orders').select('id, seller_net_amount, subtotal_amount, order_status').in('listing_id', listingIds).gte('created_at', weekStart)
       : { data: [] },
     listingIds.length > 0
-      ? supabase.from('orders').select('id, amount_usd, status').in('listing_id', listingIds).gte('created_at', monthStart)
+      ? supabase.from('orders').select('id, seller_net_amount, subtotal_amount, order_status').in('listing_id', listingIds).gte('created_at', monthStart)
       : { data: [] },
     listingIds.length > 0
-      ? supabase.from('orders').select('id, amount_usd, status').in('listing_id', listingIds)
+      ? supabase.from('orders').select('id, seller_net_amount, subtotal_amount, order_status').in('listing_id', listingIds)
       : { data: [] },
   ])
 
   function calcRevenue(orders: any[] | null) {
-    return orders?.filter(o => o.status === 'completed').reduce((s: number, o: any) => s + Number(o.amount_usd ?? 0), 0) ?? 0
+    return orders?.filter(o => o.order_status === 'completed').reduce((s: number, o: any) => s + Number(o.seller_net_amount ?? o.subtotal_amount ?? 0), 0) ?? 0
   }
 
   const todayRev = calcRevenue(todayOrders)
@@ -59,7 +59,7 @@ export default async function SellerAnalyticsPage() {
   // Per-listing stats
   const listingStats = listings?.map(l => {
     const lOrders = allOrders?.filter(o => (o as any).listing_id === l.id) ?? []
-    const lRev = lOrders.filter(o => o.status === 'completed').reduce((s, o) => s + Number((o as any).amount_usd ?? 0), 0)
+    const lRev = lOrders.filter(o => o.order_status === 'completed').reduce((s, o) => s + Number((o as any).seller_net_amount ?? (o as any).subtotal_amount ?? 0), 0)
     return { ...l, orderCount: lOrders.length, revenue: lRev }
   }) ?? []
 
@@ -117,8 +117,8 @@ export default async function SellerAnalyticsPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <StatCard label="Orders" value={orders?.length ?? 0} />
               <StatCard label="Revenue" value={`$${rev.toFixed(2)}`} />
-              <StatCard label="Completed" value={orders?.filter(o => o.status === 'completed').length ?? 0} />
-              <StatCard label="Pending" value={orders?.filter(o => o.status === 'pending' || o.status === 'in_progress').length ?? 0} />
+              <StatCard label="Completed" value={orders?.filter(o => o.order_status === 'completed').length ?? 0} />
+              <StatCard label="Active" value={orders?.filter(o => o.order_status === 'active' || o.order_status === 'revision_requested').length ?? 0} />
             </div>
           </div>
         ))}

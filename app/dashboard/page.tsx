@@ -31,17 +31,17 @@ export default async function DashboardPage() {
   ] = await Promise.all([
     supabase.from('profiles').select('display_name, trust_tier, average_rating').eq('id', user!.id).single(),
     supabase.from('listings').select('id, title, listing_status, total_orders').eq('seller_id', user!.id),
-    supabase.from('orders').select('*', { count: 'exact', head: true }).eq('seller_id', user!.id).in('status', ['active', 'in_progress', 'delivered']),
-    supabase.from('orders').select('*', { count: 'exact', head: true }).eq('seller_id', user!.id).eq('status', 'completed'),
-    supabase.from('orders').select('amount_usd').eq('seller_id', user!.id).eq('status', 'completed'),
+    supabase.from('orders').select('*', { count: 'exact', head: true }).eq('seller_id', user!.id).in('order_status', ['active', 'delivered', 'revision_requested']),
+    supabase.from('orders').select('*', { count: 'exact', head: true }).eq('seller_id', user!.id).eq('order_status', 'completed'),
+    supabase.from('orders').select('seller_net_amount, subtotal_amount').eq('seller_id', user!.id).eq('order_status', 'completed'),
     supabase.from('orders').select(`
-      id, status, amount_usd, created_at,
+      id, order_status, subtotal_amount, seller_net_amount, created_at,
       listings ( title ),
       profiles!orders_buyer_id_fkey ( display_name )
     `).eq('seller_id', user!.id).order('created_at', { ascending: false }).limit(5),
   ])
 
-  const totalRevenue = revenueResult?.reduce((sum: number, o: any) => sum + Number(o.amount_usd ?? 0), 0) ?? 0
+  const totalRevenue = revenueResult?.reduce((sum: number, o: any) => sum + Number(o.seller_net_amount ?? o.subtotal_amount ?? 0), 0) ?? 0
   const totalCompletedOrders = completedCount ?? 0
   const level = getLevel(totalCompletedOrders)
   const nextLevel = LEVEL_LADDER[level.index + 1] ?? null
@@ -147,12 +147,12 @@ export default async function DashboardPage() {
                   <p className="text-sm text-slate-500">{(order.profiles as any)?.display_name ?? 'Buyer'}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-sm font-semibold text-slate-900">${Number(order.amount_usd ?? 0).toFixed(2)}</span>
+                  <span className="text-sm font-semibold text-emerald-700">${Number(order.seller_net_amount ?? order.subtotal_amount ?? 0).toFixed(2)}</span>
                   <span className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${
-                    order.status === 'completed' ? 'bg-emerald-50 text-emerald-700' :
-                    order.status === 'active' ? 'bg-blue-50 text-blue-700' :
+                    order.order_status === 'completed' ? 'bg-emerald-50 text-emerald-700' :
+                    order.order_status === 'active' ? 'bg-blue-50 text-blue-700' :
                     'bg-amber-50 text-amber-700'
-                  }`}>{order.status?.replace('_', ' ')}</span>
+                  }`}>{order.order_status?.replace(/_/g, ' ')}</span>
                 </div>
               </div>
             ))}

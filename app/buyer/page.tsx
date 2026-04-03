@@ -13,28 +13,28 @@ export default async function BuyerDashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
 
   const [
-    { data: activeOrders, count: activeCount },
-    { data: completedOrders, count: completedCount },
-    { data: savedServices, count: savedCount },
-    { data: unreadMessages, count: unreadMsgCount },
+    { count: activeCount },
+    { count: completedCount },
+    { count: unreadNotifCount },
+    { count: unreadMsgCount },
     { data: recentOrders },
   ] = await Promise.all([
-    supabase.from('orders').select('*', { count: 'exact', head: true }).eq('buyer_id', user!.id).in('status', ['active', 'in_progress', 'delivered']),
-    supabase.from('orders').select('*', { count: 'exact', head: true }).eq('buyer_id', user!.id).eq('status', 'completed'),
-    supabase.from('saved_listings').select('*', { count: 'exact', head: true }).eq('user_id', user!.id),
-    supabase.from('conversations').select('*', { count: 'exact', head: true }).eq('buyer_id', user!.id).eq('buyer_unread', true),
+    supabase.from('orders').select('*', { count: 'exact', head: true }).eq('buyer_id', user!.id).in('order_status', ['active', 'delivered', 'revision_requested']),
+    supabase.from('orders').select('*', { count: 'exact', head: true }).eq('buyer_id', user!.id).eq('order_status', 'completed'),
+    supabase.from('notifications').select('*', { count: 'exact', head: true }).eq('user_id', user!.id).eq('is_read', false),
+    supabase.from('messages').select('*', { count: 'exact', head: true }).eq('receiver_id', user!.id).eq('is_read', false),
     supabase.from('orders').select(`
-      id, status, amount_usd, created_at,
+      id, order_status, subtotal_amount, created_at,
       listings ( title ),
-      profiles!orders_seller_id_fkey ( display_name )
+      seller:profiles!orders_seller_id_fkey ( display_name )
     `).eq('buyer_id', user!.id).order('created_at', { ascending: false }).limit(5),
   ])
 
   const stats = [
     { label: 'Active Orders', value: activeCount ?? 0 },
     { label: 'Completed Orders', value: completedCount ?? 0 },
-    { label: 'Saved Services', value: savedCount ?? 0 },
     { label: 'Unread Messages', value: unreadMsgCount ?? 0 },
+    { label: 'Notifications', value: unreadNotifCount ?? 0 },
   ]
 
   return (
@@ -71,11 +71,11 @@ export default async function BuyerDashboardPage() {
                 <div key={order.id} className="flex flex-col gap-3 rounded-2xl bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="font-medium text-slate-900">{(order.listings as any)?.title ?? 'Service'}</p>
-                    <p className="text-sm text-slate-500">{(order.profiles as any)?.display_name ?? 'Seller'}</p>
+                    <p className="text-sm text-slate-500">{(order as any).seller?.display_name ?? 'Seller'}</p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-semibold text-slate-900">${Number(order.amount_usd ?? 0).toFixed(2)}</span>
-                    <span className={`w-fit rounded-full px-3 py-1 text-sm capitalize ${statusColor(order.status)}`}>{order.status?.replace('_', ' ')}</span>
+                    <span className="text-sm font-semibold text-slate-900">${Number(order.subtotal_amount ?? 0).toFixed(2)}</span>
+                    <span className={`w-fit rounded-full px-3 py-1 text-sm capitalize ${statusColor(order.order_status)}`}>{order.order_status?.replace(/_/g, ' ')}</span>
                   </div>
                 </div>
               ))}
