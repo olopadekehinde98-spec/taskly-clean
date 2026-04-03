@@ -7,16 +7,18 @@ import Link from 'next/link'
 type Message = {
   id: string
   sender_id: string
-  content: string
+  receiver_id: string
+  body: string
   created_at: string
+  is_read: boolean
 }
 
 export default function SellerConversationPage({ params }: { params: Promise<{ id: string }> }) {
   const [conversationId, setConversationId] = useState<string | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [userId, setUserId] = useState<string | null>(null)
-  const [buyerName, setBuyerName] = useState('Buyer')
-  const [listingTitle, setListingTitle] = useState<string | null>(null)
+  const [otherName, setOtherName] = useState('User')
+  const [otherId, setOtherId] = useState<string | null>(null)
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
@@ -34,29 +36,43 @@ export default function SellerConversationPage({ params }: { params: Promise<{ i
       if (!user) return
       setUserId(user.id)
 
+      // Load conversation + participants
       supabase
         .from('conversations')
         .select(`
-          id,
-          profiles!conversations_buyer_id_fkey ( display_name ),
-          listings ( title ),
-          messages ( id, sender_id, content, created_at )
+          id, participant_a, participant_b,
+          a:profiles!conversations_participant_a_fkey ( id, display_name ),
+          b:profiles!conversations_participant_b_fkey ( id, display_name )
         `)
         .eq('id', conversationId)
-        .eq('seller_id', user.id)
         .single()
-        .then(({ data }) => {
-          if (!data) return
-          setBuyerName((data.profiles as any)?.display_name ?? 'Buyer')
-          setListingTitle((data.listings as any)?.title ?? null)
-          const msgs = Array.isArray(data.messages)
-            ? [...data.messages].sort((a: Message, b: Message) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
-            : []
-          setMessages(msgs)
-          setLoading(false)
-        })
+        .then(({ data: conv }) => {
+          if (!conv) { setLoading(false); return }
 
-      supabase.from('conversations').update({ seller_unread: false }).eq('id', conversationId).then(() => {})
+          const other = conv.participant_a === user.id ? (conv as any).b : (conv as any).a
+          setOtherName(other?.display_name ?? 'User')
+          setOtherId(other?.id ?? null)
+
+          // Load messages
+          supabase
+            .from('messages')
+            .select('id, sender_id, receiver_id, body, created_at, is_read')
+            .eq('conversation_id', conversationId)
+            .order('created_at', { ascending: true })
+            .then(({ data: msgs }) => {
+              setMessages(msgs ?? [])
+              setLoading(false)
+
+              // Mark incoming messages as read
+              supabase
+                .from('messages')
+                .update({ is_read: true })
+                .eq('conversation_id', conversationId)
+                .eq('receiver_id', user.id)
+                .eq('is_read', false)
+                .then(() => {})
+            })
+        })
     })
   }, [conversationId])
 
@@ -65,19 +81,30 @@ export default function SellerConversationPage({ params }: { params: Promise<{ i
   }, [messages])
 
   async function sendMessage() {
-    if (!input.trim() || !conversationId || !userId || sending) return
+    if (!input.trim() || !conversationId || !userId || !otherId || sending) return
     setSending(true)
     const supabase = createClient()
-    const content = input.trim()
+    const body = input.trim()
     setInput('')
+
     const { data } = await supabase
       .from('messages')
-      .insert({ conversation_id: conversationId, sender_id: userId, content })
+      .insert({
+        conversation_id: conversationId,
+        sender_id: userId,
+        receiver_id: otherId,
+        body,
+      })
       .select()
       .single()
+
     if (data) {
       setMessages(prev => [...prev, data])
-      await supabase.from('conversations').update({ updated_at: new Date().toISOString(), buyer_unread: true }).eq('id', conversationId)
+      // Update last_message_at on conversation
+      await supabase
+        .from('conversations')
+        .update({ last_message_at: new Date().toISOString() })
+        .eq('id', conversationId)
     }
     setSending(false)
   }
@@ -97,8 +124,7 @@ export default function SellerConversationPage({ params }: { params: Promise<{ i
           <Link href="/dashboard/messages" className="text-slate-400 hover:text-slate-600 text-xl">←</Link>
           <div>
             <p className="text-xs text-slate-500">Conversation with</p>
-            <h1 className="text-xl font-bold text-slate-900">{buyerName}</h1>
-            {listingTitle && <p className="text-xs text-blue-600 mt-0.5">{listingTitle}</p>}
+            <h1 className="text-xl font-bold text-slate-900">{otherName}</h1>
           </div>
         </div>
 
@@ -111,7 +137,7 @@ export default function SellerConversationPage({ params }: { params: Promise<{ i
               <div className={`max-w-[75%] rounded-2xl px-4 py-3 text-sm leading-6 ${
                 msg.sender_id === userId ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-800'
               }`}>
-                <p>{msg.content}</p>
+                <p>{msg.body}</p>
                 <p className={`mt-1 text-xs ${msg.sender_id === userId ? 'text-blue-100' : 'text-slate-500'}`}>
                   {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </p>
@@ -129,7 +155,7 @@ export default function SellerConversationPage({ params }: { params: Promise<{ i
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() } }}
               placeholder="Write your reply..."
-              className="flex-1 rounded-2xl border px-4 py-3 text-sm outline-none resize-none"
+              className="flex-1 rounded-2xl border px-4 py-3 text-sm outline-none resize-none focus:border-blue-400"
             />
             <button
               onClick={sendMessage}
