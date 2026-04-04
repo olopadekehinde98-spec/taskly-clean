@@ -8,25 +8,30 @@ export default async function ServiceDetailsPage({ params }: Props) {
   const { slug } = await params
   const supabase = await createClient()
 
-  // Fetch listing by slug or id
+  // Get current user to allow seller preview
+  const { data: { user } } = await supabase.auth.getUser()
+
+  // Fetch listing by slug
   const { data: listing } = await supabase
     .from('listings')
     .select(`
-      id, title, slug, description, short_description, cover_image_url,
-      average_rating, total_reviews, total_orders, delivery_days,
+      id, seller_id, title, slug, short_description, cover_image_url,
+      average_rating, total_reviews, total_orders,
       listing_status, created_at,
       categories(name, slug, icon),
       profiles!listings_seller_id_fkey(
         id, display_name, username, avatar_url, bio,
         trust_tier, response_time, member_since, response_rate
       ),
-      listing_packages(id, tier, title, price_usd, delivery_days, description, revisions)
+      listing_packages(id, tier, name, price_usd, delivery_days, description, revisions)
     `)
     .eq('slug', slug)
-    .eq('listing_status', 'live')
     .single()
 
-  if (!listing) notFound()
+  // Only allow live listings OR the seller previewing their own
+  if (!listing || (listing.listing_status !== 'live' && listing.seller_id !== user?.id)) notFound()
+
+  const isPreview = listing.listing_status !== 'live'
 
   const seller = (listing as any).profiles
   const packages: any[] = (listing as any).listing_packages ?? []
@@ -40,6 +45,18 @@ export default async function ServiceDetailsPage({ params }: Props) {
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-10">
+      {isPreview && (
+        <div className="mx-auto max-w-7xl mb-6">
+          <div className="rounded-2xl border-2 border-amber-300 bg-amber-50 px-5 py-3 flex items-center gap-3">
+            <span className="text-xl">👁️</span>
+            <div>
+              <p className="font-semibold text-amber-800 text-sm">Preview Mode — This gig is not yet live</p>
+              <p className="text-xs text-amber-700">Status: <span className="font-mono font-bold">{listing.listing_status}</span>. Only you can see this page until it is approved.</p>
+            </div>
+            <a href="/dashboard/services" className="ml-auto text-xs font-semibold text-amber-700 underline">Back to My Gigs</a>
+          </div>
+        </div>
+      )}
       <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1fr_360px]">
 
         {/* Left column */}
@@ -109,7 +126,7 @@ export default async function ServiceDetailsPage({ params }: Props) {
                   {packages.map((pkg: any) => (
                     <div key={pkg.id} className="rounded-2xl border bg-slate-50 p-5">
                       <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-blue-600">{pkg.tier}</p>
-                      <h3 className="mb-2 font-semibold text-slate-900">{pkg.title || pkg.tier}</h3>
+                      <h3 className="mb-2 font-semibold text-slate-900">{pkg.name || pkg.tier}</h3>
                       <p className="mb-3 text-2xl font-bold text-slate-900">${Number(pkg.price_usd).toFixed(2)}</p>
                       <p className="mb-2 text-xs text-slate-500">{pkg.delivery_days} day delivery</p>
                       {pkg.revisions != null && <p className="text-xs text-slate-500">{pkg.revisions === -1 ? 'Unlimited' : pkg.revisions} revision{pkg.revisions !== 1 ? 's' : ''}</p>}

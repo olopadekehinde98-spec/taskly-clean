@@ -17,17 +17,23 @@ export async function POST(req: NextRequest) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
-    const { summary, conversation, auto_save } = await req.json()
+    const { summary, conversation, auto_save, contact_name, contact_email } = await req.json()
     if (!summary) return NextResponse.json({ error: 'Summary required' }, { status: 400 })
 
     const ticket_number = await generateTicketNumber(supabase)
+
+    // Prepend contact info as a system message if provided without auth
+    const fullConversation = [...(conversation ?? [])]
+    if ((contact_name || contact_email) && !user?.id) {
+      fullConversation.unshift({ role: 'system', text: `Contact: ${contact_name || 'Guest'} (${contact_email || 'no email'})` })
+    }
 
     const { data, error } = await supabase.from('support_tickets').insert({
       user_id: user?.id ?? null,
       ticket_number,
       summary,
-      conversation: conversation ?? [],
-      status: auto_save ? 'open' : 'open',
+      conversation: fullConversation,
+      status: 'open',
       auto_saved: auto_save === true,
     }).select().single()
 

@@ -14,10 +14,8 @@ export async function POST(req: NextRequest) {
     const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).single()
     if (!profile?.is_admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-    const { message, history } = await req.json()
+    const { message, history: clientHistory = [], session_id } = await req.json()
     if (!message) return NextResponse.json({ error: 'Message required' }, { status: 400 })
-
-    // history is an array of { role: 'user' | 'assistant', content: string }
 
     // Fetch ALL platform data in parallel
     const [
@@ -73,17 +71,17 @@ export async function POST(req: NextRequest) {
       supabase.from('listings').select('*', { count: 'exact', head: true }).eq('moderation_status', 'pending'),
 
       // Orders
-      supabase.from('orders').select('id, status, amount_usd, created_at, buyer:profiles!orders_buyer_id_fkey(display_name, email), listings(title)').order('created_at', { ascending: false }).limit(15),
+      supabase.from('orders').select('id, order_status, subtotal_amount, created_at, buyer:profiles!orders_buyer_id_fkey(display_name, email), listings(title)').order('created_at', { ascending: false }).limit(15),
       supabase.from('orders').select('*', { count: 'exact', head: true }),
-      supabase.from('orders').select('*', { count: 'exact', head: true }).eq('status', 'completed'),
-      supabase.from('orders').select('*', { count: 'exact', head: true }).eq('status', 'in_progress'),
+      supabase.from('orders').select('*', { count: 'exact', head: true }).eq('order_status', 'completed'),
+      supabase.from('orders').select('*', { count: 'exact', head: true }).eq('order_status', 'active'),
 
       // Revenue — sum of completed orders
-      supabase.from('orders').select('amount_usd, created_at').eq('status', 'completed').order('created_at', { ascending: false }).limit(50),
+      supabase.from('orders').select('subtotal_amount, seller_net_amount, created_at').eq('order_status', 'completed').order('created_at', { ascending: false }).limit(50),
 
-      // Violations
-      supabase.from('violations').select('reason, created_at, profiles(display_name, email)').order('created_at', { ascending: false }).limit(10),
-      supabase.from('disputes').select('reason, status, created_at, profiles!disputes_buyer_id_fkey(display_name, email)').order('created_at', { ascending: false }).limit(10),
+      // Violations (table may not exist — handle gracefully)
+      supabase.from('audit_logs').select('action, action_type, created_at, profiles!audit_logs_actor_id_fkey(display_name, email)').in('action_type', ['ban', 'flag', 'suspend', 'restrict']).order('created_at', { ascending: false }).limit(10),
+      supabase.from('disputes').select('description, status, created_at').order('created_at', { ascending: false }).limit(10),
       supabase.from('disputes').select('*', { count: 'exact', head: true }).eq('status', 'open'),
 
       // Support tickets
@@ -91,21 +89,21 @@ export async function POST(req: NextRequest) {
       supabase.from('support_tickets').select('*', { count: 'exact', head: true }).eq('status', 'open'),
 
       // Messages/Conversations
-      supabase.from('conversations').select('created_at, profiles!conversations_buyer_id_fkey(display_name), profiles!conversations_seller_id_fkey(display_name)').order('created_at', { ascending: false }).limit(10),
+      supabase.from('conversations').select('created_at, a:profiles!conversations_participant_a_fkey(display_name), b:profiles!conversations_participant_b_fkey(display_name)').order('created_at', { ascending: false }).limit(10),
 
       // Audit logs with IP addresses
-      supabase.from('audit_logs').select('action, action_type, ip_address, created_at, profiles(display_name, email)').order('created_at', { ascending: false }).limit(15),
+      supabase.from('audit_logs').select('action, action_type, ip_address, created_at, profiles!audit_logs_actor_id_fkey(display_name, email)').order('created_at', { ascending: false }).limit(15),
 
       // Security-flagged users
       supabase.from('profiles').select('display_name, email, account_status, created_at').eq('account_status', 'flagged').limit(10),
     ])
 
     // Calculate revenue
-    const totalRevenue = revenueData?.reduce((sum, o) => sum + (o.amount_usd ?? 0), 0) ?? 0
-    const platformRevenue = totalRevenue * 0.1 // 10% fee
+    const totalRevenue = revenueData?.reduce((sum, o) => sum + (Number(o.subtotal_amount) ?? 0), 0) ?? 0
+    const platformRevenue = revenueData?.reduce((sum, o) => sum + (Number(o.subtotal_amount) - Number(o.seller_net_amount ?? 0)), 0) ?? 0
     const last30Revenue = revenueData
       ?.filter(o => new Date(o.created_at) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000))
-      ?.reduce((sum, o) => sum + (o.amount_usd ?? 0), 0) ?? 0
+      ?.reduce((sum, o) => sum + (Number(o.subtotal_amount) ?? 0), 0) ?? 0
 
     const platformContext = `
 You are a powerful AI admin assistant for TasklyClean marketplace. You have FULL access to live platform data updated in real time. Be concise, insightful, and proactive — flag anything suspicious.
@@ -153,17 +151,17 @@ ${recentListings?.map(l => `• "${l.title}" by ${(l.profiles as any)?.display_n
 ╔══════════════════════════════╗
 ║   RECENT ORDERS (last 15)    ║
 ╚══════════════════════════════╝
-${recentOrders?.map(o => `• Order #${String(o.id)?.slice(0, 8)} | "${(o.listings as any)?.title ?? 'Unknown'}" | Buyer: ${(o.buyer as any)?.display_name ?? 'Unknown'} | $${o.amount_usd ?? '?'} | ${o.status} | ${new Date(o.created_at).toLocaleString()}`).join('\n') ?? 'No data'}
+${recentOrders?.map(o => `• Order #${String(o.id)?.slice(0, 8)} | "${(o.listings as any)?.title ?? 'Unknown'}" | Buyer: ${(o.buyer as any)?.display_name ?? 'Unknown'} | $${(o as any).subtotal_amount ?? '?'} | ${(o as any).order_status} | ${new Date(o.created_at).toLocaleString()}`).join('\n') ?? 'No data'}
 
 ╔══════════════════════════════╗
 ║   RECENT VIOLATIONS (last 10) ║
 ╚══════════════════════════════╝
-${violations?.map(v => `• ${(v.profiles as any)?.display_name ?? 'Unknown'} (${(v.profiles as any)?.email}) — ${v.reason} — ${new Date(v.created_at).toLocaleString()}`).join('\n') ?? 'No violations'}
+${violations?.map((v: any) => `• ${(v.profiles as any)?.display_name ?? 'Unknown'} (${(v.profiles as any)?.email}) — ${v.action_type} — ${new Date(v.created_at).toLocaleString()}`).join('\n') ?? 'No violations'}
 
 ╔══════════════════════════════╗
 ║   RECENT DISPUTES (last 10)  ║
 ╚══════════════════════════════╝
-${disputes?.map(d => `• ${(d.profiles as any)?.display_name ?? 'Unknown'} — ${d.status} — ${d.reason} — ${new Date(d.created_at).toLocaleString()}`).join('\n') ?? 'No disputes'}
+${disputes?.map((d: any) => `• ${d.status} — ${d.description ?? '—'} — ${new Date(d.created_at).toLocaleString()}`).join('\n') ?? 'No disputes'}
 
 ╔══════════════════════════════╗
 ║  SUPPORT TICKETS (last 10)   ║
@@ -173,7 +171,7 @@ ${supportTickets?.map(t => `• [${t.status}] ${t.summary} — ${(t.profiles as 
 ╔══════════════════════════════╗
 ║  RECENT MESSAGES (last 10)   ║
 ╚══════════════════════════════╝
-${recentConversations?.map((c: any) => `• Buyer: ${c['profiles']?.[0]?.display_name ?? 'Unknown'} ↔ Seller: ${c['profiles']?.[1]?.display_name ?? 'Unknown'} — ${new Date(c.created_at).toLocaleString()}`).join('\n') ?? 'No data'}
+${recentConversations?.map((c: any) => `• ${c.a?.display_name ?? 'Unknown'} ↔ ${c.b?.display_name ?? 'Unknown'} — ${new Date(c.created_at).toLocaleString()}`).join('\n') ?? 'No data'}
 
 ╔══════════════════════════════╗
 ║    AUDIT LOG (last 15)       ║
@@ -211,17 +209,30 @@ provide the exact action: "Go to /admin/users, find [user email], and click [ACT
 You can identify users from the platform data above and give precise instructions.
 `
 
+    // Build message history for multi-turn conversation
+    const historyMessages: Array<{ role: 'user' | 'assistant'; content: string }> = [
+      ...(clientHistory || []),
+      { role: 'user', content: message },
+    ]
+
     const aiResponse = await client.messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: 1200,
       system: platformContext,
-      messages: [{ role: 'user', content: message }],
+      messages: historyMessages,
     })
 
     const textBlock = aiResponse.content.find(b => b.type === 'text')
     const text = (textBlock && 'text' in textBlock ? textBlock.text : '') ?? ''
 
-    return NextResponse.json({ result: text })
+    // Persist conversation to DB
+    const sid = session_id || crypto.randomUUID()
+    await supabase.from('ai_conversations').insert([
+      { user_id: user.id, session_id: sid, role: 'user', message, feature: 'admin_chat' },
+      { user_id: user.id, session_id: sid, role: 'assistant', message: text, feature: 'admin_chat' },
+    ]).then(({ error: e }) => { if (e) console.error('admin ai persist error:', e.message) })
+
+    return NextResponse.json({ result: text, session_id: sid })
   } catch (err: any) {
     return NextResponse.json({ error: err.message ?? 'Internal error' }, { status: 500 })
   }

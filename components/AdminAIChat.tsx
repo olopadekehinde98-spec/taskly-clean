@@ -15,12 +15,22 @@ const QUICK_QUESTIONS = [
   'Who applied to be a seller?',
 ]
 
+const SESSION_KEY = 'admin_ai_session'
+
 export default function AdminAIChat() {
   const [messages, setMessages] = useState<Message[]>([
     { role: 'ai', text: "Hi! I'm your admin AI with full platform access. I can report on revenue, orders, users, gigs, violations, disputes, support tickets, messages, seller applications, flagged accounts, and more. What do you need?" }
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [sessionId] = useState(() => {
+    if (typeof window === 'undefined') return crypto.randomUUID()
+    const stored = localStorage.getItem(SESSION_KEY)
+    if (stored) return stored
+    const fresh = crypto.randomUUID()
+    localStorage.setItem(SESSION_KEY, fresh)
+    return fresh
+  })
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -31,6 +41,10 @@ export default function AdminAIChat() {
     const msg = text ?? input.trim()
     if (!msg || loading) return
 
+    const history = messages
+      .filter(m => m.role !== 'ai' || messages.indexOf(m) > 0)
+      .map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.text }))
+
     setMessages(prev => [...prev, { role: 'user', text: msg }])
     setInput('')
     setLoading(true)
@@ -39,9 +53,11 @@ export default function AdminAIChat() {
       const res = await fetch('/api/ai/admin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: msg }),
+        body: JSON.stringify({ message: msg, history, session_id: sessionId }),
       })
       const data = await res.json()
+      // Persist session_id returned by server
+      if (data.session_id && typeof window !== 'undefined') localStorage.setItem(SESSION_KEY, data.session_id)
       setMessages(prev => [...prev, { role: 'ai', text: data.result ?? data.error ?? 'Something went wrong.' }])
     } catch {
       setMessages(prev => [...prev, { role: 'ai', text: 'Failed to reach AI. Please try again.' }])

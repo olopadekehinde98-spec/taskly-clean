@@ -48,17 +48,17 @@ export default async function BuyerSupportPage() {
                       {ticket.status}
                     </span>
                   </div>
-                  <h3 className="text-lg font-semibold text-slate-900">{ticket.subject}</h3>
+                  <h3 className="text-lg font-semibold text-slate-900">{ticket.summary}</h3>
                   <p className="text-xs text-slate-500 mt-0.5">{new Date(ticket.created_at).toLocaleString()}</p>
                 </div>
               </div>
 
               {/* Original messages */}
-              {Array.isArray(ticket.messages) && ticket.messages.length > 0 && (
+              {Array.isArray(ticket.conversation) && ticket.conversation.length > 0 && (
                 <div className="mb-4 space-y-2">
                   <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Conversation</p>
                   <div className="space-y-2 max-h-48 overflow-y-auto rounded-2xl bg-slate-50 p-3">
-                    {ticket.messages.map((msg: any, i: number) => (
+                    {ticket.conversation.map((msg: any, i: number) => (
                       <div key={i} className={`text-xs p-2 rounded-xl ${msg.role === 'user' ? 'bg-blue-50 text-blue-800' : 'bg-white text-slate-700 border'}`}>
                         <span className="font-semibold capitalize">{msg.role}: </span>{msg.content}
                       </div>

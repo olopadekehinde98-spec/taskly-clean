@@ -35,7 +35,7 @@ export default function Footer() {
             <h3 className="mb-4 font-semibold">Support</h3>
             <ul className="space-y-2 text-sm text-slate-400">
               <li><Link href="/help" className="hover:text-white transition-colors">Help Center</Link></li>
-              <li><Link href="/buyer/support" className="hover:text-white transition-colors">Contact Support</Link></li>
+              <li><Link href="/contact" className="hover:text-white transition-colors">Contact Support</Link></li>
               <li><Link href="/refund" className="hover:text-white transition-colors">Refund Policy</Link></li>
             </ul>
           </div>

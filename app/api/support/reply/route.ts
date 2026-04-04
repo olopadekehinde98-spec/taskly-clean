@@ -42,8 +42,9 @@ export async function POST(req: NextRequest) {
         user_id: ticket.user_id,
         type: 'support',
         title: 'Support Reply Received',
-        message: `Admin has replied to your support ticket ${ticket.ticket_number ?? ''}. Open Support in your dashboard to read the reply.`,
-        read: false,
+        body: `Admin has replied to your support ticket ${ticket.ticket_number ?? ''}. Open Support in your dashboard to read the reply.`,
+        link: '/buyer/support',
+        is_read: false,
       }).then(({ error: nErr }) => { if (nErr) console.error('Notification failed:', nErr.message) })
     }
 
