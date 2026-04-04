@@ -22,45 +22,101 @@ export default async function SellerAnalyticsPage() {
   // All listings for this seller
   const { data: listings } = await supabase
     .from('listings')
-    .select('id, title, listing_status, total_orders, average_rating')
+    .select('id, title, slug, listing_status, total_orders, average_rating, total_reviews')
     .eq('seller_id', user.id)
     .order('total_orders', { ascending: false })
 
   const listingIds = listings?.map(l => l.id) ?? []
 
-  // Orders breakdown
-  const [{ data: todayOrders }, { data: weekOrders }, { data: monthOrders }, { data: allOrders }] = await Promise.all([
+  // Parallel fetch: orders + views
+  const [
+    { data: allOrders },
+    { data: todayOrders },
+    { data: weekOrders },
+    { data: monthOrders },
+    { data: allViews },
+    { data: todayViews },
+    { data: weekViews },
+    { data: monthViews },
+  ] = await Promise.all([
     listingIds.length > 0
-      ? supabase.from('orders').select('id, seller_net_amount, subtotal_amount, order_status').in('listing_id', listingIds).gte('created_at', todayStart)
+      ? supabase.from('orders').select('id, listing_id, seller_net_amount, subtotal_amount, order_status').in('listing_id', listingIds)
       : { data: [] },
     listingIds.length > 0
-      ? supabase.from('orders').select('id, seller_net_amount, subtotal_amount, order_status').in('listing_id', listingIds).gte('created_at', weekStart)
+      ? supabase.from('orders').select('id, listing_id, seller_net_amount, subtotal_amount, order_status').in('listing_id', listingIds).gte('created_at', todayStart)
       : { data: [] },
     listingIds.length > 0
-      ? supabase.from('orders').select('id, seller_net_amount, subtotal_amount, order_status').in('listing_id', listingIds).gte('created_at', monthStart)
+      ? supabase.from('orders').select('id, listing_id, seller_net_amount, subtotal_amount, order_status').in('listing_id', listingIds).gte('created_at', weekStart)
       : { data: [] },
     listingIds.length > 0
-      ? supabase.from('orders').select('id, seller_net_amount, subtotal_amount, order_status').in('listing_id', listingIds)
+      ? supabase.from('orders').select('id, listing_id, seller_net_amount, subtotal_amount, order_status').in('listing_id', listingIds).gte('created_at', monthStart)
+      : { data: [] },
+    // Views (event_type: view | click | impression)
+    listingIds.length > 0
+      ? supabase.from('listing_views').select('listing_id, event_type, created_at').in('listing_id', listingIds)
+      : { data: [] },
+    listingIds.length > 0
+      ? supabase.from('listing_views').select('listing_id, event_type').in('listing_id', listingIds).gte('created_at', todayStart)
+      : { data: [] },
+    listingIds.length > 0
+      ? supabase.from('listing_views').select('listing_id, event_type').in('listing_id', listingIds).gte('created_at', weekStart)
+      : { data: [] },
+    listingIds.length > 0
+      ? supabase.from('listing_views').select('listing_id, event_type').in('listing_id', listingIds).gte('created_at', monthStart)
       : { data: [] },
   ])
 
   function calcRevenue(orders: any[] | null) {
-    return orders?.filter(o => o.order_status === 'completed').reduce((s: number, o: any) => s + Number(o.seller_net_amount ?? o.subtotal_amount ?? 0), 0) ?? 0
+    return orders?.filter(o => o.order_status === 'completed')
+      .reduce((s: number, o: any) => s + Number(o.seller_net_amount ?? o.subtotal_amount ?? 0), 0) ?? 0
   }
 
+  function countViews(views: any[] | null) {
+    return views?.filter(v => v.event_type === 'view').length ?? 0
+  }
+
+  function countClicks(views: any[] | null) {
+    return views?.filter(v => v.event_type === 'click').length ?? 0
+  }
+
+  const allRev = calcRevenue(allOrders)
   const todayRev = calcRevenue(todayOrders)
   const weekRev = calcRevenue(weekOrders)
   const monthRev = calcRevenue(monthOrders)
-  const allRev = calcRevenue(allOrders)
 
+  const totalViews = countViews(allViews)
+  const totalClicks = countClicks(allViews)
   const liveListings = listings?.filter(l => l.listing_status === 'live').length ?? 0
   const totalOrders = allOrders?.length ?? 0
 
   // Per-listing stats
   const listingStats = listings?.map(l => {
-    const lOrders = allOrders?.filter(o => (o as any).listing_id === l.id) ?? []
-    const lRev = lOrders.filter(o => o.order_status === 'completed').reduce((s, o) => s + Number((o as any).seller_net_amount ?? (o as any).subtotal_amount ?? 0), 0)
-    return { ...l, orderCount: lOrders.length, revenue: lRev }
+    const lAllOrders = allOrders?.filter(o => (o as any).listing_id === l.id) ?? []
+    const lRev = lAllOrders.filter(o => o.order_status === 'completed')
+      .reduce((s, o) => s + Number((o as any).seller_net_amount ?? (o as any).subtotal_amount ?? 0), 0)
+
+    const lViewsAll = allViews?.filter(v => v.listing_id === l.id) ?? []
+    const lViewsToday = todayViews?.filter(v => v.listing_id === l.id) ?? []
+    const lViewsWeek = weekViews?.filter(v => v.listing_id === l.id) ?? []
+    const lViewsMonth = monthViews?.filter(v => v.listing_id === l.id) ?? []
+
+    return {
+      ...l,
+      orderCount: lAllOrders.length,
+      revenue: lRev,
+      views: {
+        today: lViewsToday.filter(v => v.event_type === 'view').length,
+        week: lViewsWeek.filter(v => v.event_type === 'view').length,
+        month: lViewsMonth.filter(v => v.event_type === 'view').length,
+        all: lViewsAll.filter(v => v.event_type === 'view').length,
+      },
+      clicks: {
+        today: lViewsToday.filter(v => v.event_type === 'click').length,
+        week: lViewsWeek.filter(v => v.event_type === 'click').length,
+        month: lViewsMonth.filter(v => v.event_type === 'click').length,
+        all: lViewsAll.filter(v => v.event_type === 'click').length,
+      },
+    }
   }) ?? []
 
   function StatCard({ label, value, sub }: { label: string; value: string | number; sub?: string }) {
@@ -94,9 +150,9 @@ export default async function SellerAnalyticsPage() {
           <p className="text-xs text-slate-400 mt-1">All time</p>
         </div>
         <div className="rounded-3xl border bg-white p-6 shadow-sm">
-          <p className="text-sm text-slate-500">Live Listings</p>
-          <p className="mt-2 text-3xl font-bold text-blue-600">{liveListings}</p>
-          <p className="text-xs text-slate-400 mt-1">of {listings?.length ?? 0} total</p>
+          <p className="text-sm text-slate-500">Total Views</p>
+          <p className="mt-2 text-3xl font-bold text-blue-600">{totalViews}</p>
+          <p className="text-xs text-slate-400 mt-1">{totalClicks} order clicks</p>
         </div>
         <div className="rounded-3xl border bg-white p-6 shadow-sm">
           <p className="text-sm text-slate-500">This Month</p>
@@ -105,49 +161,94 @@ export default async function SellerAnalyticsPage() {
         </div>
       </div>
 
-      {/* Period breakdown */}
+      {/* Views / Orders period breakdown */}
       <section className="grid gap-6 xl:grid-cols-3">
         {[
-          { label: 'Today', orders: todayOrders, rev: todayRev },
-          { label: 'Last 7 Days', orders: weekOrders, rev: weekRev },
-          { label: 'Last 30 Days', orders: monthOrders, rev: monthRev },
-        ].map(({ label, orders, rev }) => (
+          { label: 'Today', orders: todayOrders, rev: todayRev, views: todayViews },
+          { label: 'Last 7 Days', orders: weekOrders, rev: weekRev, views: weekViews },
+          { label: 'Last 30 Days', orders: monthOrders, rev: monthRev, views: monthViews },
+        ].map(({ label, orders, rev, views }) => (
           <div key={label} className="rounded-3xl border bg-white p-6 shadow-sm">
             <p className="mb-4 text-lg font-semibold text-slate-900">{label}</p>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <StatCard label="Orders" value={orders?.length ?? 0} />
-              <StatCard label="Revenue" value={`$${rev.toFixed(2)}`} />
-              <StatCard label="Completed" value={orders?.filter(o => o.order_status === 'completed').length ?? 0} />
-              <StatCard label="Active" value={orders?.filter(o => o.order_status === 'active' || o.order_status === 'revision_requested').length ?? 0} />
+            <div className="grid gap-3 sm:grid-cols-2">
+              <StatCard label="👁 Views" value={countViews(views)} />
+              <StatCard label="🖱 Clicks" value={countClicks(views)} />
+              <StatCard label="📦 Orders" value={orders?.length ?? 0} />
+              <StatCard label="💰 Revenue" value={`$${rev.toFixed(2)}`} />
             </div>
           </div>
         ))}
       </section>
 
-      {/* Per-listing breakdown */}
+      {/* Per-listing breakdown with views/clicks/orders */}
       {listingStats.length > 0 && (
         <section className="rounded-3xl border bg-white p-6 shadow-sm">
-          <h2 className="mb-5 text-xl font-bold text-slate-900">Listing Performance</h2>
+          <h2 className="mb-5 text-xl font-bold text-slate-900">Per Gig Analytics</h2>
           <div className="space-y-4">
             {listingStats.map(l => (
-              <div key={l.id} className="rounded-2xl bg-slate-50 p-5">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="min-w-0">
-                    <p className="font-semibold text-slate-900 truncate">{l.title}</p>
-                    <div className="flex items-center gap-3 mt-1">
-                      <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${l.listing_status === 'live' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600'}`}>{l.listing_status}</span>
-                      {l.average_rating > 0 && <span className="text-xs text-slate-500">⭐ {Number(l.average_rating).toFixed(1)}</span>}
+              <div key={l.id} className="rounded-2xl border bg-slate-50 p-5">
+                {/* Gig title + status */}
+                <div className="mb-4 flex items-start justify-between gap-3">
+                  <div>
+                    <p className="font-semibold text-slate-900">{l.title}</p>
+                    <div className="mt-1 flex items-center gap-2">
+                      <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${l.listing_status === 'live' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
+                        {l.listing_status}
+                      </span>
+                      {l.average_rating > 0 && <span className="text-xs text-slate-500">⭐ {Number(l.average_rating).toFixed(1)} ({l.total_reviews})</span>}
                     </div>
                   </div>
-                  <div className="flex gap-6 shrink-0 text-center">
-                    <div>
-                      <p className="text-xl font-bold text-slate-900">{l.orderCount}</p>
-                      <p className="text-xs text-slate-500">Orders</p>
+                  <a href={`/services/${l.slug}`} target="_blank" className="shrink-0 rounded-xl border px-3 py-1 text-xs font-medium text-slate-600 hover:bg-white">
+                    View Gig →
+                  </a>
+                </div>
+
+                {/* Daily / Weekly / Monthly grid */}
+                <div className="grid gap-3 sm:grid-cols-3">
+                  {[
+                    { period: 'Today', views: l.views.today, clicks: l.clicks.today },
+                    { period: 'Last 7 Days', views: l.views.week, clicks: l.clicks.week },
+                    { period: 'Last 30 Days', views: l.views.month, clicks: l.clicks.month },
+                  ].map(({ period, views, clicks }) => (
+                    <div key={period} className="rounded-xl bg-white border p-4">
+                      <p className="mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wide">{period}</p>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <p className="text-lg font-bold text-blue-600">{views}</p>
+                          <p className="text-xs text-slate-500">Views</p>
+                        </div>
+                        <div>
+                          <p className="text-lg font-bold text-indigo-600">{clicks}</p>
+                          <p className="text-xs text-slate-500">Clicks</p>
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-xl font-bold text-emerald-600">${l.revenue.toFixed(2)}</p>
-                      <p className="text-xs text-slate-500">Revenue</p>
-                    </div>
+                  ))}
+                </div>
+
+                {/* All-time totals */}
+                <div className="mt-3 flex gap-6 border-t pt-3 text-center">
+                  <div>
+                    <p className="text-xl font-bold text-slate-900">{l.views.all}</p>
+                    <p className="text-xs text-slate-500">Total Views</p>
+                  </div>
+                  <div>
+                    <p className="text-xl font-bold text-indigo-600">{l.clicks.all}</p>
+                    <p className="text-xs text-slate-500">Total Clicks</p>
+                  </div>
+                  <div>
+                    <p className="text-xl font-bold text-slate-900">{l.orderCount}</p>
+                    <p className="text-xs text-slate-500">Orders</p>
+                  </div>
+                  <div>
+                    <p className="text-xl font-bold text-emerald-600">${l.revenue.toFixed(2)}</p>
+                    <p className="text-xs text-slate-500">Revenue</p>
+                  </div>
+                  <div>
+                    <p className="text-xl font-bold text-slate-700">
+                      {l.views.all > 0 ? `${((l.orderCount / l.views.all) * 100).toFixed(1)}%` : '—'}
+                    </p>
+                    <p className="text-xs text-slate-500">Conv. Rate</p>
                   </div>
                 </div>
               </div>
@@ -161,12 +262,12 @@ export default async function SellerAnalyticsPage() {
         <h2 className="mb-4 text-xl font-bold text-slate-900">Growth Tips</h2>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 text-sm text-slate-600">
           {[
-            { icon: '📸', tip: 'Add high-quality images to your listings to increase click-through rates.' },
-            { icon: '🏷️', tip: 'Use specific, buyer-intent keywords in your title and tags to improve search visibility.' },
-            { icon: '⚡', tip: 'Respond to order requests quickly — buyers prefer sellers with fast response times.' },
-            { icon: '⭐', tip: 'Deliver exceptional work to earn 5-star reviews and unlock higher trust tiers.' },
-            { icon: '💼', tip: 'Offer all three package tiers (Basic, Standard, Premium) to capture different budgets.' },
-            { icon: '📣', tip: 'Share your listing links on social media to drive external traffic.' },
+            { icon: '📸', tip: 'Add high-quality images to increase click-through rates.' },
+            { icon: '🏷️', tip: 'Use specific, buyer-intent keywords in your title and tags.' },
+            { icon: '⚡', tip: 'Respond to order requests quickly — buyers prefer fast sellers.' },
+            { icon: '⭐', tip: 'Deliver exceptional work to earn 5-star reviews.' },
+            { icon: '💼', tip: 'Offer all three packages (Basic/Standard/Premium) to capture all budgets.' },
+            { icon: '📣', tip: 'Share your listing on social media to drive external traffic.' },
           ].map(({ icon, tip }) => (
             <div key={tip} className="rounded-2xl bg-slate-50 p-4">
               <span className="text-2xl">{icon}</span>

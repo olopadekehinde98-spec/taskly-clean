@@ -2,6 +2,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import SaveListingButton from '@/components/SaveListingButton'
+import GigViewTracker from '@/components/GigViewTracker'
+import GigClickTracker from '@/components/GigClickTracker'
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -46,6 +48,9 @@ export default async function ServiceDetailsPage({ params }: Props) {
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-10">
+      {/* Track this gig view silently */}
+      {!isPreview && <GigViewTracker listingId={(listing as any).id} />}
+
       {isPreview && (
         <div className="mx-auto max-w-7xl mb-6">
           <div className="rounded-2xl border-2 border-amber-300 bg-amber-50 px-5 py-3 flex items-center gap-3">
@@ -160,12 +165,10 @@ export default async function ServiceDetailsPage({ params }: Props) {
               <p className="mb-1 text-sm text-slate-500">Starting at</p>
               <p className="mb-1 text-3xl font-bold text-blue-600">${Number(basicPkg.price_usd).toFixed(2)}</p>
               <p className="mb-5 text-sm text-slate-400">{basicPkg.delivery_days}-day delivery</p>
-              <Link
+              <GigClickTracker
+                listingId={(listing as any).id}
                 href={`/order/${(listing as any).slug ?? (listing as any).id}`}
-                className="mb-3 block w-full rounded-2xl bg-blue-600 px-5 py-3 text-center font-semibold text-white hover:bg-blue-700 transition-colors"
-              >
-                Order Now
-              </Link>
+              />
             </>
           ) : (
             <p className="mb-5 text-sm text-slate-500">Contact seller for pricing</p>
