@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import SaveListingButton from '@/components/SaveListingButton'
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -176,6 +177,10 @@ export default async function ServiceDetailsPage({ params }: Props) {
           >
             View Seller Profile
           </Link>
+
+          {!isPreview && (
+            <SaveListingButton listingId={(listing as any).id} />
+          )}
 
           <div className="mt-6 space-y-3 border-t pt-5 text-sm text-slate-600">
             {(listing as any).total_orders > 0 && (

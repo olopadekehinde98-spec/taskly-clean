@@ -11,7 +11,7 @@ export default async function AdminAIConversationsPage() {
   // Group by session — fetch recent sessions with first/last message
   const { data: raw } = await supabase
     .from('ai_conversations')
-    .select('id, user_id, session_id, role, message, feature, created_at, profiles(display_name, email)')
+    .select('id, user_id, session_id, role, message, feature, created_at, profiles!ai_conversations_user_id_fkey(display_name, email)')
     .order('created_at', { ascending: false })
     .limit(400)
 
