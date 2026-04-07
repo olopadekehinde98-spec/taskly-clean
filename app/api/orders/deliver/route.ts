@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const body = await req.json()
-    const { order_id, delivery_note } = body
+    const { order_id, delivery_note, attachment_urls } = body
     if (!order_id) return NextResponse.json({ error: 'order_id required' }, { status: 400 })
 
     // Verify this order belongs to the seller and is in a deliverable state
@@ -28,6 +28,8 @@ export async function POST(req: NextRequest) {
       .from('orders')
       .update({
         order_status: 'delivered',
+        delivery_note: delivery_note || null,
+        attachment_urls: attachment_urls?.length ? attachment_urls : null,
         delivered_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
