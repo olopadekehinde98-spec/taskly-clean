@@ -15,7 +15,7 @@ export default async function QualityCheckPage({ searchParams }: Props) {
   const { data: listing } = await supabase
     .from('listings')
     .select(`
-      id, title, description, listing_status,
+      id, title, slug, description, listing_status,
       categories ( name ),
       listing_packages ( tier, price_usd, delivery_days )
     `)

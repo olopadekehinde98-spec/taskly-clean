@@ -13,7 +13,7 @@ export default async function BuyerDeliveredOrderPage({ params }: Props) {
   const { data: order } = await supabase
     .from('orders')
     .select(`
-      id, order_status, subtotal_amount, due_at, delivered_at,
+      id, order_status, subtotal_amount, due_at, delivered_at, delivery_note, attachment_urls,
       listings ( title, slug ),
       seller:profiles!orders_seller_id_fkey ( display_name, username ),
       listing_packages ( name, tier, delivery_days )
@@ -53,6 +53,38 @@ export default async function BuyerDeliveredOrderPage({ params }: Props) {
                 </p>
               )}
             </div>
+
+            {/* Delivery message */}
+            {((order as any).delivery_note || ((order as any).attachment_urls?.length ?? 0) > 0) && (
+              <div className="rounded-3xl border bg-white p-8 shadow-sm">
+                <h2 className="mb-4 text-lg font-bold text-slate-900">Seller's Delivery</h2>
+                {(order as any).delivery_note && (
+                  <p className="text-sm text-slate-700 leading-7 whitespace-pre-wrap mb-5">{(order as any).delivery_note}</p>
+                )}
+                {((order as any).attachment_urls?.length ?? 0) > 0 && (
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-3">Attachments</p>
+                    <ul className="space-y-2">
+                      {((order as any).attachment_urls as string[]).map((url, i) => {
+                        const name = url.split('/').pop() ?? `File ${i + 1}`
+                        return (
+                          <li key={i}>
+                            <a
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 rounded-xl border bg-slate-50 px-4 py-2.5 text-sm text-blue-600 hover:bg-blue-50 transition-colors"
+                            >
+                              📎 <span className="truncate">{name}</span>
+                            </a>
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="rounded-3xl border bg-white p-8 shadow-sm">
               <h2 className="mb-4 text-lg font-bold text-slate-900">Order Details</h2>
