@@ -13,7 +13,14 @@
       "Bash(npm list:*)",
       "mcp__supabase__list_tables",
       "mcp__supabase__apply_migration",
-      "mcp__supabase__execute_sql"
+      "mcp__supabase__execute_sql",
+      "Bash(curl -s -X POST https://taskly-clean.vercel.app/api/stripe/checkout -H \"Content-Type: application/json\" -d '{\"\"listing_id\"\":\"\"test\"\",\"\"package_id\"\":\"\"test\"\"}')",
+      "Bash(node -e \"const s = require\\(''C:/Users/SAMUEL/taskly-clean/node_modules/stripe''\\); console.log\\(s.version || ''no version''\\); const i = new s\\(''sk_test_51TIRY0AyoHFlyCzEysLq9irciY8HcWnDFcIFRDaLlVpMOcxGPZfA0JDz5MUKvRcvEXGFsLtph1Q0NZ3gU5NH6KCc00tF1bwUvA''\\); console.log\\(''ok''\\);\")",
+      "Bash(node -e \"const d=require\\(''''fs''''\\).readFileSync\\(''''/dev/stdin'''',''''utf8''''\\); console.log\\(JSON.parse\\(d\\).version\\)\")",
+      "Bash(node -e \"console.log\\(require\\(''C:/Users/SAMUEL/taskly-clean/node_modules/stripe/package.json''\\).version\\)\")",
+      "Bash(node -e \":*)",
+      "Bash(curl -s https://taskly-clean.vercel.app/api/stripe/test)",
+      "Bash(npx next:*)"
     ]
   }
 }

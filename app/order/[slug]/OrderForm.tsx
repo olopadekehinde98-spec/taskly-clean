@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 
 type Package = { id: string; tier: string; name: string; price_usd: number; delivery_days: number; description: string; revisions: number }
 
@@ -16,7 +15,6 @@ export default function OrderForm({
   selectedTier: string
   userId: string
 }) {
-  const router = useRouter()
   const [tier, setTier] = useState(selectedTier)
   const [requirements, setRequirements] = useState('')
   const [loading, setLoading] = useState(false)
@@ -39,7 +37,7 @@ export default function OrderForm({
     setError('')
 
     try {
-      const res = await fetch('/api/orders/create', {
+      const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -49,8 +47,10 @@ export default function OrderForm({
         }),
       })
       const data = await res.json()
-      if (data.error) { setError(data.error); return }
-      router.push(`/order/confirmation?order_id=${data.order_id}`)
+      if (data.error) { setError(`Payment error: ${data.error}`); return }
+      if (!data.url) { setError('No checkout URL returned. Please try again.'); return }
+      // Redirect to Stripe Checkout
+      window.location.href = data.url
     } catch {
       setError('Something went wrong. Please try again.')
     } finally {
@@ -153,7 +153,7 @@ export default function OrderForm({
               disabled={loading}
               className="rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-3 font-semibold text-white hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50"
             >
-              {loading ? 'Placing Order...' : `Place Order — $${total.toFixed(2)}`}
+              {loading ? 'Redirecting to payment...' : `Pay Securely — $${total.toFixed(2)}`}
             </button>
             <a
               href={`/services/${listing.slug}`}
@@ -162,6 +162,10 @@ export default function OrderForm({
               Back to Gig
             </a>
           </div>
+
+          <p className="text-xs text-slate-400 flex items-center gap-1">
+            🔒 Secure payment via Stripe · Your card details are never stored on our servers
+          </p>
         </form>
       </section>
 

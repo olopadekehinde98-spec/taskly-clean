@@ -4,17 +4,19 @@ import { createClient } from '@/lib/supabase/server'
 export const dynamic = 'force-dynamic'
 
 type Props = {
-  searchParams: Promise<{ order_id?: string }>
+  searchParams: Promise<{ order_id?: string; session_id?: string }>
 }
 
 export default async function OrderConfirmationPage({ searchParams }: Props) {
-  const { order_id } = await searchParams
+  const { order_id, session_id } = await searchParams
   const supabase = await createClient()
 
   let order: any = null
-  if (order_id) {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (user) {
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (user) {
+    if (order_id) {
+      // Direct order ID (non-Stripe path)
       const { data } = await supabase
         .from('orders')
         .select(`
@@ -24,6 +26,20 @@ export default async function OrderConfirmationPage({ searchParams }: Props) {
           listing_packages(tier, name, delivery_days)
         `)
         .eq('id', order_id)
+        .eq('buyer_id', user.id)
+        .single()
+      order = data
+    } else if (session_id) {
+      // Stripe Checkout completed — look up order by stripe_session_id
+      const { data } = await supabase
+        .from('orders')
+        .select(`
+          id, subtotal_amount, order_status, due_at, created_at,
+          listings(title, slug),
+          seller:profiles!orders_seller_id_fkey(display_name),
+          listing_packages(tier, name, delivery_days)
+        `)
+        .eq('stripe_session_id', session_id)
         .eq('buyer_id', user.id)
         .single()
       order = data
@@ -58,9 +74,10 @@ export default async function OrderConfirmationPage({ searchParams }: Props) {
             )}
           </div>
         ) : (
-          <p className="mx-auto mb-8 max-w-2xl text-slate-600">
-            Your payment is held in escrow and will be released to the seller once you accept the delivery.
-          </p>
+          <div className="mx-auto mb-6 w-fit rounded-2xl border border-emerald-200 bg-emerald-50 px-8 py-5 text-center">
+            <p className="text-sm text-emerald-700 font-medium">Payment received · Order being created…</p>
+            <p className="mt-1 text-xs text-emerald-600">This usually takes a few seconds. Refresh if it doesn't appear.</p>
+          </div>
         )}
 
         <div className="mb-8 rounded-3xl bg-slate-50 p-6 text-left">

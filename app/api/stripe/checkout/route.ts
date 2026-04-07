@@ -4,77 +4,87 @@ import { createClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
+function getStripe() {
+  return new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    httpClient: Stripe.createFetchHttpClient(),
+  })
+}
+
 export async function POST(req: NextRequest) {
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2026-03-25.dahlia' })
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const { listingId, packageIndex, projectTitle, requirements } = await req.json()
-
-    if (!listingId || packageIndex === undefined) {
-      return NextResponse.json({ error: 'Missing listingId or packageIndex' }, { status: 400 })
+    const { listing_id, package_id, requirements_text } = await req.json()
+    if (!listing_id || !package_id) {
+      return NextResponse.json({ error: 'listing_id and package_id required' }, { status: 400 })
     }
 
-    // Fetch listing from DB
-    const { data: listing, error: listingError } = await supabase
+    // Fetch listing
+    const { data: listing } = await supabase
       .from('listings')
-      .select('*, profiles(id, display_name, email)')
-      .eq('id', listingId)
+      .select('id, title, slug, seller_id, listing_status')
+      .eq('id', listing_id)
+      .eq('listing_status', 'live')
       .single()
 
-    if (listingError || !listing) {
-      return NextResponse.json({ error: 'Listing not found' }, { status: 404 })
-    }
+    if (!listing) return NextResponse.json({ error: 'Listing not found or not live' }, { status: 404 })
+    if (listing.seller_id === user.id) return NextResponse.json({ error: 'Cannot order your own listing' }, { status: 400 })
 
-    // Get the selected package — listings store packages as JSON array
-    const packages = listing.packages ?? []
-    const pkg = packages[packageIndex]
+    // Fetch package
+    const { data: pkg } = await supabase
+      .from('listing_packages')
+      .select('id, tier, name, price_usd, delivery_days')
+      .eq('id', package_id)
+      .eq('listing_id', listing_id)
+      .single()
+
     if (!pkg) return NextResponse.json({ error: 'Package not found' }, { status: 404 })
 
-    const priceInCents = Math.round(Number(pkg.price) * 100)
-    const buyerFeeInCents = Math.round(priceInCents * 0.05)
-    const totalInCents = priceInCents + buyerFeeInCents
+    const subtotalCents = Math.round(Number(pkg.price_usd) * 100)
+    const buyerFeeCents = Math.round(subtotalCents * 0.05)
+    const totalCents = subtotalCents + buyerFeeCents
 
-    const origin = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+    const origin = 'https://taskly-clean.vercel.app'
 
+    const stripe = getStripe()
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      payment_method_types: ['card'],
       line_items: [
         {
           quantity: 1,
           price_data: {
             currency: 'usd',
-            unit_amount: totalInCents,
+            unit_amount: totalCents,
             product_data: {
               name: listing.title,
-              description: `${pkg.name} package · Delivery: ${pkg.delivery_days} days`,
+              description: `${pkg.name} package · ${pkg.delivery_days}-day delivery`,
             },
           },
         },
       ],
       metadata: {
         buyer_id: user.id,
-        seller_id: (listing.profiles as any)?.id ?? listing.seller_id,
-        listing_id: listingId,
-        package_index: String(packageIndex),
+        seller_id: listing.seller_id,
+        listing_id,
+        package_id,
+        package_tier: pkg.tier,
         package_name: pkg.name,
-        price_cents: String(priceInCents),
-        buyer_fee_cents: String(buyerFeeInCents),
-        total_cents: String(totalInCents),
-        project_title: projectTitle ?? '',
-        requirements: (requirements ?? '').slice(0, 500),
+        subtotal_cents: String(subtotalCents),
+        buyer_fee_cents: String(buyerFeeCents),
+        total_cents: String(totalCents),
+        delivery_days: String(pkg.delivery_days),
+        requirements_text: (requirements_text ?? '').slice(0, 500),
       },
-      customer_email: user.email,
+      customer_email: user.email ?? undefined,
       success_url: `${origin}/order/confirmation?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/services/${listing.slug}`,
     })
 
     return NextResponse.json({ url: session.url })
   } catch (err: any) {
-    console.error('Stripe checkout error:', err.message)
+    console.error('Stripe checkout error:', err.message, err.type)
     return NextResponse.json({ error: err.message }, { status: 500 })
   }
 }

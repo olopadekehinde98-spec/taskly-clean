@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
+import DeliverForm from './DeliverForm'
 
 const STATUS_LABELS: Record<string, { label: string; classes: string }> = {
   pending_requirements: { label: 'Awaiting Requirements', classes: 'bg-amber-50 text-amber-700' },
@@ -104,27 +105,7 @@ export default async function SellerOrderDetailPage({ params }: Props) {
           {(order.order_status === 'active' || order.order_status === 'revision_requested') && (
             <div className="rounded-3xl border bg-white p-8 shadow-sm">
               <h2 className="mb-4 text-lg font-bold text-slate-900">Submit Delivery</h2>
-              <form action="/api/orders/deliver" method="POST" className="space-y-4">
-                <input type="hidden" name="order_id" value={order.id} />
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-slate-700">Delivery Message</label>
-                  <textarea
-                    name="delivery_note"
-                    rows={5}
-                    placeholder="Describe what you've delivered and any instructions for the buyer..."
-                    className="w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-blue-500 resize-none"
-                  />
-                </div>
-                <p className="text-xs text-slate-400">File upload coming soon. For now, include links or instructions in your message.</p>
-                <div className="flex gap-3">
-                  <button type="submit" className="rounded-2xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition-colors">
-                    Submit Delivery →
-                  </button>
-                  <Link href={`/dashboard/orders/${id}/dispute`} className="rounded-2xl border px-6 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
-                    Open Dispute
-                  </Link>
-                </div>
-              </form>
+              <DeliverForm orderId={order.id} />
             </div>
           )}
 

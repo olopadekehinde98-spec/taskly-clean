@@ -1,136 +1,119 @@
-type Props = {
-  params: Promise<{ id: string }>
-}
+'use client'
 
-export default async function BuyerReviewPage({ params }: Props) {
-  const { id } = await params
+import { useParams, useRouter } from 'next/navigation'
+import { useState } from 'react'
+import Link from 'next/link'
+
+export default function BuyerReviewPage() {
+  const { id } = useParams<{ id: string }>()
+  const router = useRouter()
+  const [rating, setRating] = useState(0)
+  const [hovered, setHovered] = useState(0)
+  const [title, setTitle] = useState('')
+  const [body, setBody] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (rating === 0) { setError('Please select a star rating.'); return }
+    if (!body.trim()) { setError('Please write a review.'); return }
+    setLoading(true)
+    setError('')
+    try {
+      const res = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ order_id: id, rating, title: title.trim() || null, body: body.trim() }),
+      })
+      const data = await res.json()
+      if (data.error) { setError(data.error); setLoading(false); return }
+      router.push(`/buyer/orders/${id}/review/submitted`)
+    } catch {
+      setError('Something went wrong. Please try again.')
+      setLoading(false)
+    }
+  }
+
+  const displayRating = hovered || rating
 
   return (
     <main className="min-h-screen bg-slate-50 px-6 py-16">
-      <div className="mx-auto max-w-4xl space-y-8">
+      <div className="mx-auto max-w-2xl space-y-8">
         <div>
-          <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-blue-600">
-            Buyer Review
-          </p>
-          <h1 className="text-3xl font-bold text-slate-900">Leave a Review</h1>
+          <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-blue-600">Leave a Review</p>
+          <h1 className="text-3xl font-bold text-slate-900">How was your experience?</h1>
         </div>
 
         <div className="rounded-3xl border bg-white p-8 shadow-sm">
-          <div className="mb-8">
-            <p className="text-sm text-slate-500">Order ID</p>
-            <h2 className="mt-1 text-2xl font-bold text-slate-900">{id}</h2>
-          </div>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
+            )}
 
-          <form className="space-y-6">
             <div>
-              <label className="mb-3 block text-sm font-medium text-slate-700">
-                Overall Rating
-              </label>
-
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  className="flex h-12 w-12 items-center justify-center rounded-2xl border bg-amber-50 text-xl text-amber-500"
-                >
-                  ★
-                </button>
-                <button
-                  type="button"
-                  className="flex h-12 w-12 items-center justify-center rounded-2xl border bg-amber-50 text-xl text-amber-500"
-                >
-                  ★
-                </button>
-                <button
-                  type="button"
-                  className="flex h-12 w-12 items-center justify-center rounded-2xl border bg-amber-50 text-xl text-amber-500"
-                >
-                  ★
-                </button>
-                <button
-                  type="button"
-                  className="flex h-12 w-12 items-center justify-center rounded-2xl border bg-amber-50 text-xl text-amber-500"
-                >
-                  ★
-                </button>
-                <button
-                  type="button"
-                  className="flex h-12 w-12 items-center justify-center rounded-2xl border bg-amber-50 text-xl text-amber-500"
-                >
-                  ★
-                </button>
+              <label className="mb-3 block text-sm font-medium text-slate-700">Overall Rating <span className="text-red-500">*</span></label>
+              <div className="flex gap-2">
+                {[1, 2, 3, 4, 5].map(star => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setRating(star)}
+                    onMouseEnter={() => setHovered(star)}
+                    onMouseLeave={() => setHovered(0)}
+                    className="text-3xl transition-transform hover:scale-110"
+                  >
+                    <span className={star <= displayRating ? 'text-amber-400' : 'text-slate-200'}>★</span>
+                  </button>
+                ))}
               </div>
-
-              <p className="mt-2 text-xs text-slate-500">
-                Interactive star logic will be connected later.
-              </p>
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-3">
-              <div className="rounded-2xl bg-slate-50 p-5">
-                <label className="mb-2 block text-sm font-medium text-slate-700">
-                  Communication
-                </label>
-                <select className="w-full rounded-2xl border bg-white px-4 py-3 outline-none">
-                  <option>5 - Excellent</option>
-                  <option>4 - Good</option>
-                  <option>3 - Average</option>
-                  <option>2 - Poor</option>
-                  <option>1 - Bad</option>
-                </select>
-              </div>
-
-              <div className="rounded-2xl bg-slate-50 p-5">
-                <label className="mb-2 block text-sm font-medium text-slate-700">
-                  Service Quality
-                </label>
-                <select className="w-full rounded-2xl border bg-white px-4 py-3 outline-none">
-                  <option>5 - Excellent</option>
-                  <option>4 - Good</option>
-                  <option>3 - Average</option>
-                  <option>2 - Poor</option>
-                  <option>1 - Bad</option>
-                </select>
-              </div>
-
-              <div className="rounded-2xl bg-slate-50 p-5">
-                <label className="mb-2 block text-sm font-medium text-slate-700">
-                  Delivery Time
-                </label>
-                <select className="w-full rounded-2xl border bg-white px-4 py-3 outline-none">
-                  <option>5 - Excellent</option>
-                  <option>4 - Good</option>
-                  <option>3 - Average</option>
-                  <option>2 - Poor</option>
-                  <option>1 - Bad</option>
-                </select>
-              </div>
+              {displayRating > 0 && (
+                <p className="mt-2 text-sm text-slate-500">
+                  {displayRating === 1 && 'Poor'}
+                  {displayRating === 2 && 'Fair'}
+                  {displayRating === 3 && 'Good'}
+                  {displayRating === 4 && 'Very Good'}
+                  {displayRating === 5 && 'Excellent'}
+                </p>
+              )}
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
-                Written Review
-              </label>
-              <textarea
-                rows={7}
-                placeholder="Write a short review about your experience with the seller and the final delivery."
-                className="w-full rounded-2xl border px-4 py-3 outline-none"
+              <label className="mb-2 block text-sm font-medium text-slate-700">Review Title</label>
+              <input
+                type="text"
+                value={title}
+                onChange={e => setTitle(e.target.value)}
+                placeholder="Summarize your experience (optional)"
+                maxLength={100}
+                className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
               />
             </div>
 
-            <div className="flex flex-wrap gap-4">
-              <a
-                href={`/buyer/orders/${id}/review/submitted`}
-                className="rounded-2xl bg-blue-600 px-6 py-3 font-medium text-white"
-              >
-                Submit Review
-              </a>
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700">Written Review <span className="text-red-500">*</span></label>
+              <textarea
+                rows={6}
+                value={body}
+                onChange={e => setBody(e.target.value)}
+                placeholder="Share your experience with this seller and the quality of their work."
+                required
+                className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all resize-none"
+              />
+              <p className="mt-1 text-xs text-slate-400">{body.length} characters</p>
+            </div>
 
-              <a
-                href={`/buyer/orders/${id}/completed`}
-                className="rounded-2xl border px-6 py-3 font-medium text-slate-700"
+            <div className="flex flex-wrap gap-4">
+              <button
+                type="submit"
+                disabled={loading}
+                className="rounded-2xl bg-blue-600 px-6 py-3 font-medium text-white hover:bg-blue-700 transition-colors disabled:opacity-50"
               >
-                Back
-              </a>
+                {loading ? 'Submitting…' : 'Submit Review'}
+              </button>
+              <Link href={`/buyer/orders/${id}`} className="rounded-2xl border px-6 py-3 font-medium text-slate-700 hover:bg-slate-50 transition-colors">
+                Skip
+              </Link>
             </div>
           </form>
         </div>
