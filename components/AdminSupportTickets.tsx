@@ -12,7 +12,12 @@ type Ticket = {
   conversation: { role: string; text: string; content?: string }[]
   admin_replies: { text: string; created_at: string; attachments?: Attachment[] }[]
   thread: { role: 'buyer' | 'admin'; text: string; created_at: string }[]
-  profiles: { display_name?: string; email?: string; avatar_url?: string } | null
+  profiles: { display_name?: string; email?: string; avatar_url?: string } | { display_name?: string; email?: string; avatar_url?: string }[] | null
+}
+
+function getProfile(p: Ticket['profiles']) {
+  if (!p) return null
+  return Array.isArray(p) ? p[0] ?? null : p
 }
 
 export default function AdminSupportTickets({ tickets }: { tickets: Ticket[] }) {
@@ -89,7 +94,7 @@ export default function AdminSupportTickets({ tickets }: { tickets: Ticket[] }) 
             <div>
               <p className="font-bold text-slate-900">{selected.summary}</p>
               <p className="text-xs text-slate-500 mt-0.5">
-                From: {selected.profiles?.display_name ?? 'Guest'} ({selected.profiles?.email ?? 'unknown'}) · {new Date(selected.created_at).toLocaleString()}
+                From: {getProfile(selected.profiles)?.display_name ?? 'Guest'} ({getProfile(selected.profiles)?.email ?? 'unknown'}) · {new Date(selected.created_at).toLocaleString()}
               </p>
             </div>
             <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold ${selected.status === 'open' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}`}>
@@ -192,7 +197,7 @@ function TicketCard({ ticket, selected, onClick }: { ticket: Ticket; selected: b
         </span>
       </div>
       <p className="text-xs text-slate-500 mt-1">
-        {ticket.profiles?.display_name ?? 'Guest'} · {new Date(ticket.created_at).toLocaleDateString()}
+        {getProfile(ticket.profiles)?.display_name ?? 'Guest'} · {new Date(ticket.created_at).toLocaleDateString()}
       </p>
       {(ticket.thread?.length ?? 0) > 0 && (
         <p className="text-xs text-blue-600 mt-1">

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">TasklyClean</string>
+    <string name="title_activity_main">TasklyClean</string>
+    <string name="package_name">com.tasklyclean.app</string>
+    <string name="custom_url_scheme">com.tasklyclean.app</string>
+</resources>
