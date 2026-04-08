@@ -4,9 +4,6 @@ import { createClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
-// Disable body parsing so we get the raw body for signature verification
-export const config = { api: { bodyParser: false } }
-
 export async function POST(req: NextRequest) {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     httpClient: Stripe.createFetchHttpClient(),
