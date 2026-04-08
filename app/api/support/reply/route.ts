@@ -16,19 +16,25 @@ export async function POST(req: NextRequest) {
     // Fetch existing ticket (include user_id and ticket_number to notify buyer)
     const { data: ticket, error: fetchErr } = await supabase
       .from('support_tickets')
-      .select('admin_replies, user_id, ticket_number')
+      .select('admin_replies, thread, user_id, ticket_number')
       .eq('id', ticket_id)
       .single()
 
     if (fetchErr) throw fetchErr
 
     const replies = ticket.admin_replies ?? []
-    replies.push({ text: reply, created_at: new Date().toISOString(), attachments: attachments ?? [] })
+    const newReply = { text: reply, created_at: new Date().toISOString(), attachments: attachments ?? [] }
+    replies.push(newReply)
+
+    // Also append to unified thread
+    const thread = (ticket.thread as any[]) ?? []
+    thread.push({ role: 'admin', text: reply, created_at: new Date().toISOString() })
 
     const { error } = await supabase
       .from('support_tickets')
       .update({
         admin_replies: replies,
+        thread,
         status: status ?? 'open',
         updated_at: new Date().toISOString(),
       })

@@ -33,7 +33,8 @@
       "Bash(npx tsc:*)",
       "Bash(ls /tmp/claude*)",
       "Read(//c/Users/SAMUEL/AppData/Local/Temp/claude/C--Users-SAMUEL-taskly-clean/**)",
-      "Bash(echo \"EXIT:$?\")"
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(grep -v \"^$\")"
     ]
   }
 }

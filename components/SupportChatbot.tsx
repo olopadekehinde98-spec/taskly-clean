@@ -15,14 +15,25 @@ const QUICK_QUESTIONS = [
 export default function SupportChatbot() {
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'ai', text: "Hi! 👋 I'm the TasklyClean support assistant. Ask me anything about orders, payments, disputes, or platform rules — or I'll connect you to a real person if needed." }
+    { role: 'ai', text: "Hi! 👋 I'm the TasklyClean support assistant. Ask me anything about your orders, payments, disputes, or platform rules — or I'll connect you to a real person if needed." }
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [escalated, setEscalated] = useState(false)
   const [ticketCreated, setTicketCreated] = useState(false)
   const [ticketNumber, setTicketNumber] = useState<string | null>(null)
+  const [userContext, setUserContext] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
+
+  // Fetch user context once when chat opens
+  useEffect(() => {
+    if (open && userContext === null) {
+      fetch('/api/support/context')
+        .then(r => r.json())
+        .then(d => setUserContext(d.context ?? ''))
+        .catch(() => setUserContext(''))
+    }
+  }, [open, userContext])
 
   useEffect(() => {
     if (open) bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -41,7 +52,7 @@ export default function SupportChatbot() {
       const res = await fetch('/api/ai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ feature: 'support_chat', payload: { message: msg } }),
+        body: JSON.stringify({ feature: 'support_chat', payload: { message: msg, user_context: userContext ?? undefined } }),
       })
       const data = await res.json()
       const aiText = data.result ?? 'Sorry, something went wrong. Please try again.'

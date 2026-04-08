@@ -8,8 +8,8 @@ export default async function AdminSupportPage() {
 
   const { data: tickets } = await supabase
     .from('support_tickets')
-    .select('*, profiles(display_name, email, avatar_url)')
-    .order('created_at', { ascending: false })
+    .select('id, ticket_number, summary, status, conversation, admin_replies, thread, created_at, updated_at, profiles(display_name, email, avatar_url)')
+    .order('updated_at', { ascending: false })
 
   return (
     <div className="space-y-6">

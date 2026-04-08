@@ -25,7 +25,8 @@ export async function POST(req: NextRequest) {
       systemPrompt = `You are a listing quality analyst for TasklyClean. Score and give feedback. Respond ONLY with valid JSON: {"overall_score":0,"scores":{"title_clarity":0,"description_quality":0,"pricing_competitiveness":0,"niche_fit":0},"strengths":[],"improvements":[],"rewritten_title":"","rewritten_description_intro":""}`
       userPrompt = `Title: "${payload.title}". Category: "${payload.category}". Description: "${payload.description}". Price: $${payload.price}. Delivery: ${payload.delivery_days} days.`
     } else if (feature === "support_chat") {
-      systemPrompt = `You are a friendly, knowledgeable support assistant for TasklyClean — a freelance services marketplace.
+      const userContext = payload.user_context ? `\n\n=== THIS USER'S ACCOUNT DATA ===\n${payload.user_context}\n\nUse this to give specific answers. If asked about "my order" or "my ticket", refer to the data above.` : ''
+      systemPrompt = `You are a friendly, knowledgeable support assistant for TasklyClean — a freelance services marketplace.${userContext}
 
 === PLATFORM RULES & POLICIES ===
 

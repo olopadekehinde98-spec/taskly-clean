@@ -5,11 +5,13 @@ import FileAttach, { type Attachment } from '@/components/FileAttach'
 
 type Ticket = {
   id: string
+  ticket_number?: string
   summary: string
   status: string
   created_at: string
-  conversation: { role: string; text: string }[]
+  conversation: { role: string; text: string; content?: string }[]
   admin_replies: { text: string; created_at: string; attachments?: Attachment[] }[]
+  thread: { role: 'buyer' | 'admin'; text: string; created_at: string }[]
   profiles: { display_name?: string; email?: string; avatar_url?: string } | null
 }
 
@@ -32,11 +34,12 @@ export default function AdminSupportTickets({ tickets }: { tickets: Ticket[] }) 
       })
       // Update local state
       const newReply = { text: reply.trim(), created_at: new Date().toISOString(), attachments }
+      const newThreadMsg = { role: 'admin' as const, text: reply.trim(), created_at: new Date().toISOString() }
       setLocalTickets(prev => prev.map(t => t.id === selected.id
-        ? { ...t, status, admin_replies: [...(t.admin_replies ?? []), newReply] }
+        ? { ...t, status, admin_replies: [...(t.admin_replies ?? []), newReply], thread: [...(t.thread ?? []), newThreadMsg] }
         : t
       ))
-      setSelected(prev => prev ? { ...prev, status, admin_replies: [...(prev.admin_replies ?? []), newReply] } : null)
+      setSelected(prev => prev ? { ...prev, status, admin_replies: [...(prev.admin_replies ?? []), newReply], thread: [...(prev.thread ?? []), newThreadMsg] } : null)
       setReply('')
       setAttachments([])
     } finally {
@@ -95,37 +98,45 @@ export default function AdminSupportTickets({ tickets }: { tickets: Ticket[] }) 
           </div>
 
           {/* Conversation */}
-          <div className="flex-1 overflow-y-auto px-6 py-4 space-y-3 max-h-80">
-            <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Chat conversation</p>
-            {selected.conversation?.map((m, i) => (
-              <div key={i} className={`flex gap-2 ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${
-                  m.role === 'user' ? 'bg-blue-600 text-white rounded-tr-sm' : 'bg-slate-100 text-slate-800 rounded-tl-sm'
-                }`}>{m.text}</div>
-              </div>
-            ))}
-
-            {(selected.admin_replies?.length ?? 0) > 0 && (
+          <div className="flex-1 overflow-y-auto px-6 py-4 space-y-3 max-h-96">
+            {/* Original AI chat */}
+            {selected.conversation?.filter(m => m.role !== 'system').length > 0 && (
               <>
-                <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mt-4 mb-2">Your replies</p>
-                {selected.admin_replies.map((r, i) => (
-                  <div key={i} className="flex justify-end">
-                    <div className="max-w-[80%] rounded-2xl rounded-tr-sm bg-red-600 text-white px-3 py-2 text-sm">
-                      <p>{r.text}</p>
-                      {r.attachments && r.attachments.length > 0 && (
-                        <div className="mt-2 space-y-1">
-                          {r.attachments.map(a => (
-                            <a key={a.url} href={a.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-red-100 hover:text-white underline">
-                              📎 {a.name}
-                            </a>
-                          ))}
-                        </div>
-                      )}
-                      <p className="text-[10px] text-red-200 mt-1">{new Date(r.created_at).toLocaleString()}</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Original AI Chat</p>
+                <div className="space-y-2 max-h-36 overflow-y-auto rounded-2xl bg-slate-50 p-3 mb-4">
+                  {selected.conversation.filter(m => m.role !== 'system').map((m, i) => (
+                    <div key={i} className={`text-xs p-2 rounded-xl ${m.role === 'user' ? 'bg-blue-50 text-blue-800' : 'bg-white text-slate-700 border'}`}>
+                      <span className="font-semibold capitalize">{m.role === 'user' ? 'Buyer' : 'AI'}: </span>{m.text ?? m.content}
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* Unified thread */}
+            {(selected.thread?.length ?? 0) > 0 && (
+              <>
+                <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Conversation Thread</p>
+                {selected.thread.map((m, i) => (
+                  <div key={i} className={`flex ${m.role === 'admin' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${
+                      m.role === 'admin' ? 'bg-red-600 text-white' : 'bg-blue-50 text-blue-900 border border-blue-100'
+                    }`}>
+                      <p className={`text-[10px] font-bold mb-1 ${m.role === 'admin' ? 'text-red-200' : 'text-blue-500'}`}>
+                        {m.role === 'admin' ? '🛡️ You (Admin)' : '👤 Buyer'}
+                      </p>
+                      <p>{m.text}</p>
+                      <p className={`text-[10px] mt-1 ${m.role === 'admin' ? 'text-red-200' : 'text-slate-400'}`}>
+                        {new Date(m.created_at).toLocaleString()}
+                      </p>
                     </div>
                   </div>
                 ))}
               </>
+            )}
+
+            {(selected.thread?.length ?? 0) === 0 && (selected.admin_replies?.length ?? 0) === 0 && (
+              <p className="text-xs text-slate-400 text-center py-4">No replies yet. Be the first to respond.</p>
             )}
           </div>
 
@@ -183,8 +194,13 @@ function TicketCard({ ticket, selected, onClick }: { ticket: Ticket; selected: b
       <p className="text-xs text-slate-500 mt-1">
         {ticket.profiles?.display_name ?? 'Guest'} · {new Date(ticket.created_at).toLocaleDateString()}
       </p>
-      {(ticket.admin_replies?.length ?? 0) > 0 && (
-        <p className="text-xs text-blue-600 mt-1">{ticket.admin_replies.length} reply sent</p>
+      {(ticket.thread?.length ?? 0) > 0 && (
+        <p className="text-xs text-blue-600 mt-1">
+          {ticket.thread.filter(m => m.role === 'buyer').length > 0 && (
+            <span className="text-amber-600">● Buyer replied · </span>
+          )}
+          {ticket.thread.length} message{ticket.thread.length !== 1 ? 's' : ''}
+        </p>
       )}
     </button>
   )
