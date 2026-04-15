@@ -20,33 +20,33 @@ export default async function ScheduleLayout({ children }: { children: React.Rea
   }
 
   return (
-    <main className="min-h-screen bg-slate-50">
+    <main className="min-h-screen bg-[#fdfaf4]">
       <div className="mx-auto grid max-w-7xl gap-8 px-6 py-10 lg:grid-cols-[260px_1fr]">
-        <aside className="h-fit rounded-3xl border bg-white p-6 shadow-sm">
+        <aside className="h-fit rounded-3xl border border-[#dae8df] bg-white p-6 shadow-sm">
           <div className="mb-4">
-            <h2 className="mb-1 text-xl font-bold text-slate-900">Listing Studio</h2>
-            <p className="text-xs text-slate-500">{user.email}</p>
+            <h2 className="mb-1 text-xl font-bold text-[#0d2818]" style={{ fontFamily: 'Fraunces, serif' }}>Listing Studio</h2>
+            <p className="text-xs text-[#7a9a86]">{user.email}</p>
           </div>
-          <p className="mb-6 text-sm text-slate-500">Create and manage your listings with AI assistance.</p>
-          <nav className="space-y-2">
-            <Link href="/schedule" className="block rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-100">
+          <p className="mb-6 text-sm text-[#7a9a86]">Create and manage your listings with AI assistance.</p>
+          <nav className="space-y-1">
+            <Link href="/schedule" className="block rounded-2xl px-4 py-3 text-sm font-medium text-[#4a6958] hover:bg-[#edfbf2] hover:text-[#0d2818]">
               My Listings
             </Link>
-            <Link href="/schedule/new" className="block rounded-2xl px-4 py-3 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100">
+            <Link href="/schedule/new" className="block rounded-2xl px-4 py-3 text-sm font-medium text-[#3ecf68] bg-[#edfbf2] hover:bg-[#3ecf68]/20">
               + Create New Listing
             </Link>
-            <Link href="/dashboard" className="block rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-100">
+            <Link href="/dashboard" className="block rounded-2xl px-4 py-3 text-sm font-medium text-[#4a6958] hover:bg-[#edfbf2] hover:text-[#0d2818]">
               Seller Dashboard
             </Link>
-            <Link href="/dashboard/orders" className="block rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-100">
+            <Link href="/dashboard/orders" className="block rounded-2xl px-4 py-3 text-sm font-medium text-[#4a6958] hover:bg-[#edfbf2] hover:text-[#0d2818]">
               Orders
             </Link>
-            <Link href="/dashboard/messages" className="block rounded-2xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-100">
+            <Link href="/dashboard/messages" className="block rounded-2xl px-4 py-3 text-sm font-medium text-[#4a6958] hover:bg-[#edfbf2] hover:text-[#0d2818]">
               Messages
             </Link>
           </nav>
           <form action={logout} className="mt-6">
-            <button className="w-full rounded-2xl border px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50">
+            <button className="w-full rounded-2xl border border-[#dae8df] px-4 py-3 text-sm font-medium text-[#4a6958] hover:bg-[#edfbf2]">
               Log Out
             </button>
           </form>
