@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
     const buyerFeeCents = Math.round(subtotalCents * 0.05)
     const totalCents = subtotalCents + buyerFeeCents
 
-    const origin = 'https://taskly-clean.vercel.app'
+    const origin = req.headers.get('origin') ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'https://taskly-clean.vercel.app'
 
     const stripe = getStripe()
     const session = await stripe.checkout.sessions.create({

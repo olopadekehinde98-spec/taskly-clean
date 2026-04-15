@@ -83,7 +83,7 @@ export default function ListingQualityChecker({ title, category, description, pr
         <button
           onClick={checkQuality}
           disabled={loading || !title || !description}
-          className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50 hover:bg-blue-700 transition-colors"
+          className="rounded-xl bg-[#edfbf2] px-4 py-2 text-sm font-medium text-white disabled:opacity-50 hover:bg-[#edfbf2] transition-colors"
         >
           {loading ? 'Analysing...' : 'Check Quality'}
         </button>
@@ -156,13 +156,13 @@ export default function ListingQualityChecker({ title, category, description, pr
           <div className="space-y-3">
             <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wide">💡 AI Suggestions</h4>
 
-            <div className="rounded-xl bg-blue-50 border border-blue-100 p-3">
+            <div className="rounded-xl bg-[#edfbf2] border border-[#dae8df] p-3">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs font-semibold text-blue-700">Suggested Title</span>
+                <span className="text-xs font-semibold text-[#3ecf68]">Suggested Title</span>
                 {onApplySuggestion && (
                   <button
                     onClick={() => onApplySuggestion('title', result.rewritten_title)}
-                    className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                    className="text-xs text-[#3ecf68] hover:text-[#3ecf68] font-medium"
                   >
                     Apply →
                   </button>
@@ -171,13 +171,13 @@ export default function ListingQualityChecker({ title, category, description, pr
               <p className="text-sm text-slate-800">{result.rewritten_title}</p>
             </div>
 
-            <div className="rounded-xl bg-blue-50 border border-blue-100 p-3">
+            <div className="rounded-xl bg-[#edfbf2] border border-[#dae8df] p-3">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs font-semibold text-blue-700">Suggested Opening</span>
+                <span className="text-xs font-semibold text-[#3ecf68]">Suggested Opening</span>
                 {onApplySuggestion && (
                   <button
                     onClick={() => onApplySuggestion('description', result.rewritten_description_intro)}
-                    className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                    className="text-xs text-[#3ecf68] hover:text-[#3ecf68] font-medium"
                   >
                     Apply →
                   </button>

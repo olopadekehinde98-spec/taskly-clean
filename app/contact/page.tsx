@@ -51,13 +51,13 @@ export default function ContactPage() {
           <h1 className="text-2xl font-bold text-slate-900 mb-2">Ticket Submitted!</h1>
           <p className="text-slate-600 mb-4">Your support ticket has been created. Our team will respond shortly.</p>
           {ticketNum && (
-            <div className="rounded-2xl bg-blue-50 border border-blue-100 px-4 py-3 mb-6">
+            <div className="rounded-2xl bg-[#edfbf2] border border-[#dae8df] px-4 py-3 mb-6">
               <p className="text-xs text-slate-500">Ticket Number</p>
-              <p className="font-mono font-bold text-blue-700 text-lg">{ticketNum}</p>
+              <p className="font-mono font-bold text-[#28a84e] text-lg">{ticketNum}</p>
             </div>
           )}
           <div className="flex flex-col gap-2">
-            <Link href="/buyer/support" className="rounded-2xl bg-blue-600 px-5 py-3 font-medium text-white hover:bg-blue-700 text-center">View My Tickets</Link>
+            <Link href="/buyer/support" className="rounded-2xl bg-[#3ecf68] px-5 py-3 font-medium text-white hover:bg-[#28a84e] text-center">View My Tickets</Link>
             <Link href="/" className="rounded-2xl border px-5 py-3 font-medium text-slate-700 hover:bg-slate-50 text-center">Back to Home</Link>
           </div>
         </div>
@@ -69,7 +69,7 @@ export default function ContactPage() {
     <main className="min-h-screen bg-slate-50 px-4 py-16">
       <div className="mx-auto max-w-2xl">
         <div className="mb-8 text-center">
-          <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-blue-600">Support</p>
+          <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-[#3ecf68]">Support</p>
           <h1 className="text-4xl font-bold text-slate-900">Contact Us</h1>
           <p className="mt-3 text-slate-500">Fill in the form below and our team will get back to you as soon as possible.</p>
         </div>
@@ -88,7 +88,7 @@ export default function ContactPage() {
                   value={name}
                   onChange={e => setName(e.target.value)}
                   placeholder="John Smith"
-                  className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                  className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-[#3ecf68] focus:ring-2 focus:ring-[#3ecf68]/20 transition-all"
                 />
               </div>
               <div>
@@ -98,7 +98,7 @@ export default function ContactPage() {
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                  className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-[#3ecf68] focus:ring-2 focus:ring-[#3ecf68]/20 transition-all"
                 />
               </div>
             </div>
@@ -111,7 +111,7 @@ export default function ContactPage() {
                 onChange={e => setSubject(e.target.value)}
                 required
                 placeholder="e.g. Issue with my order, Account problem..."
-                className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-[#3ecf68] focus:ring-2 focus:ring-[#3ecf68]/20 transition-all"
               />
             </div>
 
@@ -123,14 +123,14 @@ export default function ContactPage() {
                 required
                 rows={6}
                 placeholder="Describe your issue or question in detail..."
-                className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all resize-none"
+                className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-[#3ecf68] focus:ring-2 focus:ring-[#3ecf68]/20 transition-all resize-none"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 py-3 font-semibold text-white hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50"
+              className="w-full rounded-2xl bg-gradient-to-r [#3ecf68] py-3 font-semibold text-white hover:from-[#3ecf68] hover:to-[#163522] transition-all disabled:opacity-50"
             >
               {loading ? 'Submitting...' : 'Submit Support Ticket →'}
             </button>
@@ -150,7 +150,7 @@ export default function ContactPage() {
             <div>
               <div className="text-2xl mb-1">📋</div>
               <p className="text-xs font-semibold text-slate-700">Track Tickets</p>
-              <p className="text-xs text-slate-500"><Link href="/buyer/support" className="underline text-blue-600">View your tickets</Link></p>
+              <p className="text-xs text-slate-500"><Link href="/buyer/support" className="underline text-[#3ecf68]">View your tickets</Link></p>
             </div>
           </div>
         </div>

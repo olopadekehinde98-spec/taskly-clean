@@ -29,7 +29,7 @@ export default async function SellerServicesPage({
     <main className="space-y-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-blue-600">
+          <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-[#3ecf68]">
             Seller Dashboard
           </p>
           <h1 className="text-3xl font-bold text-slate-900">My Services</h1>
@@ -37,7 +37,7 @@ export default async function SellerServicesPage({
 
         <Link
           href="/dashboard/services/new"
-          className="rounded-2xl bg-blue-600 px-5 py-3 font-medium text-white"
+          className="rounded-2xl bg-[#3ecf68] px-5 py-3 font-medium text-white"
         >
           Create New Gig
         </Link>
@@ -55,7 +55,7 @@ export default async function SellerServicesPage({
           <p className="mb-6 text-slate-600">Create your first gig to start selling.</p>
           <Link
             href="/dashboard/services/new"
-            className="rounded-2xl bg-blue-600 px-5 py-3 font-medium text-white"
+            className="rounded-2xl bg-[#3ecf68] px-5 py-3 font-medium text-white"
           >
             Create Gig
           </Link>
@@ -65,7 +65,7 @@ export default async function SellerServicesPage({
           {services.map((service: any) => (
             <div key={service.id} className="rounded-3xl border bg-white p-6 shadow-sm">
               <div className="mb-3 flex items-center justify-between">
-                <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">
+                <span className="rounded-full bg-[#edfbf2] px-3 py-1 text-xs font-medium text-[#28a84e]">
                   {service.category}
                 </span>
                 <span className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-700">
@@ -82,7 +82,7 @@ export default async function SellerServicesPage({
               <div className="flex items-center justify-between">
                 <Link
                   href={`/dashboard/services/${service.slug}`}
-                  className="font-medium text-blue-600"
+                  className="font-medium text-[#3ecf68]"
                 >
                   Edit Gig
                 </Link>

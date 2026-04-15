@@ -135,10 +135,10 @@ export default function BuyerConversationPage({ params }: { params: Promise<{ id
           {messages.map((msg) => (
             <div key={msg.id} className={`flex ${msg.sender_id === userId ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[75%] rounded-2xl px-4 py-3 text-sm leading-6 ${
-                msg.sender_id === userId ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-800'
+                msg.sender_id === userId ? 'bg-[#3ecf68] text-white' : 'bg-slate-100 text-slate-800'
               }`}>
                 <p>{msg.body}</p>
-                <p className={`mt-1 text-xs ${msg.sender_id === userId ? 'text-blue-100' : 'text-slate-500'}`}>
+                <p className={`mt-1 text-xs ${msg.sender_id === userId ? 'text-[#edfbf2]' : 'text-slate-500'}`}>
                   {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </p>
               </div>
@@ -155,12 +155,12 @@ export default function BuyerConversationPage({ params }: { params: Promise<{ id
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() } }}
               placeholder="Write your message..."
-              className="flex-1 rounded-2xl border px-4 py-3 text-sm outline-none resize-none focus:border-blue-400"
+              className="flex-1 rounded-2xl border px-4 py-3 text-sm outline-none resize-none focus:border-[#dae8df]"
             />
             <button
               onClick={sendMessage}
               disabled={sending || !input.trim()}
-              className="rounded-2xl bg-blue-600 px-5 py-2 text-sm font-medium text-white disabled:opacity-50 hover:bg-blue-700 transition-colors"
+              className="rounded-2xl bg-[#3ecf68] px-5 py-2 text-sm font-medium text-white disabled:opacity-50 hover:bg-[#28a84e] transition-colors"
             >
               {sending ? '...' : 'Send'}
             </button>

@@ -12,7 +12,7 @@ export default async function NewScheduleListingPage() {
   return (
     <div className="space-y-8">
       <div>
-        <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-blue-600">Listing Studio</p>
+        <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-[#3ecf68]">Listing Studio</p>
         <h1 className="text-3xl font-bold text-slate-900">Create New Listing</h1>
         <p className="mt-1 text-slate-500 text-sm">Use the AI quality checker to score and improve your listing before publishing.</p>
       </div>

@@ -32,7 +32,7 @@ export default async function BuyerSavedPage() {
   return (
     <div className="space-y-8">
       <div>
-        <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-blue-600">Buyer Dashboard</p>
+        <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-[#3ecf68]">Buyer Dashboard</p>
         <h1 className="text-3xl font-bold text-slate-900">Saved Services</h1>
       </div>
 
@@ -49,7 +49,7 @@ export default async function BuyerSavedPage() {
         </div>
         <div className="rounded-3xl border bg-white p-6 shadow-sm">
           <p className="text-sm text-slate-500">Quick Action</p>
-          <Link href="/services" className="mt-2 inline-block rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white">
+          <Link href="/services" className="mt-2 inline-block rounded-xl bg-[#3ecf68] px-4 py-2 text-sm font-medium text-white">
             Browse More →
           </Link>
         </div>
@@ -60,7 +60,7 @@ export default async function BuyerSavedPage() {
           <div className="mb-4 text-5xl">❤️</div>
           <h2 className="mb-2 text-2xl font-bold text-slate-900">No saved services yet</h2>
           <p className="mb-6 text-slate-600">Browse services and click the Save button to add them here.</p>
-          <Link href="/services" className="rounded-2xl bg-blue-600 px-5 py-3 font-medium text-white">
+          <Link href="/services" className="rounded-2xl bg-[#3ecf68] px-5 py-3 font-medium text-white">
             Browse Services
           </Link>
         </div>
@@ -71,7 +71,7 @@ export default async function BuyerSavedPage() {
             return (
               <div key={save.id} className="rounded-2xl border bg-white p-5 shadow-sm">
                 <div className="mb-3 flex items-center justify-between">
-                  <span className="inline-block rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">
+                  <span className="inline-block rounded-full bg-[#edfbf2] px-3 py-1 text-xs font-medium text-[#28a84e]">
                     {listing.categories?.icon} {listing.categories?.name ?? '—'}
                   </span>
                   <form action={`/api/listings/unsave`} method="POST">
@@ -87,7 +87,7 @@ export default async function BuyerSavedPage() {
                   <p className="mb-3 text-xs text-amber-500">★ {Number(listing.average_rating).toFixed(1)} ({listing.total_reviews})</p>
                 )}
                 <p className="mb-4 text-sm font-semibold text-slate-900">Starting at {startingPrice(listing)}</p>
-                <Link href={`/services/${listing.slug}`} className="font-medium text-blue-600 text-sm hover:underline">
+                <Link href={`/services/${listing.slug}`} className="font-medium text-[#3ecf68] text-sm hover:underline">
                   View Service →
                 </Link>
               </div>

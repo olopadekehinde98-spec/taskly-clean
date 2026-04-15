@@ -59,14 +59,14 @@ export default function JobPostAssistant({ onApply }: Props) {
         value={notes}
         onChange={e => setNotes(e.target.value)}
         placeholder="e.g. I need someone to design a logo for my new bakery called Sunrise Bakes. It should feel warm and modern. I need it in 3 days and my budget is around $50-100."
-        className="w-full rounded-xl border px-4 py-3 text-sm text-slate-800 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 resize-none"
+        className="w-full rounded-xl border px-4 py-3 text-sm text-slate-800 outline-none focus:border-[#dae8df] focus:ring-2 focus:ring-blue-100 resize-none"
         rows={4}
       />
 
       <button
         onClick={generateBrief}
         disabled={loading || !notes.trim()}
-        className="w-full rounded-xl bg-blue-600 py-2.5 text-sm font-medium text-white disabled:opacity-50 hover:bg-blue-700 transition-colors"
+        className="w-full rounded-xl bg-[#edfbf2] py-2.5 text-sm font-medium text-white disabled:opacity-50 hover:bg-[#edfbf2] transition-colors"
       >
         {loading ? 'Writing your brief...' : '✨ Generate Job Brief'}
       </button>
@@ -123,7 +123,7 @@ export default function JobPostAssistant({ onApply }: Props) {
             <ul className="space-y-1">
               {result.requirements.map((r, i) => (
                 <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
-                  <span className="text-blue-500 mt-0.5">•</span>
+                  <span className="text-[#3ecf68] mt-0.5">•</span>
                   {r}
                 </li>
               ))}

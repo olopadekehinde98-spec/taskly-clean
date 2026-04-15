@@ -95,7 +95,7 @@ export default async function SellerDisputeNoticePage({ params }: Props) {
           ) : (
             <div className="rounded-3xl border bg-white p-8 shadow-sm">
               <p className="text-slate-500">No active dispute on this order.</p>
-              <Link href={`/dashboard/orders/${id}`} className="mt-4 inline-block text-sm text-blue-600 hover:underline">
+              <Link href={`/dashboard/orders/${id}`} className="mt-4 inline-block text-sm text-[#3ecf68] hover:underline">
                 ← Back to Order
               </Link>
             </div>

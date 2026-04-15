@@ -89,7 +89,7 @@ export default function QualityCheckClient({
           </p>
           <button
             onClick={runCheck}
-            className="rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 px-8 py-3 font-semibold text-white hover:from-purple-700 hover:to-indigo-700 transition-all"
+            className="rounded-2xl bg-gradient-to-r from-purple-600 to-[#163522] px-8 py-3 font-semibold text-white hover:from-purple-700 hover:to-[#163522] transition-all"
           >
             Run AI Quality Check →
           </button>
@@ -170,7 +170,7 @@ export default function QualityCheckClient({
           <div className="flex flex-wrap gap-4">
             <Link
               href={`/dashboard/services/${slug}`}
-              className="rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700 transition-colors"
+              className="rounded-2xl bg-[#3ecf68] px-6 py-3 font-semibold text-white hover:bg-[#28a84e] transition-colors"
             >
               Edit Listing →
             </Link>

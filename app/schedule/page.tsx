@@ -37,10 +37,10 @@ export default async function SchedulePage({
     <div className="space-y-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-blue-600">Listing Studio</p>
+          <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-[#3ecf68]">Listing Studio</p>
           <h1 className="text-3xl font-bold text-slate-900">My Listings</h1>
         </div>
-        <Link href="/schedule/new" className="rounded-2xl bg-blue-600 px-5 py-3 font-medium text-white hover:bg-blue-700 transition-colors text-center">
+        <Link href="/schedule/new" className="rounded-2xl bg-[#3ecf68] px-5 py-3 font-medium text-white hover:bg-[#28a84e] transition-colors text-center">
           + Create New Listing
         </Link>
       </div>
@@ -56,7 +56,7 @@ export default async function SchedulePage({
           { label: 'Live', value: live, color: 'text-emerald-600' },
           { label: 'In Review', value: inReview, color: 'text-amber-600' },
           { label: 'Drafts', value: drafts, color: 'text-slate-600' },
-          { label: 'Total Orders', value: totalOrders, color: 'text-blue-600' },
+          { label: 'Total Orders', value: totalOrders, color: 'text-[#3ecf68]' },
         ].map(s => (
           <div key={s.label} className="rounded-2xl border bg-white p-5 shadow-sm">
             <p className="text-xs text-slate-500 uppercase tracking-wide">{s.label}</p>
@@ -70,7 +70,7 @@ export default async function SchedulePage({
           <div className="text-5xl mb-4">🎯</div>
           <h2 className="text-2xl font-bold text-slate-900 mb-2">No listings yet</h2>
           <p className="text-slate-500 mb-6">Create your first listing and use the AI quality checker to make it stand out.</p>
-          <Link href="/schedule/new" className="rounded-2xl bg-blue-600 px-6 py-3 font-medium text-white hover:bg-blue-700 transition-colors">
+          <Link href="/schedule/new" className="rounded-2xl bg-[#3ecf68] px-6 py-3 font-medium text-white hover:bg-[#28a84e] transition-colors">
             Create Your First Listing
           </Link>
         </div>
@@ -96,7 +96,7 @@ export default async function SchedulePage({
                   {basicPkg && <span className="font-semibold text-slate-900">${Number(basicPkg.price_usd).toFixed(0)}</span>}
                 </div>
                 <div className="flex items-center justify-between border-t pt-4">
-                  <Link href={`/dashboard/services/${listing.slug}`} className="text-sm font-medium text-blue-600 hover:underline">
+                  <Link href={`/dashboard/services/${listing.slug}`} className="text-sm font-medium text-[#3ecf68] hover:underline">
                     Edit
                   </Link>
                   <Link href={`/schedule/quality-check?id=${listing.id}`} className="text-sm font-medium text-purple-600 hover:underline">

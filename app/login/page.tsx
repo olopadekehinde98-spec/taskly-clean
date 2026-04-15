@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { login } from '@/app/auth/actions'
 
-export const metadata = { title: 'Sign In — TasklyClean' }
+export const metadata = { title: 'Sign In — Taskly' }
 
 export default async function LoginPage({
   searchParams,
@@ -13,19 +13,23 @@ export default async function LoginPage({
 
   return (
     <main className="min-h-screen flex">
+
       {/* Left brand panel */}
-      <div className="hidden lg:flex lg:w-1/2 flex-col justify-between bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-900 p-12 text-white">
+      <div className="hidden lg:flex lg:w-1/2 flex-col justify-between bg-[#0d2818] p-12 text-white">
         <Link href="/" className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-lg font-black backdrop-blur-sm">T</div>
-          <span className="text-xl font-bold">TasklyClean</span>
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#3ecf68] text-lg font-black text-[#0d2818]">T</div>
+          <span className="text-xl font-bold" style={{ fontFamily: 'Fraunces, serif' }}>Taskly</span>
         </Link>
 
         <div>
-          <h2 className="text-4xl font-extrabold leading-tight mb-4">
-            Welcome back to<br />
-            <span className="text-cyan-300">your marketplace</span>
+          <p className="text-xs font-bold uppercase tracking-widest text-[#3ecf68] mb-4 flex items-center gap-2">
+            <span className="block w-5 h-0.5 bg-[#3ecf68]" />Welcome Back
+          </p>
+          <h2 className="text-4xl font-bold leading-tight mb-4" style={{ fontFamily: 'Fraunces, serif' }}>
+            Back to<br />
+            <em className="not-italic text-[#3ecf68]">your marketplace</em>
           </h2>
-          <p className="text-slate-300 text-lg leading-relaxed mb-8">
+          <p className="text-white/50 text-lg leading-relaxed mb-8">
             Access your orders, messages, and services — all in one place.
           </p>
 
@@ -35,7 +39,7 @@ export default async function LoginPage({
               { icon: '💬', text: 'Message sellers and get updates fast' },
               { icon: '⭐', text: 'Leave reviews and build your reputation' },
             ].map(item => (
-              <div key={item.text} className="flex items-center gap-3 text-slate-300">
+              <div key={item.text} className="flex items-center gap-3 text-white/55">
                 <span className="text-xl">{item.icon}</span>
                 <span className="text-sm">{item.text}</span>
               </div>
@@ -43,49 +47,52 @@ export default async function LoginPage({
           </div>
         </div>
 
-        <p className="text-xs text-slate-500">
-          © 2026 TasklyClean. Trusted marketplace for digital services.
+        <p className="text-xs text-white/25">
+          © 2026 Taskly. Trusted marketplace for digital services.
         </p>
       </div>
 
       {/* Right form panel */}
-      <div className="flex flex-1 flex-col items-center justify-center px-6 py-16 bg-slate-50">
+      <div className="flex flex-1 flex-col items-center justify-center px-6 py-16 bg-[#fdfaf4]">
         <div className="w-full max-w-md">
+
           {/* Mobile logo */}
           <Link href="/" className="flex items-center gap-2 mb-8 lg:hidden">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-sm font-black text-white">T</div>
-            <span className="font-bold text-slate-900">TasklyClean</span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#3ecf68] text-sm font-black text-[#0d2818]">T</div>
+            <span className="font-bold text-[#0d2818]" style={{ fontFamily: 'Fraunces, serif' }}>Taskly</span>
           </Link>
 
-          <div className="rounded-3xl border bg-white p-8 shadow-sm">
+          <div className="rounded-3xl border border-[#dae8df] bg-white p-8 shadow-sm">
             <div className="mb-8">
-              <p className="mb-1 text-xs font-bold uppercase tracking-widest text-blue-600">Welcome Back</p>
-              <h1 className="text-3xl font-extrabold text-slate-900">Sign in</h1>
-              <p className="mt-2 text-sm text-slate-500">Enter your credentials to continue.</p>
+              <p className="mb-1 text-xs font-bold uppercase tracking-widest text-[#3ecf68] flex items-center gap-2">
+                <span className="block w-4 h-0.5 bg-[#3ecf68]" />Welcome Back
+              </p>
+              <h1 className="text-3xl font-bold text-[#0d2818]" style={{ fontFamily: 'Fraunces, serif' }}>Sign in</h1>
+              <p className="mt-2 text-sm text-[#7a9a86]">Enter your credentials to continue.</p>
             </div>
 
             {message && (
-              <div className="mb-5 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+              <div className="mb-5 rounded-2xl border border-[#dae8df] bg-[#edfbf2] px-4 py-3 text-sm text-[#28a84e]">
                 {message}
               </div>
             )}
 
             <form className="space-y-5">
               <div>
-                <label className="mb-1.5 block text-sm font-semibold text-slate-700">Email Address</label>
+                <label className="mb-1.5 block text-sm font-semibold text-[#0d2818]">Email Address</label>
                 <input
                   name="email"
                   type="email"
                   required
                   placeholder="you@example.com"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 transition-all"
+                  className="w-full rounded-xl border border-[#dae8df] bg-[#fdfaf4] px-4 py-3 text-sm outline-none focus:border-[#3ecf68] focus:bg-white focus:ring-2 focus:ring-[#3ecf68]/20 transition-all"
                 />
               </div>
 
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-sm font-semibold text-slate-700">Password</label>
-                  <Link href="/forgot-password" className="text-xs font-medium text-blue-600 hover:underline">
+                  <label className="text-sm font-semibold text-[#0d2818]">Password</label>
+                  <Link href="/forgot-password" className="text-xs font-medium text-[#3ecf68] hover:underline">
                     Forgot password?
                   </Link>
                 </div>
@@ -94,21 +101,21 @@ export default async function LoginPage({
                   type="password"
                   required
                   placeholder="Enter your password"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 transition-all"
+                  className="w-full rounded-xl border border-[#dae8df] bg-[#fdfaf4] px-4 py-3 text-sm outline-none focus:border-[#3ecf68] focus:bg-white focus:ring-2 focus:ring-[#3ecf68]/20 transition-all"
                 />
               </div>
 
               <button
                 formAction={login}
-                className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-500/25 hover:from-blue-700 hover:to-indigo-700 transition-all"
+                className="w-full rounded-xl bg-[#0d2818] px-5 py-3.5 text-sm font-bold text-white shadow-lg hover:bg-[#163522] transition-all"
               >
                 Sign In →
               </button>
             </form>
 
-            <p className="mt-6 text-center text-sm text-slate-500">
+            <p className="mt-6 text-center text-sm text-[#7a9a86]">
               Don't have an account?{' '}
-              <Link href="/signup" className="font-semibold text-blue-600 hover:underline">
+              <Link href="/signup" className="font-semibold text-[#3ecf68] hover:underline">
                 Create one free
               </Link>
             </p>

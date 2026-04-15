@@ -4,18 +4,19 @@ import { useParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import Link from 'next/link'
 
-const ISSUE_TYPES = [
-  'Delivery does not match requirements',
-  'Seller not responding',
-  'Serious quality issue',
-  'Missing files / incomplete delivery',
-  'Other serious issue',
+// Values must match DB CHECK constraint: not_delivered | low_quality | wrong_delivery | seller_unresponsive | other
+const ISSUE_TYPES: { label: string; value: string }[] = [
+  { label: 'Delivery does not match requirements', value: 'wrong_delivery' },
+  { label: 'Seller not responding',                value: 'seller_unresponsive' },
+  { label: 'Serious quality issue',                value: 'low_quality' },
+  { label: 'Missing files / incomplete delivery',  value: 'not_delivered' },
+  { label: 'Other serious issue',                  value: 'other' },
 ]
 
 export default function BuyerDisputePage() {
   const { id } = useParams<{ id: string }>()
   const router = useRouter()
-  const [issueType, setIssueType] = useState(ISSUE_TYPES[0])
+  const [issueType, setIssueType] = useState(ISSUE_TYPES[0].value)
   const [description, setDescription] = useState('')
   const [requestedOutcome, setRequestedOutcome] = useState('full_refund')
   const [loading, setLoading] = useState(false)
@@ -63,7 +64,7 @@ export default function BuyerDisputePage() {
                 onChange={e => setIssueType(e.target.value)}
                 className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-red-400 focus:ring-2 focus:ring-red-400/20 transition-all"
               >
-                {ISSUE_TYPES.map(t => <option key={t}>{t}</option>)}
+                {ISSUE_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
               </select>
             </div>
 
@@ -90,7 +91,7 @@ export default function BuyerDisputePage() {
                 <option value="full_refund">Full refund</option>
                 <option value="partial_refund">Partial refund</option>
                 <option value="revision">Revision / redo the work</option>
-                <option value="cancellation">Order cancellation</option>
+                <option value="other">Order cancellation / other</option>
               </select>
             </div>
 

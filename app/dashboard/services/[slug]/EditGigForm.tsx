@@ -56,7 +56,7 @@ export default function EditGigForm({ listing, categories }: { listing: Listing;
   return (
     <main className="space-y-8">
       <div>
-        <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-blue-600">Seller Dashboard</p>
+        <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-[#3ecf68]">Seller Dashboard</p>
         <h1 className="text-3xl font-bold text-slate-900">Edit Gig</h1>
         <p className="mt-1 text-sm text-slate-500">Status: <span className={`font-semibold ${listing.listing_status === 'live' ? 'text-emerald-600' : 'text-amber-600'}`}>{listing.listing_status}</span></p>
       </div>
@@ -81,7 +81,7 @@ export default function EditGigForm({ listing, categories }: { listing: Listing;
                 type="text"
                 required
                 defaultValue={listing.title}
-                className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-[#3ecf68] focus:ring-2 focus:ring-[#3ecf68]/20 transition-all"
               />
             </div>
 
@@ -91,7 +91,7 @@ export default function EditGigForm({ listing, categories }: { listing: Listing;
                 <select
                   name="category_id"
                   defaultValue={listing.category_id ?? ''}
-                  className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-blue-500 bg-white"
+                  className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-[#3ecf68] bg-white"
                 >
                   <option value="">Select a category</option>
                   {categories.map(cat => (
@@ -108,7 +108,7 @@ export default function EditGigForm({ listing, categories }: { listing: Listing;
                   type="text"
                   defaultValue={(listing.tags ?? []).join(', ')}
                   placeholder="Kindle Formatting, KDP, Ebook Layout"
-                  className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-blue-500 transition-all"
+                  className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-[#3ecf68] transition-all"
                 />
                 <p className="mt-1 text-xs text-slate-400">Separate with commas</p>
               </div>
@@ -121,7 +121,7 @@ export default function EditGigForm({ listing, categories }: { listing: Listing;
                 rows={5}
                 required
                 defaultValue={listing.short_description}
-                className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-blue-500 transition-all"
+                className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-[#3ecf68] transition-all"
               />
             </div>
 
@@ -139,19 +139,19 @@ export default function EditGigForm({ listing, categories }: { listing: Listing;
                           type="text"
                           defaultValue={pkg.name}
                           placeholder={`${tier.charAt(0).toUpperCase() + tier.slice(1)} package title`}
-                          className="w-full rounded-2xl border bg-white px-4 py-3 text-sm outline-none focus:border-blue-500"
+                          className="w-full rounded-2xl border bg-white px-4 py-3 text-sm outline-none focus:border-[#3ecf68]"
                         />
                         <input
                           name={`${tier}_price`}
                           type="text"
                           defaultValue={pkg.price_usd ? `$${pkg.price_usd}` : ''}
                           placeholder={`Price e.g. $${[30, 50, 80][idx]}`}
-                          className="w-full rounded-2xl border bg-white px-4 py-3 text-sm outline-none focus:border-blue-500"
+                          className="w-full rounded-2xl border bg-white px-4 py-3 text-sm outline-none focus:border-[#3ecf68]"
                         />
                         <select
                           name={`${tier}_delivery`}
                           defaultValue={`${pkg.delivery_days} day${pkg.delivery_days !== 1 ? 's' : ''}`}
-                          className="w-full rounded-2xl border bg-white px-4 py-3 text-sm outline-none focus:border-blue-500"
+                          className="w-full rounded-2xl border bg-white px-4 py-3 text-sm outline-none focus:border-[#3ecf68]"
                         >
                           {['1 day', '2 days', '3 days', '5 days', '7 days', '10 days', '14 days'].map(d => (
                             <option key={d}>{d}</option>
@@ -162,7 +162,7 @@ export default function EditGigForm({ listing, categories }: { listing: Listing;
                           rows={3}
                           defaultValue={pkg.description}
                           placeholder={`What's included in ${tier}?`}
-                          className="w-full rounded-2xl border bg-white px-4 py-3 text-sm outline-none focus:border-blue-500"
+                          className="w-full rounded-2xl border bg-white px-4 py-3 text-sm outline-none focus:border-[#3ecf68]"
                         />
                       </div>
                     </div>
@@ -175,7 +175,7 @@ export default function EditGigForm({ listing, categories }: { listing: Listing;
               <button
                 type="submit"
                 disabled={loading}
-                className="rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 font-medium text-white hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50"
+                className="rounded-2xl bg-gradient-to-r [#3ecf68] px-6 py-3 font-medium text-white hover:from-[#3ecf68] hover:to-[#163522] transition-all disabled:opacity-50"
               >
                 {loading ? 'Saving...' : 'Save Changes'}
               </button>

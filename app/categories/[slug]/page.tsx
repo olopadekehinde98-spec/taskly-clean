@@ -33,11 +33,11 @@ export default async function CategoryDetailsPage({ params }: Props) {
     <main className="min-h-screen bg-slate-50">
       <section className="border-b bg-white">
         <div className="mx-auto max-w-7xl px-6 py-12">
-          <Link href="/categories" className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:underline">
+          <Link href="/categories" className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-[#3ecf68] hover:underline">
             ← All Categories
           </Link>
           <div className="flex items-center gap-4 mt-2">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-2xl">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#edfbf2] text-2xl">
               {(category as any).icon ?? '💼'}
             </div>
             <div>
@@ -53,7 +53,7 @@ export default async function CategoryDetailsPage({ params }: Props) {
       <section className="mx-auto max-w-7xl px-6 py-10">
         <div className="mb-6 flex items-center justify-between">
           <p className="text-sm text-slate-500">{listings?.length ?? 0} services in {(category as any).name}</p>
-          <Link href={`/services?category=${slug}`} className="text-sm font-medium text-blue-600 hover:underline">
+          <Link href={`/services?category=${slug}`} className="text-sm font-medium text-[#3ecf68] hover:underline">
             View with filters →
           </Link>
         </div>
@@ -63,7 +63,7 @@ export default async function CategoryDetailsPage({ params }: Props) {
             <p className="text-4xl mb-4">🔍</p>
             <h2 className="text-xl font-semibold text-slate-900 mb-2">No services yet in this category</h2>
             <p className="text-slate-500 text-sm mb-6">Be the first to offer a service here.</p>
-            <Link href="/start-selling" className="rounded-2xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700">
+            <Link href="/start-selling" className="rounded-2xl bg-[#3ecf68] px-6 py-3 text-sm font-semibold text-white hover:bg-[#28a84e]">
               Start Selling
             </Link>
           </div>
@@ -80,7 +80,7 @@ export default async function CategoryDetailsPage({ params }: Props) {
                   href={`/services/${listing.slug ?? listing.id}`}
                   className="group rounded-2xl bg-white border overflow-hidden hover:shadow-md transition-shadow"
                 >
-                  <div className="aspect-video bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden">
+                  <div className="aspect-video bg-gradient-to-br from-[#3ecf68] to-[#163522] overflow-hidden">
                     {listing.cover_image_url ? (
                       <img src={listing.cover_image_url} alt={listing.title} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
                     ) : (
@@ -89,7 +89,7 @@ export default async function CategoryDetailsPage({ params }: Props) {
                   </div>
                   <div className="p-4">
                     <div className="flex items-center gap-2 mb-2">
-                      <div className="h-7 w-7 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-xs font-bold text-white overflow-hidden">
+                      <div className="h-7 w-7 rounded-full bg-gradient-to-br from-[#3ecf68] to-[#163522] flex items-center justify-center text-xs font-bold text-white overflow-hidden">
                         {listing.profiles?.avatar_url ? (
                           <img src={listing.profiles.avatar_url} alt={sellerName} className="h-full w-full object-cover" />
                         ) : sellerName[0].toUpperCase()}

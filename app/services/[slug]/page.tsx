@@ -68,7 +68,7 @@ export default async function ServiceDetailsPage({ params }: Props) {
         {/* Left column */}
         <div className="space-y-6">
           {/* Cover image */}
-          <div className="h-64 w-full overflow-hidden rounded-3xl bg-gradient-to-br from-blue-100 to-indigo-200 sm:h-80">
+          <div className="h-64 w-full overflow-hidden rounded-3xl bg-gradient-to-br from-[#3ecf68] to-[#163522] sm:h-80">
             {(listing as any).cover_image_url ? (
               <img src={(listing as any).cover_image_url} alt={(listing as any).title} className="h-full w-full object-cover" />
             ) : (
@@ -81,16 +81,16 @@ export default async function ServiceDetailsPage({ params }: Props) {
           <div className="rounded-3xl border bg-white p-8 shadow-sm">
             {/* Category + breadcrumb */}
             <div className="mb-4 flex items-center gap-2 text-sm">
-              <Link href="/services" className="text-slate-500 hover:text-blue-600">Services</Link>
+              <Link href="/services" className="text-slate-500 hover:text-[#3ecf68]">Services</Link>
               <span className="text-slate-300">/</span>
-              <Link href={`/services?category=${categorySlug}`} className="text-slate-500 hover:text-blue-600">{categoryName}</Link>
+              <Link href={`/services?category=${categorySlug}`} className="text-slate-500 hover:text-[#3ecf68]">{categoryName}</Link>
             </div>
 
             <h1 className="mb-4 text-2xl font-bold text-slate-900 sm:text-3xl">{(listing as any).title}</h1>
 
             {/* Seller info */}
             <div className="mb-5 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-sm font-bold text-white overflow-hidden">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#3ecf68] to-[#163522] text-sm font-bold text-white overflow-hidden">
                 {seller?.avatar_url ? (
                   <img src={seller.avatar_url} alt={sellerName} className="h-full w-full object-cover" />
                 ) : (
@@ -98,7 +98,7 @@ export default async function ServiceDetailsPage({ params }: Props) {
                 )}
               </div>
               <div>
-                <Link href={sellerUsername ? `/seller/${sellerUsername}` : '#'} className="font-semibold text-slate-900 hover:text-blue-600">
+                <Link href={sellerUsername ? `/seller/${sellerUsername}` : '#'} className="font-semibold text-slate-900 hover:text-[#3ecf68]">
                   {sellerName}
                 </Link>
                 {seller?.trust_tier === 'top' && (
@@ -131,7 +131,7 @@ export default async function ServiceDetailsPage({ params }: Props) {
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                   {packages.map((pkg: any) => (
                     <div key={pkg.id} className="rounded-2xl border bg-slate-50 p-5">
-                      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-blue-600">{pkg.tier}</p>
+                      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[#3ecf68]">{pkg.tier}</p>
                       <h3 className="mb-2 font-semibold text-slate-900">{pkg.name || pkg.tier}</h3>
                       <p className="mb-3 text-2xl font-bold text-slate-900">${Number(pkg.price_usd).toFixed(2)}</p>
                       <p className="mb-2 text-xs text-slate-500">{pkg.delivery_days} day delivery</p>
@@ -163,7 +163,7 @@ export default async function ServiceDetailsPage({ params }: Props) {
           {basicPkg ? (
             <>
               <p className="mb-1 text-sm text-slate-500">Starting at</p>
-              <p className="mb-1 text-3xl font-bold text-blue-600">${Number(basicPkg.price_usd).toFixed(2)}</p>
+              <p className="mb-1 text-3xl font-bold text-[#3ecf68]">${Number(basicPkg.price_usd).toFixed(2)}</p>
               <p className="mb-5 text-sm text-slate-400">{basicPkg.delivery_days}-day delivery</p>
               <GigClickTracker
                 listingId={(listing as any).id}

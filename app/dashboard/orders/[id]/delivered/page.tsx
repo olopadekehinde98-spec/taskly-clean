@@ -25,7 +25,7 @@ export default async function SellerDeliveredPage({ params }: Props) {
           </div>
         </div>
         <div className="flex flex-wrap justify-center gap-4">
-          <Link href="/dashboard/orders" className="rounded-2xl bg-blue-600 px-6 py-3 font-medium text-white hover:bg-blue-700 transition-colors">
+          <Link href="/dashboard/orders" className="rounded-2xl bg-[#3ecf68] px-6 py-3 font-medium text-white hover:bg-[#28a84e] transition-colors">
             Back to Orders
           </Link>
           <Link href={`/dashboard/orders/${id}`} className="rounded-2xl border px-6 py-3 font-medium text-slate-700 hover:bg-slate-50 transition-colors">

@@ -36,7 +36,14 @@ export async function POST(req: NextRequest) {
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
     const listingTitle = (order.listings as any)?.title ?? 'your service'
-    const note = revision_title ? `${revision_title}: ${revision_details}` : revision_details
+    const reason = revision_title ? `${revision_title}: ${revision_details}` : revision_details
+
+    // Persist revision details so the seller can see exactly what needs changing
+    await supabase.from('revisions').insert({
+      order_id,
+      buyer_id: user.id,
+      reason,
+    })
 
     await supabase.from('notifications').insert({
       user_id: order.seller_id,

@@ -7,7 +7,7 @@ const STATUS_STYLES: Record<string, string> = {
   denied: 'bg-red-100 text-red-700',
   removed: 'bg-red-100 text-red-700',
   paused: 'bg-amber-100 text-amber-700',
-  in_review: 'bg-blue-100 text-blue-700',
+  in_review: 'bg-[#d4f5e4] text-[#28a84e]',
 }
 
 export default async function AdminServicesPage({
@@ -48,7 +48,7 @@ export default async function AdminServicesPage({
           name="q"
           defaultValue={q}
           placeholder="Search by title..."
-          className="rounded-xl border px-4 py-2 text-sm outline-none focus:border-blue-500 w-64"
+          className="rounded-xl border px-4 py-2 text-sm outline-none focus:border-[#3ecf68] w-64"
         />
         <select name="status" defaultValue={status ?? ''} className="rounded-xl border px-4 py-2 text-sm outline-none">
           <option value="">All statuses</option>

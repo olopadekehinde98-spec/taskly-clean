@@ -32,7 +32,7 @@ export default async function AdminMessagesPage() {
   return (
     <main className="space-y-8">
       <div>
-        <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-blue-600">Admin</p>
+        <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-[#3ecf68]">Admin</p>
         <h1 className="text-3xl font-bold text-slate-900">All Messages</h1>
         <p className="mt-1 text-sm text-slate-500">View all conversations between users.</p>
       </div>
@@ -73,7 +73,7 @@ export default async function AdminMessagesPage() {
                     )}
                   </td>
                   <td className="px-6 py-4">
-                    <a href={`/admin/messages/${c.id}`} className="rounded-xl bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700">
+                    <a href={`/admin/messages/${c.id}`} className="rounded-xl bg-[#3ecf68] px-3 py-1.5 text-xs font-medium text-white hover:bg-[#28a84e]">
                       View Chat
                     </a>
                   </td>

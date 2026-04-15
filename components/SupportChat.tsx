@@ -78,7 +78,7 @@ export default function SupportChat() {
       {/* Floating button */}
       <button
         onClick={() => setOpen(o => !o)}
-        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-2xl shadow-lg shadow-blue-500/40 hover:from-blue-700 hover:to-indigo-700 transition-all"
+        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#3ecf68] to-[#163522] text-2xl shadow-lg shadow-blue-500/40 hover:from-[#3ecf68] hover:to-[#163522] transition-all"
         aria-label="Support chat"
       >
         {open ? '✕' : '💬'}
@@ -88,11 +88,11 @@ export default function SupportChat() {
       {open && (
         <div className="fixed bottom-24 right-6 z-50 w-[360px] max-w-[calc(100vw-2rem)] rounded-3xl border bg-white shadow-2xl shadow-slate-200 overflow-hidden flex flex-col">
           {/* Header */}
-          <div className="flex items-center gap-3 px-5 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+          <div className="flex items-center gap-3 px-5 py-4 bg-gradient-to-r from-[#3ecf68] to-[#163522] text-white">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/20 text-lg">🤖</div>
             <div>
               <p className="font-bold text-sm">TasklyClean Support</p>
-              <p className="text-xs text-blue-100">
+              <p className="text-xs text-[#3ecf68]">
                 {escalated ? '🟡 Connected to human support' : '🟢 AI Assistant · Online'}
               </p>
             </div>
@@ -106,7 +106,7 @@ export default function SupportChat() {
                   key={q}
                   onClick={() => send(q)}
                   disabled={loading}
-                  className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600 hover:border-blue-300 hover:text-blue-700 transition-colors"
+                  className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600 hover:border-[#dae8df] hover:text-[#3ecf68] transition-colors"
                 >
                   {q}
                 </button>
@@ -119,11 +119,11 @@ export default function SupportChat() {
             {messages.map((m, i) => (
               <div key={i} className={`flex gap-2 ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 {m.role === 'ai' && (
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 text-sm mt-0.5">🤖</div>
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#3ecf68] to-[#163522] text-sm mt-0.5">🤖</div>
                 )}
                 <div className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm leading-relaxed ${
                   m.role === 'user'
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-tr-sm'
+                    ? 'bg-gradient-to-r from-[#3ecf68] to-[#163522] text-white rounded-tr-sm'
                     : 'bg-slate-100 text-slate-800 rounded-tl-sm'
                 }`}>
                   {m.text}
@@ -139,7 +139,7 @@ export default function SupportChat() {
 
             {loading && (
               <div className="flex gap-2 justify-start">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 text-sm">🤖</div>
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#3ecf68] to-[#163522] text-sm">🤖</div>
                 <div className="rounded-2xl rounded-tl-sm bg-slate-100 px-4 py-3 flex gap-1.5 items-center">
                   <span className="h-2 w-2 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: '0ms' }} />
                   <span className="h-2 w-2 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -158,12 +158,12 @@ export default function SupportChat() {
               onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
               placeholder="Type your question..."
               disabled={loading}
-              className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:bg-white transition-all disabled:opacity-50"
+              className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-[#dae8df] focus:bg-white transition-all disabled:opacity-50"
             />
             <button
               onClick={() => send()}
               disabled={loading || !input.trim()}
-              className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-3 py-2 text-sm font-bold text-white hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-40"
+              className="rounded-xl bg-gradient-to-r from-[#3ecf68] to-[#163522] px-3 py-2 text-sm font-bold text-white hover:from-[#3ecf68] hover:to-[#163522] transition-all disabled:opacity-40"
             >
               →
             </button>

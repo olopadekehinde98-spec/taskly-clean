@@ -95,7 +95,7 @@ export default function HelpPage() {
     <main className="mx-auto max-w-4xl px-6 py-16 space-y-12">
       {/* Hero */}
       <div className="text-center">
-        <p className="text-sm font-medium uppercase tracking-widest text-blue-600 mb-2">Help Center</p>
+        <p className="text-sm font-medium uppercase tracking-widest text-[#3ecf68] mb-2">Help Center</p>
         <h1 className="text-4xl font-bold text-slate-900">How can we help?</h1>
         <p className="mt-3 text-slate-500 text-lg">Find answers to common questions about TasklyClean.</p>
       </div>
@@ -136,7 +136,7 @@ export default function HelpPage() {
         <h2 className="text-2xl font-bold mb-2">Still need help?</h2>
         <p className="text-slate-400 mb-6">Our support team is available Monday–Friday, 9am–6pm UTC.</p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <a href="mailto:support@tasklyclean.com" className="rounded-xl bg-blue-600 px-6 py-3 font-medium hover:bg-blue-700 transition-colors">
+          <a href="mailto:support@tasklyclean.com" className="rounded-xl bg-[#3ecf68] px-6 py-3 font-medium hover:bg-[#28a84e] transition-colors">
             Email Support
           </a>
           <a href="mailto:trust@tasklyclean.com" className="rounded-xl border border-slate-600 px-6 py-3 font-medium text-slate-300 hover:bg-slate-800 transition-colors">

@@ -45,7 +45,7 @@ export default async function OrderPage({ params, searchParams }: Props) {
     <main className="min-h-screen bg-slate-50 px-4 py-10">
       <div className="mx-auto max-w-7xl">
         <div className="mb-8">
-          <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-blue-600">Checkout</p>
+          <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-[#3ecf68]">Checkout</p>
           <h1 className="text-3xl font-bold text-slate-900">Complete Your Order</h1>
         </div>
 

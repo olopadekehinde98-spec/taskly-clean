@@ -55,7 +55,7 @@ export default function ProfileImageUpload({ currentLetter, currentAvatarUrl }: 
 
       <div
         onClick={() => inputRef.current?.click()}
-        className="group relative flex h-36 w-36 cursor-pointer items-center justify-center rounded-full overflow-hidden bg-gradient-to-r from-blue-500 to-indigo-600 text-4xl font-bold text-white hover:opacity-90 transition-opacity"
+        className="group relative flex h-36 w-36 cursor-pointer items-center justify-center rounded-full overflow-hidden bg-gradient-to-r from-[#3ecf68] to-[#163522] text-4xl font-bold text-white hover:opacity-90 transition-opacity"
       >
         {avatarUrl ? (
           <img src={avatarUrl} alt="Profile" className="h-full w-full object-cover" />

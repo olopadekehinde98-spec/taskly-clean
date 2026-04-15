@@ -9,8 +9,8 @@ type Props = {
 function getBadgeClasses(level: string) {
   if (level === 'Elite Seller') return 'bg-amber-50 text-amber-700'
   if (level === 'Top Seller') return 'bg-purple-50 text-purple-700'
-  if (level === 'Skilled Seller') return 'bg-indigo-50 text-indigo-700'
-  if (level === 'Rising Seller') return 'bg-blue-50 text-blue-700'
+  if (level === 'Skilled Seller') return 'bg-[#0d2818] text-[#3ecf68]'
+  if (level === 'Rising Seller') return 'bg-[#edfbf2] text-[#28a84e]'
   return 'bg-slate-100 text-slate-700'
 }
 
@@ -61,7 +61,7 @@ export default async function SellerPage({ params }: Props) {
         <div className="grid gap-8 lg:grid-cols-[320px_1fr]">
           <aside className="h-fit rounded-3xl border bg-white p-6 shadow-sm">
             <div className="mb-5 flex flex-col items-center text-center">
-              <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-3xl font-bold text-white">
+              <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-r from-[#3ecf68] to-[#163522] text-3xl font-bold text-white">
                 {displayName.charAt(0).toUpperCase()}
               </div>
 
@@ -115,7 +115,7 @@ export default async function SellerPage({ params }: Props) {
 
               <div className="h-3 rounded-full bg-slate-200">
                 <div
-                  className="h-3 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600"
+                  className="h-3 rounded-full bg-gradient-to-r [#3ecf68]"
                   style={{ width: `${rankScore}%` }}
                 />
               </div>
@@ -125,7 +125,7 @@ export default async function SellerPage({ params }: Props) {
               </p>
             </div>
 
-            <button className="mt-6 w-full rounded-2xl bg-blue-600 px-5 py-3 font-medium text-white">
+            <button className="mt-6 w-full rounded-2xl bg-[#3ecf68] px-5 py-3 font-medium text-white">
               Contact Seller
             </button>
           </aside>
@@ -213,7 +213,7 @@ export default async function SellerPage({ params }: Props) {
                       href={`/services/${service.slug}`}
                       className="block rounded-2xl border bg-slate-50 p-5 transition hover:-translate-y-1 hover:shadow-md"
                     >
-                      <span className="mb-3 inline-block rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">
+                      <span className="mb-3 inline-block rounded-full bg-[#edfbf2] px-3 py-1 text-xs font-medium text-[#28a84e]">
                         {service.category}
                       </span>
 
@@ -222,7 +222,7 @@ export default async function SellerPage({ params }: Props) {
                       </h3>
 
                       <p className="text-sm text-slate-600">Status</p>
-                      <p className="mt-1 text-lg font-bold text-blue-600">{service.listing_status}</p>
+                      <p className="mt-1 text-lg font-bold text-[#3ecf68]">{service.listing_status}</p>
                     </Link>
                   ))}
                 </div>

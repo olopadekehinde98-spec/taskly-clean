@@ -4,8 +4,8 @@ import Link from 'next/link'
 
 const STATUS_STYLES: Record<string, string> = {
   pending_requirements: 'bg-amber-50 text-amber-700',
-  active:               'bg-blue-50 text-blue-700',
-  delivered:            'bg-indigo-50 text-indigo-700',
+  active:               'bg-[#edfbf2] text-[#28a84e]',
+  delivered:            'bg-[#0d2818] text-[#3ecf68]',
   revision_requested:   'bg-orange-50 text-orange-700',
   completed:            'bg-emerald-50 text-emerald-700',
   cancelled:            'bg-slate-100 text-slate-600',
@@ -86,7 +86,7 @@ export default async function SellerOrdersPage() {
                       {new Date(order.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-4 py-4">
-                      <Link href={`/dashboard/orders/${order.id}`} className="font-medium text-blue-600 hover:underline text-sm">
+                      <Link href={`/dashboard/orders/${order.id}`} className="font-medium text-[#3ecf68] hover:underline text-sm">
                         View
                       </Link>
                     </td>

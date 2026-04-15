@@ -72,10 +72,10 @@ export default async function BuyerMessagesPage() {
               <Link
                 key={conv.id}
                 href={`/buyer/messages/${conv.id}`}
-                className={`block rounded-2xl border p-5 transition hover:shadow-sm ${unreadCount > 0 ? 'border-blue-200 bg-blue-50/60' : 'bg-slate-50'}`}
+                className={`block rounded-2xl border p-5 transition hover:shadow-sm ${unreadCount > 0 ? 'border-[#dae8df] bg-[#edfbf2]/60' : 'bg-slate-50'}`}
               >
                 <div className="flex items-start gap-3">
-                  <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-400 to-indigo-400 flex items-center justify-center text-sm font-bold text-white shrink-0">
+                  <div className="h-10 w-10 rounded-full bg-gradient-to-r [#3ecf68] flex items-center justify-center text-sm font-bold text-white shrink-0">
                     {(other?.display_name ?? 'U')[0].toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -92,7 +92,7 @@ export default async function BuyerMessagesPage() {
                     )}
                   </div>
                   {unreadCount > 0 && (
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white shrink-0">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#3ecf68] text-xs font-bold text-white shrink-0">
                       {unreadCount}
                     </span>
                   )}

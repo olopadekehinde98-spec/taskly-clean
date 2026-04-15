@@ -38,7 +38,8 @@
       "Bash(BUILD_TARGET=mobile npx next build --webpack)",
       "Bash(echo \"BUILD_EXIT:$?\")",
       "Bash(npx cap:*)",
-      "Bash(echo \"SYNC_EXIT:$?\")"
+      "Bash(echo \"SYNC_EXIT:$?\")",
+      "Bash(xargs grep:*)"
     ]
   }
 }

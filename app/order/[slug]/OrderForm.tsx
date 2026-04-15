@@ -60,8 +60,8 @@ export default function OrderForm({
 
   const tierColors: Record<string, string> = {
     basic: 'border-slate-200',
-    standard: 'border-blue-400 ring-2 ring-blue-100',
-    premium: 'border-indigo-400 ring-2 ring-indigo-100',
+    standard: 'border-[#dae8df] ring-2 ring-blue-100',
+    premium: 'border-[#dae8df] ring-2 ring-indigo-100',
   }
 
   return (
@@ -73,7 +73,7 @@ export default function OrderForm({
           {listing.cover_image_url ? (
             <img src={listing.cover_image_url} alt={listing.title} className="h-16 w-16 rounded-2xl object-cover shrink-0" />
           ) : (
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100 text-2xl shrink-0">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#d4f5e4] text-2xl shrink-0">
               {(listing.categories as any)?.icon ?? '💼'}
             </div>
           )}
@@ -96,11 +96,11 @@ export default function OrderForm({
                   key={p.tier}
                   type="button"
                   onClick={() => setTier(p.tier)}
-                  className={`rounded-2xl border p-4 text-left transition-all ${tier === p.tier ? tierColors[p.tier] + ' bg-blue-50' : 'border-slate-200 hover:border-slate-300'}`}
+                  className={`rounded-2xl border p-4 text-left transition-all ${tier === p.tier ? tierColors[p.tier] + ' bg-[#edfbf2]' : 'border-slate-200 hover:border-slate-300'}`}
                 >
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{p.tier}</p>
                   <p className="mt-1 font-semibold text-slate-900">{p.name}</p>
-                  <p className="mt-1 text-xl font-bold text-blue-600">${Number(p.price_usd).toFixed(2)}</p>
+                  <p className="mt-1 text-xl font-bold text-[#3ecf68]">${Number(p.price_usd).toFixed(2)}</p>
                   <p className="mt-1 text-xs text-slate-500">{p.delivery_days}-day delivery</p>
                   {p.revisions != null && (
                     <p className="text-xs text-slate-500">{p.revisions === -1 ? 'Unlimited' : p.revisions} revision{p.revisions !== 1 ? 's' : ''}</p>
@@ -115,7 +115,7 @@ export default function OrderForm({
         <div className="mb-6 rounded-2xl bg-slate-50 p-5">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-blue-600">{pkg.tier}</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-[#3ecf68]">{pkg.tier}</p>
               <p className="mt-1 font-semibold text-slate-900">{pkg.name}</p>
               {pkg.description && <p className="mt-1 text-sm text-slate-600">{pkg.description}</p>}
             </div>
@@ -142,7 +142,7 @@ export default function OrderForm({
               onChange={e => setRequirements(e.target.value)}
               required
               placeholder="Describe exactly what you need. Include any specific details, examples, or files the seller should know about."
-              className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all resize-none"
+              className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-[#3ecf68] focus:ring-2 focus:ring-[#3ecf68]/20 transition-all resize-none"
             />
             <p className="mt-1 text-xs text-slate-400">{requirements.length} characters · Be specific to get the best result</p>
           </div>
@@ -151,7 +151,7 @@ export default function OrderForm({
             <button
               type="submit"
               disabled={loading}
-              className="rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-3 font-semibold text-white hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50"
+              className="rounded-2xl bg-gradient-to-r [#3ecf68] px-8 py-3 font-semibold text-white hover:from-[#3ecf68] hover:to-[#163522] transition-all disabled:opacity-50"
             >
               {loading ? 'Redirecting to payment...' : `Pay Securely — $${total.toFixed(2)}`}
             </button>
@@ -202,7 +202,7 @@ export default function OrderForm({
           <div className="flex justify-between text-sm">
             <div className="flex items-center gap-1">
               <span className="text-slate-600">Buyer fee</span>
-              <span className="rounded-full bg-blue-100 px-1.5 py-0.5 text-[10px] font-bold text-blue-700">5%</span>
+              <span className="rounded-full bg-[#d4f5e4] px-1.5 py-0.5 text-[10px] font-bold text-[#28a84e]">5%</span>
             </div>
             <span className="font-medium">${buyerFee.toFixed(2)}</span>
           </div>

@@ -27,7 +27,7 @@ export default async function ReviewSubmittedPage({ params }: Props) {
         <div className="flex flex-wrap justify-center gap-4">
           <a
             href="/buyer/orders"
-            className="rounded-2xl bg-blue-600 px-6 py-3 font-medium text-white"
+            className="rounded-2xl bg-[#3ecf68] px-6 py-3 font-medium text-white"
           >
             Back to Buyer Orders
           </a>

@@ -47,8 +47,8 @@ export default async function AdminConversationPage({ params }: Props) {
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <div className="rounded-2xl border bg-blue-50 p-4">
-          <p className="text-xs font-medium uppercase text-blue-600">Buyer</p>
+        <div className="rounded-2xl border bg-[#edfbf2] p-4">
+          <p className="text-xs font-medium uppercase text-[#3ecf68]">Buyer</p>
           <p className="mt-1 font-semibold text-slate-900">{(conversation as any).buyer?.display_name || '—'}</p>
           <p className="text-xs text-slate-500">{(conversation as any).buyer?.email}</p>
         </div>
@@ -68,9 +68,9 @@ export default async function AdminConversationPage({ params }: Props) {
             return (
               <div key={m.id} className={`flex ${isBuyer ? 'justify-start' : 'justify-end'}`}>
                 <div className={`max-w-[70%] rounded-2xl px-4 py-3 text-sm ${
-                  isBuyer ? 'bg-blue-50 text-slate-800' : 'bg-emerald-50 text-slate-800'
+                  isBuyer ? 'bg-[#edfbf2] text-slate-800' : 'bg-emerald-50 text-slate-800'
                 }`}>
-                  <p className={`mb-1 text-xs font-medium ${isBuyer ? 'text-blue-600' : 'text-emerald-600'}`}>
+                  <p className={`mb-1 text-xs font-medium ${isBuyer ? 'text-[#3ecf68]' : 'text-emerald-600'}`}>
                     {isBuyer ? (conversation as any).buyer?.display_name : (conversation as any).seller?.display_name}
                   </p>
                   <p className="leading-5">{m.content}</p>

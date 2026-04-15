@@ -17,7 +17,7 @@ export default async function SellerIndexPage() {
   return (
     <main className="min-h-screen bg-slate-50 px-6 py-16">
       <div className="mx-auto max-w-5xl">
-        <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-blue-600">Community</p>
+        <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-[#3ecf68]">Community</p>
         <h1 className="mb-4 text-4xl font-bold text-slate-900">Browse Sellers</h1>
         <p className="mb-10 text-slate-500">Discover top-rated freelancers ready to help with your next project.</p>
 
@@ -26,7 +26,7 @@ export default async function SellerIndexPage() {
             <div className="text-5xl mb-4">👥</div>
             <h2 className="text-2xl font-bold text-slate-900 mb-2">No sellers yet</h2>
             <p className="text-slate-500">Be the first to start selling on Taskly.</p>
-            <Link href="/start-selling" className="mt-6 inline-block rounded-2xl bg-blue-600 px-6 py-3 font-medium text-white hover:bg-blue-700 transition-colors">
+            <Link href="/start-selling" className="mt-6 inline-block rounded-2xl bg-[#3ecf68] px-6 py-3 font-medium text-white hover:bg-[#28a84e] transition-colors">
               Start Selling
             </Link>
           </div>
@@ -42,7 +42,7 @@ export default async function SellerIndexPage() {
                   {seller.avatar_url ? (
                     <img src={seller.avatar_url} alt={seller.display_name} className="h-12 w-12 rounded-full object-cover" />
                   ) : (
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-xl font-bold text-blue-600">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#d4f5e4] text-xl font-bold text-[#3ecf68]">
                       {(seller.display_name ?? 'S')[0].toUpperCase()}
                     </div>
                   )}

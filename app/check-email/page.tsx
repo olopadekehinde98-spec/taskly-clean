@@ -11,11 +11,11 @@ export default async function CheckEmailPage({
   return (
     <main className="min-h-screen bg-slate-50 px-6 py-20">
       <div className="mx-auto max-w-2xl rounded-3xl border bg-white p-10 text-center shadow-sm">
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-50 text-2xl text-blue-600">
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#edfbf2] text-2xl text-[#3ecf68]">
           ✉
         </div>
 
-        <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-blue-600">
+        <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-[#3ecf68]">
           Confirm Your Account
         </p>
 
@@ -44,7 +44,7 @@ export default async function CheckEmailPage({
         <div className="flex flex-wrap justify-center gap-4">
           <Link
             href="/login"
-            className="rounded-2xl bg-blue-600 px-6 py-3 font-medium text-white"
+            className="rounded-2xl bg-[#3ecf68] px-6 py-3 font-medium text-white"
           >
             Go to Login
           </Link>

@@ -33,12 +33,12 @@ export default function ServiceCard({
   return (
     <div className="overflow-hidden rounded-2xl border bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md">
       <Link href={`/services/${slug}`} className="block">
-        <div className="h-44 bg-gradient-to-r from-blue-500 to-indigo-600" />
+        <div className="h-44 bg-gradient-to-r from-[#3ecf68] to-[#163522]" />
       </Link>
 
       <div className="p-5">
         <div className="mb-3 flex items-center justify-between gap-3">
-          <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">
+          <span className="rounded-full bg-[#edfbf2] px-3 py-1 text-xs font-medium text-[#3ecf68]">
             {category}
           </span>
 
@@ -80,7 +80,7 @@ export default function ServiceCard({
           <span>{delivery}</span>
         </div>
 
-        <div className="text-right text-base font-bold text-blue-600">
+        <div className="text-right text-base font-bold text-[#3ecf68]">
           Starting at {price}
         </div>
       </div>

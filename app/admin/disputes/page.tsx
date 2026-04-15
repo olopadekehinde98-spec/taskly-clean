@@ -134,13 +134,13 @@ export default async function AdminDisputesPage({
                         name="note"
                         placeholder="Admin note (optional)..."
                         rows={2}
-                        className="w-full rounded-xl border px-3 py-2 text-xs outline-none focus:border-blue-500 resize-none"
+                        className="w-full rounded-xl border px-3 py-2 text-xs outline-none focus:border-[#3ecf68] resize-none"
                       />
                       <div className="flex gap-2">
                         <button
                           name="decision"
                           value="refund_buyer"
-                          className="flex-1 rounded-xl bg-blue-600 px-3 py-2 text-xs font-medium text-white hover:bg-blue-700"
+                          className="flex-1 rounded-xl bg-[#3ecf68] px-3 py-2 text-xs font-medium text-white hover:bg-[#28a84e]"
                         >
                           Refund Buyer
                         </button>

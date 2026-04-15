@@ -20,8 +20,8 @@ const severityStyles = {
 }
 
 const badgeStyles = {
-  'New User': 'bg-blue-100 text-blue-700',
-  'New Order': 'bg-indigo-100 text-indigo-700',
+  'New User': 'bg-[#edfbf2] text-[#3ecf68]',
+  'New Order': 'bg-[#0d2818] text-[#3ecf68]',
   'New Gig': 'bg-purple-100 text-purple-700',
   'Violation': 'bg-red-100 text-red-700',
   'Dispute': 'bg-orange-100 text-orange-700',
@@ -67,8 +67,8 @@ export default function AdminNotificationsClient({ events }: { events: Event[] }
       <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-6">
         {[
           { label: 'Total Events', value: counts.total, color: 'text-slate-900' },
-          { label: 'New Users', value: counts.newUsers, color: 'text-blue-600' },
-          { label: 'New Orders', value: counts.newOrders, color: 'text-indigo-600' },
+          { label: 'New Users', value: counts.newUsers, color: 'text-[#3ecf68]' },
+          { label: 'New Orders', value: counts.newOrders, color: 'text-[#3ecf68]' },
           { label: 'Violations', value: counts.violations, color: 'text-red-600' },
           { label: 'Disputes', value: counts.disputes, color: 'text-orange-600' },
           { label: 'Support Tickets', value: counts.tickets, color: 'text-amber-600' },
@@ -90,7 +90,7 @@ export default function AdminNotificationsClient({ events }: { events: Event[] }
           <button
             onClick={getAISummary}
             disabled={loadingAI}
-            className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-xs font-bold text-white hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-50"
+            className="rounded-xl bg-gradient-to-r from-[#3ecf68] to-[#163522] px-4 py-2 text-xs font-bold text-white hover:from-[#3ecf68] hover:to-[#163522] transition-all disabled:opacity-50"
           >
             {loadingAI ? 'Generating...' : aiSummary ? 'Refresh Summary' : 'Generate AI Summary'}
           </button>

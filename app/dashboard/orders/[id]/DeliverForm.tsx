@@ -79,7 +79,7 @@ export default function DeliverForm({ orderId }: { orderId: string }) {
           value={note}
           onChange={e => setNote(e.target.value)}
           placeholder="Describe what you've delivered and any instructions for the buyer..."
-          className="w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all resize-none"
+          className="w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[#3ecf68] focus:ring-2 focus:ring-[#3ecf68]/20 transition-all resize-none"
         />
       </div>
 
@@ -87,7 +87,7 @@ export default function DeliverForm({ orderId }: { orderId: string }) {
       <div>
         <label className="mb-2 block text-sm font-medium text-slate-700">Attachments <span className="text-slate-400 font-normal">(optional · max 5 files · 10MB each)</span></label>
         <div
-          className="cursor-pointer rounded-2xl border-2 border-dashed border-slate-200 p-6 text-center hover:border-blue-400 transition-colors"
+          className="cursor-pointer rounded-2xl border-2 border-dashed border-slate-200 p-6 text-center hover:border-[#3ecf68] transition-colors"
           onClick={() => fileRef.current?.click()}
         >
           <p className="text-sm text-slate-500">Click to attach files</p>
@@ -118,7 +118,7 @@ export default function DeliverForm({ orderId }: { orderId: string }) {
       <button
         type="submit"
         disabled={loading}
-        className="rounded-2xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition-colors disabled:opacity-50"
+        className="rounded-2xl bg-[#3ecf68] px-6 py-3 text-sm font-semibold text-white hover:bg-[#28a84e] transition-colors disabled:opacity-50"
       >
         {loading ? (files.length > 0 ? 'Uploading & submitting…' : 'Submitting…') : 'Submit Delivery →'}
       </button>

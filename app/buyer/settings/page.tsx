@@ -30,7 +30,7 @@ export default async function BuyerSettingsPage({
   return (
     <main className="space-y-8">
       <div>
-        <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-blue-600">Buyer Dashboard</p>
+        <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-[#3ecf68]">Buyer Dashboard</p>
         <h1 className="text-3xl font-bold text-slate-900">Account Settings</h1>
       </div>
 
@@ -55,7 +55,7 @@ export default async function BuyerSettingsPage({
                       name="display_name"
                       type="text"
                       defaultValue={displayName}
-                      className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                      className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-[#3ecf68] focus:ring-2 focus:ring-[#3ecf68]/20 transition-all"
                     />
                   </div>
                   <div>
@@ -64,7 +64,7 @@ export default async function BuyerSettingsPage({
                       name="username"
                       type="text"
                       defaultValue={username}
-                      className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                      className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-[#3ecf68] focus:ring-2 focus:ring-[#3ecf68]/20 transition-all"
                     />
                   </div>
                   <div>
@@ -84,7 +84,7 @@ export default async function BuyerSettingsPage({
                       type="text"
                       defaultValue={phone}
                       placeholder="+1 555 000 0000"
-                      className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                      className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-[#3ecf68] focus:ring-2 focus:ring-[#3ecf68]/20 transition-all"
                     />
                   </div>
                 </div>
@@ -96,10 +96,10 @@ export default async function BuyerSettingsPage({
                   rows={4}
                   defaultValue={bio}
                   placeholder="Tell sellers a bit about yourself..."
-                  className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                  className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-[#3ecf68] focus:ring-2 focus:ring-[#3ecf68]/20 transition-all"
                 />
               </div>
-              <button type="submit" className="rounded-2xl bg-blue-600 px-6 py-3 font-medium text-white hover:bg-blue-700 transition-colors">
+              <button type="submit" className="rounded-2xl bg-[#3ecf68] px-6 py-3 font-medium text-white hover:bg-[#28a84e] transition-colors">
                 Save Profile
               </button>
             </form>

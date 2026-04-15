@@ -78,12 +78,12 @@ export default function BuyerSupportClient({ tickets }: { tickets: Ticket[] }) {
               className="w-full flex items-center justify-between gap-4 p-6 text-left hover:bg-slate-50 transition-colors"
             >
               <div className="flex items-center gap-3 min-w-0">
-                <span className="font-mono text-xs font-bold text-blue-600 bg-blue-50 rounded-full px-2.5 py-1 shrink-0">
+                <span className="font-mono text-xs font-bold text-[#3ecf68] bg-[#edfbf2] rounded-full px-2.5 py-1 shrink-0">
                   {ticket.ticket_number ?? 'TKT'}
                 </span>
                 <span className={`rounded-full px-2.5 py-1 text-xs font-bold shrink-0 ${
                   isResolved ? 'bg-emerald-100 text-emerald-700' :
-                  hasAdminReplied ? 'bg-indigo-100 text-indigo-700' :
+                  hasAdminReplied ? 'bg-[#0d2818] text-[#3ecf68]' :
                   'bg-amber-100 text-amber-700'
                 }`}>
                   {isResolved ? 'Resolved' : hasAdminReplied ? 'Admin Replied' : 'Awaiting Reply'}
@@ -104,7 +104,7 @@ export default function BuyerSupportClient({ tickets }: { tickets: Ticket[] }) {
                     <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Original Conversation</p>
                     <div className="space-y-2 max-h-40 overflow-y-auto rounded-2xl bg-slate-50 p-3">
                       {ticket.conversation.filter((m: any) => m.role !== 'system').map((msg: any, i: number) => (
-                        <div key={i} className={`text-xs p-2 rounded-xl ${msg.role === 'user' ? 'bg-blue-50 text-blue-800' : 'bg-white text-slate-700 border'}`}>
+                        <div key={i} className={`text-xs p-2 rounded-xl ${msg.role === 'user' ? 'bg-[#edfbf2] text-[#0d2818]' : 'bg-white text-slate-700 border'}`}>
                           <span className="font-semibold capitalize">{msg.role === 'user' ? 'You' : 'AI'}: </span>{msg.content ?? msg.text}
                         </div>
                       ))}
@@ -121,14 +121,14 @@ export default function BuyerSupportClient({ tickets }: { tickets: Ticket[] }) {
                         <div key={i} className={`flex ${msg.role === 'buyer' ? 'justify-end' : 'justify-start'}`}>
                           <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm ${
                             msg.role === 'buyer'
-                              ? 'bg-blue-600 text-white'
+                              ? 'bg-[#3ecf68] text-white'
                               : 'bg-emerald-50 border border-emerald-100 text-slate-800'
                           }`}>
-                            <p className={`text-[10px] font-semibold mb-1 ${msg.role === 'buyer' ? 'text-blue-200' : 'text-emerald-600'}`}>
+                            <p className={`text-[10px] font-semibold mb-1 ${msg.role === 'buyer' ? 'text-[#3ecf68]' : 'text-emerald-600'}`}>
                               {msg.role === 'buyer' ? 'You' : '🛡️ Support Team'}
                             </p>
                             <p className="leading-5">{msg.text}</p>
-                            <p className={`text-[10px] mt-1 ${msg.role === 'buyer' ? 'text-blue-200' : 'text-slate-400'}`}>
+                            <p className={`text-[10px] mt-1 ${msg.role === 'buyer' ? 'text-[#3ecf68]' : 'text-slate-400'}`}>
                               {new Date(msg.created_at).toLocaleString()}
                             </p>
                           </div>
@@ -154,14 +154,14 @@ export default function BuyerSupportClient({ tickets }: { tickets: Ticket[] }) {
                         value={replyText[ticket.id] ?? ''}
                         onChange={e => setReplyText(prev => ({ ...prev, [ticket.id]: e.target.value }))}
                         placeholder="Type your follow-up message..."
-                        className="flex-1 rounded-2xl border px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 resize-none transition-all"
+                        className="flex-1 rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[#3ecf68] focus:ring-2 focus:ring-[#3ecf68]/20 resize-none transition-all"
                       />
                     </div>
                     <div className="mt-2 flex justify-end">
                       <button
                         onClick={() => sendReply(ticket.id)}
                         disabled={sending === ticket.id || !replyText[ticket.id]?.trim()}
-                        className="rounded-2xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                        className="rounded-2xl bg-[#3ecf68] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#28a84e] disabled:opacity-50 transition-colors"
                       >
                         {sending === ticket.id ? 'Sending…' : 'Send Reply →'}
                       </button>

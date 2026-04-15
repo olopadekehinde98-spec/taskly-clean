@@ -69,8 +69,8 @@ export default function AdminAIChat() {
   return (
     <section className="rounded-3xl border bg-white shadow-sm overflow-hidden">
       {/* Header */}
-      <div className="flex items-center gap-3 px-6 py-4 border-b bg-gradient-to-r from-indigo-50 to-blue-50">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white text-lg">🤖</div>
+      <div className="flex items-center gap-3 px-6 py-4 border-b bg-gradient-to-r from-[#0d2818] to-[#28a84e]">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#3ecf68] to-[#163522] text-white text-lg">🤖</div>
         <div>
           <p className="font-bold text-slate-900 text-sm">Admin AI Assistant</p>
           <p className="text-xs text-slate-500">Powered by Claude · Live platform data</p>
@@ -88,7 +88,7 @@ export default function AdminAIChat() {
             key={q}
             onClick={() => send(q)}
             disabled={loading}
-            className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600 hover:border-blue-300 hover:text-blue-700 transition-colors disabled:opacity-50"
+            className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600 hover:border-[#dae8df] hover:text-[#3ecf68] transition-colors disabled:opacity-50"
           >
             {q}
           </button>
@@ -100,11 +100,11 @@ export default function AdminAIChat() {
         {messages.map((m, i) => (
           <div key={i} className={`flex gap-3 ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             {m.role === 'ai' && (
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 text-sm mt-0.5">🤖</div>
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#3ecf68] to-[#163522] text-sm mt-0.5">🤖</div>
             )}
             <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap ${
               m.role === 'user'
-                ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-tr-sm'
+                ? 'bg-gradient-to-r from-[#3ecf68] to-[#163522] text-white rounded-tr-sm'
                 : 'bg-slate-100 text-slate-800 rounded-tl-sm'
             }`}>
               {m.text}
@@ -116,7 +116,7 @@ export default function AdminAIChat() {
         ))}
         {loading && (
           <div className="flex gap-3 justify-start">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 text-sm">🤖</div>
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#3ecf68] to-[#163522] text-sm">🤖</div>
             <div className="rounded-2xl rounded-tl-sm bg-slate-100 px-4 py-3 flex gap-1.5 items-center">
               <span className="h-2 w-2 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: '0ms' }} />
               <span className="h-2 w-2 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -135,12 +135,12 @@ export default function AdminAIChat() {
           onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
           placeholder="Ask about users, gigs, violations, orders..."
           disabled={loading}
-          className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 transition-all disabled:opacity-50"
+          className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-[#dae8df] focus:bg-white focus:ring-2 focus:ring-blue-500/20 transition-all disabled:opacity-50"
         />
         <button
           onClick={() => send()}
           disabled={loading || !input.trim()}
-          className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2.5 text-sm font-bold text-white hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-40"
+          className="rounded-xl bg-gradient-to-r from-[#3ecf68] to-[#163522] px-4 py-2.5 text-sm font-bold text-white hover:from-[#3ecf68] hover:to-[#163522] transition-all disabled:opacity-40"
         >
           Send
         </button>

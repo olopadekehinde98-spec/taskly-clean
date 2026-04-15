@@ -14,11 +14,11 @@ type Notification = {
 }
 
 function getTypeClasses(type: string) {
-  if (type === 'Delivery Submitted') return 'bg-blue-50 text-blue-700'
-  if (type === 'New Message') return 'bg-indigo-50 text-indigo-700'
+  if (type === 'Delivery Submitted') return 'bg-[#edfbf2] text-[#3ecf68]'
+  if (type === 'New Message') return 'bg-[#0d2818] text-[#3ecf68]'
   if (type === 'Order Completed') return 'bg-emerald-50 text-emerald-700'
-  if (type === 'order') return 'bg-indigo-50 text-indigo-700'
-  if (type === 'message') return 'bg-blue-50 text-blue-700'
+  if (type === 'order') return 'bg-[#0d2818] text-[#3ecf68]'
+  if (type === 'message') return 'bg-[#edfbf2] text-[#3ecf68]'
   if (type === 'dispute') return 'bg-orange-50 text-orange-700'
   if (type === 'system') return 'bg-slate-50 text-slate-700'
   return 'bg-amber-50 text-amber-700'
@@ -152,7 +152,7 @@ export default function BuyerNotificationsClient({
               key={item.id}
               onClick={() => !item.read && markAsRead(item.id)}
               className={`block rounded-2xl border p-5 transition cursor-pointer hover:shadow-sm ${
-                item.read ? 'bg-slate-50 border-slate-100' : 'bg-blue-50/40 border-blue-100'
+                item.read ? 'bg-slate-50 border-slate-100' : 'bg-[#edfbf2]/40 border-[#dae8df]'
               } ${loading === item.id ? 'opacity-60' : ''}`}
             >
               <div className="mb-3 flex items-center justify-between gap-4">

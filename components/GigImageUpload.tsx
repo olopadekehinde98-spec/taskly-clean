@@ -42,7 +42,7 @@ export default function GigImageUpload({ value, onChange }: { value: string; onC
         onDragOver={e => e.preventDefault()}
         onDrop={e => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) handleFile(f) }}
         className={`relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed transition-all cursor-pointer overflow-hidden ${
-          preview ? 'border-blue-300 bg-blue-50/30' : 'border-slate-200 bg-slate-50 hover:border-blue-300 hover:bg-blue-50/30'
+          preview ? 'border-[#dae8df] bg-[#edfbf2]/30' : 'border-slate-200 bg-slate-50 hover:border-[#dae8df] hover:bg-[#edfbf2]/30'
         }`}
         style={{ minHeight: 180 }}
       >
@@ -62,7 +62,7 @@ export default function GigImageUpload({ value, onChange }: { value: string; onC
         )}
         {uploading && (
           <div className="absolute inset-0 flex items-center justify-center bg-white/70 rounded-2xl">
-            <div className="h-8 w-8 rounded-full border-2 border-blue-600 border-t-transparent animate-spin" />
+            <div className="h-8 w-8 rounded-full border-2 border-[#dae8df] border-t-transparent animate-spin" />
           </div>
         )}
       </div>

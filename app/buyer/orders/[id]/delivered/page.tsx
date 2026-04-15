@@ -35,20 +35,20 @@ export default async function BuyerDeliveredOrderPage({ params }: Props) {
         <div className="flex items-center gap-3">
           <Link href={`/buyer/orders/${id}`} className="text-slate-400 hover:text-slate-600">←</Link>
           <div>
-            <p className="mb-1 text-sm font-medium uppercase tracking-[0.2em] text-indigo-600">Delivery Ready</p>
+            <p className="mb-1 text-sm font-medium uppercase tracking-[0.2em] text-[#3ecf68]">Delivery Ready</p>
             <h1 className="text-2xl font-bold text-slate-900">{listing?.title ?? 'Your Order'}</h1>
           </div>
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
           <section className="space-y-8">
-            <div className="rounded-3xl border border-indigo-200 bg-indigo-50 p-6">
-              <p className="font-semibold text-indigo-800 mb-1">📦 The seller has delivered your order</p>
-              <p className="text-sm text-indigo-700">
+            <div className="rounded-3xl border border-[#dae8df] bg-[#0d2818] p-6">
+              <p className="font-semibold text-[#3ecf68] mb-1">📦 The seller has delivered your order</p>
+              <p className="text-sm text-[#3ecf68]">
                 Review the delivery below. If everything looks good, accept it. If changes are needed, request a revision.
               </p>
               {order.delivered_at && (
-                <p className="mt-2 text-xs text-indigo-600">
+                <p className="mt-2 text-xs text-[#3ecf68]">
                   Delivered {new Date(order.delivered_at).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                 </p>
               )}
@@ -73,7 +73,7 @@ export default async function BuyerDeliveredOrderPage({ params }: Props) {
                               href={url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center gap-2 rounded-xl border bg-slate-50 px-4 py-2.5 text-sm text-blue-600 hover:bg-blue-50 transition-colors"
+                              className="flex items-center gap-2 rounded-xl border bg-slate-50 px-4 py-2.5 text-sm text-[#3ecf68] hover:bg-[#edfbf2] transition-colors"
                             >
                               📎 <span className="truncate">{name}</span>
                             </a>
@@ -92,7 +92,7 @@ export default async function BuyerDeliveredOrderPage({ params }: Props) {
                 <div>
                   <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">Seller</p>
                   <p className="font-semibold text-slate-900">{seller?.display_name ?? 'Seller'}</p>
-                  {seller?.username && <p className="text-xs text-blue-500">@{seller.username}</p>}
+                  {seller?.username && <p className="text-xs text-[#3ecf68]">@{seller.username}</p>}
                 </div>
                 <div>
                   <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">Package</p>

@@ -163,7 +163,7 @@ export function ListingCreatorWithAI({ categories }: { categories: Category[] })
                 onChange={e => setTitle(e.target.value)}
                 type="text"
                 placeholder="I will professionally format your Kindle ebook"
-                className="w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-blue-500"
+                className="w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[#dae8df]"
                 required
               />
             </div>
@@ -174,7 +174,7 @@ export function ListingCreatorWithAI({ categories }: { categories: Category[] })
                 <select
                   value={categoryId}
                   onChange={e => setCategoryId(e.target.value)}
-                  className="w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-blue-500"
+                  className="w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[#dae8df]"
                 >
                   {categories.map(c => (
                     <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
@@ -196,7 +196,7 @@ export function ListingCreatorWithAI({ categories }: { categories: Category[] })
                   onChange={e => setTags(e.target.value)}
                   type="text"
                   placeholder="ebook, formatting, kindle"
-                  className="w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-blue-500"
+                  className="w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[#dae8df]"
                 />
               </div>
             </div>
@@ -208,7 +208,7 @@ export function ListingCreatorWithAI({ categories }: { categories: Category[] })
                 onChange={e => setDescription(e.target.value)}
                 rows={5}
                 placeholder="Describe what you offer, who it is for, and what makes the result valuable."
-                className="w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-blue-500 resize-none"
+                className="w-full rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[#dae8df] resize-none"
                 required
               />
             </div>
@@ -268,7 +268,7 @@ export function ListingCreatorWithAI({ categories }: { categories: Category[] })
           <button
             type="submit"
             disabled={submitting}
-            className="rounded-2xl bg-blue-600 px-6 py-3 font-medium text-white disabled:opacity-50 hover:bg-blue-700 transition-colors"
+            className="rounded-2xl bg-[#edfbf2] px-6 py-3 font-medium text-white disabled:opacity-50 hover:bg-[#edfbf2] transition-colors"
           >
             {submitting ? 'Saving...' : 'Save Listing'}
           </button>
@@ -343,8 +343,8 @@ export function ListingCreatorWithAI({ categories }: { categories: Category[] })
               )}
 
               {(quality.rewritten_title || quality.rewritten_description_intro) && (
-                <div className="rounded-2xl bg-blue-50 p-4 space-y-3">
-                  <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide">AI Suggestions</p>
+                <div className="rounded-2xl bg-[#edfbf2] p-4 space-y-3">
+                  <p className="text-xs font-semibold text-[#3ecf68] uppercase tracking-wide">AI Suggestions</p>
                   {quality.rewritten_title && (
                     <div>
                       <p className="text-xs text-slate-500 mb-1">Suggested Title:</p>
@@ -360,7 +360,7 @@ export function ListingCreatorWithAI({ categories }: { categories: Category[] })
                   <button
                     type="button"
                     onClick={applyAISuggestions}
-                    className="w-full rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+                    className="w-full rounded-xl bg-[#edfbf2] px-4 py-2 text-sm font-medium text-white hover:bg-[#edfbf2] transition-colors"
                   >
                     Apply AI Suggestions
                   </button>
@@ -380,10 +380,10 @@ export function ListingCreatorWithAI({ categories }: { categories: Category[] })
         <div className="rounded-3xl border bg-white p-5 shadow-sm">
           <h3 className="text-sm font-semibold text-slate-900 mb-2">Tips for a great listing</h3>
           <ul className="space-y-2 text-sm text-slate-600">
-            <li className="flex gap-2"><span className="text-blue-500">•</span> Use specific, searchable keywords in your title</li>
-            <li className="flex gap-2"><span className="text-blue-500">•</span> Explain your process and what buyers receive</li>
-            <li className="flex gap-2"><span className="text-blue-500">•</span> Price competitively for your niche</li>
-            <li className="flex gap-2"><span className="text-blue-500">•</span> Aim for an AI score of 7+ before publishing</li>
+            <li className="flex gap-2"><span className="text-[#3ecf68]">•</span> Use specific, searchable keywords in your title</li>
+            <li className="flex gap-2"><span className="text-[#3ecf68]">•</span> Explain your process and what buyers receive</li>
+            <li className="flex gap-2"><span className="text-[#3ecf68]">•</span> Price competitively for your niche</li>
+            <li className="flex gap-2"><span className="text-[#3ecf68]">•</span> Aim for an AI score of 7+ before publishing</li>
           </ul>
         </div>
       </aside>

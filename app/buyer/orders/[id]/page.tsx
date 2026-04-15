@@ -4,8 +4,8 @@ import Link from 'next/link'
 
 const STATUS_LABELS: Record<string, { label: string; classes: string }> = {
   pending_requirements: { label: 'Awaiting Requirements', classes: 'bg-amber-50 text-amber-700' },
-  active:               { label: 'In Progress',           classes: 'bg-blue-50 text-blue-700' },
-  delivered:            { label: 'Delivered — Review Pending', classes: 'bg-indigo-50 text-indigo-700' },
+  active:               { label: 'In Progress',           classes: 'bg-[#edfbf2] text-[#28a84e]' },
+  delivered:            { label: 'Delivered — Review Pending', classes: 'bg-[#0d2818] text-[#3ecf68]' },
   revision_requested:   { label: 'Revision Requested',    classes: 'bg-orange-50 text-orange-700' },
   completed:            { label: 'Completed',             classes: 'bg-emerald-50 text-emerald-700' },
   cancelled:            { label: 'Cancelled',             classes: 'bg-slate-100 text-slate-600' },
@@ -35,6 +35,14 @@ export default async function BuyerOrderDetailPage({ params }: Props) {
 
   if (!order) notFound()
 
+  // Look up the conversation tied to this order so we can deep-link the message button
+  const { data: conversation } = await supabase
+    .from('conversations')
+    .select('id')
+    .eq('order_id', id)
+    .maybeSingle()
+  const messageHref = conversation ? `/buyer/messages/${conversation.id}` : '/buyer/messages'
+
   const statusInfo = STATUS_LABELS[order.order_status] ?? { label: order.order_status, classes: 'bg-slate-100 text-slate-600' }
   const seller = (order as any).seller
   const listing = (order as any).listings
@@ -45,7 +53,7 @@ export default async function BuyerOrderDetailPage({ params }: Props) {
       <div className="flex items-center gap-3">
         <Link href="/buyer/orders" className="text-slate-400 hover:text-slate-600">←</Link>
         <div>
-          <p className="mb-1 text-sm font-medium uppercase tracking-[0.2em] text-blue-600">Order Details</p>
+          <p className="mb-1 text-sm font-medium uppercase tracking-[0.2em] text-[#3ecf68]">Order Details</p>
           <h1 className="text-2xl font-bold text-slate-900 font-mono">{order.id.slice(0, 8).toUpperCase()}</h1>
         </div>
       </div>
@@ -58,7 +66,7 @@ export default async function BuyerOrderDetailPage({ params }: Props) {
               <div>
                 <h2 className="text-xl font-bold text-slate-900">{listing?.title ?? 'Service'}</h2>
                 {listing?.slug && (
-                  <Link href={`/services/${listing.slug}`} className="text-xs text-blue-600 hover:underline">View listing ↗</Link>
+                  <Link href={`/services/${listing.slug}`} className="text-xs text-[#3ecf68] hover:underline">View listing ↗</Link>
                 )}
               </div>
               <span className={`rounded-full px-3 py-1 text-sm font-medium ${statusInfo.classes}`}>
@@ -70,7 +78,7 @@ export default async function BuyerOrderDetailPage({ params }: Props) {
               <div>
                 <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">Seller</p>
                 <p className="font-semibold text-slate-900">{seller?.display_name ?? seller?.email ?? 'Unknown'}</p>
-                {seller?.username && <p className="text-xs text-blue-500">@{seller.username}</p>}
+                {seller?.username && <p className="text-xs text-[#3ecf68]">@{seller.username}</p>}
               </div>
               <div>
                 <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">Package</p>
@@ -98,7 +106,7 @@ export default async function BuyerOrderDetailPage({ params }: Props) {
               <div>
                 <p className="text-slate-400 italic mb-4">No requirements submitted yet.</p>
                 {order.order_status === 'pending_requirements' && (
-                  <Link href={`/order/${listing?.slug ?? id}`} className="rounded-2xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition-colors">
+                  <Link href={`/order/${listing?.slug ?? id}`} className="rounded-2xl bg-[#3ecf68] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#28a84e] transition-colors">
                     Submit Requirements →
                   </Link>
                 )}
@@ -108,7 +116,7 @@ export default async function BuyerOrderDetailPage({ params }: Props) {
 
           {/* Actions based on status */}
           {order.order_status === 'delivered' && (
-            <div className="rounded-3xl border border-indigo-200 bg-indigo-50 p-6">
+            <div className="rounded-3xl border border-[#dae8df] bg-[#0d2818] p-6">
               <h2 className="text-lg font-bold text-slate-900 mb-2">📦 Delivery Ready</h2>
               <p className="text-sm text-slate-600 mb-4">The seller has delivered your order. Please review and accept or request a revision.</p>
               <div className="flex gap-3 flex-wrap">
@@ -129,7 +137,7 @@ export default async function BuyerOrderDetailPage({ params }: Props) {
                 <p className="text-sm text-emerald-700 mt-1">Completed {new Date(order.completed_at).toLocaleDateString()}</p>
               )}
               <div className="mt-4">
-                <Link href={`/buyer/orders/${id}/review`} className="rounded-2xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition-colors">
+                <Link href={`/buyer/orders/${id}/review`} className="rounded-2xl bg-[#3ecf68] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#28a84e] transition-colors">
                   Leave a Review
                 </Link>
               </div>
@@ -169,14 +177,14 @@ export default async function BuyerOrderDetailPage({ params }: Props) {
                 </div>
               </div>
               <div className="flex gap-3">
-                <div className={`mt-1 h-3 w-3 rounded-full shrink-0 ${['active','delivered','completed'].includes(order.order_status) ? 'bg-blue-500' : 'bg-slate-200'}`} />
+                <div className={`mt-1 h-3 w-3 rounded-full shrink-0 ${['active','delivered','completed'].includes(order.order_status) ? 'bg-[#3ecf68]' : 'bg-slate-200'}`} />
                 <div>
                   <p className="text-sm font-medium text-slate-900">In Progress</p>
                   <p className="text-xs text-slate-400">Seller working</p>
                 </div>
               </div>
               <div className="flex gap-3">
-                <div className={`mt-1 h-3 w-3 rounded-full shrink-0 ${['delivered','completed'].includes(order.order_status) ? 'bg-indigo-500' : 'bg-slate-200'}`} />
+                <div className={`mt-1 h-3 w-3 rounded-full shrink-0 ${['delivered','completed'].includes(order.order_status) ? 'bg-[#0d2818]' : 'bg-slate-200'}`} />
                 <div>
                   <p className="text-sm font-medium text-slate-900">Delivered</p>
                   <p className="text-xs text-slate-400">{order.delivered_at ? new Date(order.delivered_at).toLocaleDateString() : 'Pending'}</p>
@@ -196,7 +204,7 @@ export default async function BuyerOrderDetailPage({ params }: Props) {
           <div className="rounded-3xl border bg-white p-6 shadow-sm">
             <h2 className="mb-4 text-base font-bold text-slate-900">Quick Actions</h2>
             <div className="space-y-2">
-              <Link href="/buyer/messages" className="block w-full rounded-xl border px-4 py-2.5 text-center text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
+              <Link href={messageHref} className="block w-full rounded-xl border px-4 py-2.5 text-center text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
                 💬 Message Seller
               </Link>
               {!['completed', 'cancelled', 'disputed'].includes(order.order_status) && (

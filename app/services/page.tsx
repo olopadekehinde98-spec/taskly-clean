@@ -30,9 +30,9 @@ export default async function ServicesPage({ searchParams }: { searchParams: Pro
           <div className="rounded-2xl bg-white border p-4">
             <h3 className="mb-3 font-semibold text-slate-900 text-sm">Categories</h3>
             <ul className="space-y-1">
-              <li><Link href="/services" className={`block rounded-xl px-3 py-2 text-sm ${!category ? "bg-blue-50 text-blue-600 font-medium" : "text-slate-600 hover:bg-slate-50"}`}>All Categories</Link></li>
+              <li><Link href="/services" className={`block rounded-xl px-3 py-2 text-sm ${!category ? "bg-[#edfbf2] text-[#3ecf68] font-medium" : "text-slate-600 hover:bg-slate-50"}`}>All Categories</Link></li>
               {categories?.map(cat => (
-                <li key={cat.id}><Link href={`/services?category=${cat.slug}`} className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm ${category === cat.slug ? "bg-blue-50 text-blue-600 font-medium" : "text-slate-600 hover:bg-slate-50"}`}><span>{cat.icon}</span><span>{cat.name}</span></Link></li>
+                <li key={cat.id}><Link href={`/services?category=${cat.slug}`} className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm ${category === cat.slug ? "bg-[#edfbf2] text-[#3ecf68] font-medium" : "text-slate-600 hover:bg-slate-50"}`}><span>{cat.icon}</span><span>{cat.name}</span></Link></li>
               ))}
             </ul>
           </div>
@@ -43,7 +43,7 @@ export default async function ServicesPage({ searchParams }: { searchParams: Pro
               <div className="text-4xl mb-3">🔍</div>
               <h3 className="text-lg font-semibold text-slate-900">No services found</h3>
               <p className="mt-1 text-sm text-slate-500">{search ? `No results for "${search}"` : "No services yet."}</p>
-              <Link href="/services" className="mt-4 inline-block rounded-xl bg-blue-600 px-5 py-2 text-sm text-white">Browse all</Link>
+              <Link href="/services" className="mt-4 inline-block rounded-xl bg-[#3ecf68] px-5 py-2 text-sm text-white">Browse all</Link>
             </div>
           ) : (
             <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
@@ -51,12 +51,12 @@ export default async function ServicesPage({ searchParams }: { searchParams: Pro
                 const pkg = listing.listing_packages?.find((p: any) => p.tier === "basic") ?? listing.listing_packages?.[0]
                 return (
                   <Link key={listing.id} href={`/services/${listing.slug ?? listing.id}`} className="group rounded-2xl bg-white border overflow-hidden hover:shadow-md transition-shadow">
-                    <div className="aspect-video bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden">
+                    <div className="aspect-video bg-gradient-to-br from-[#3ecf68] to-[#163522] overflow-hidden">
                       {listing.cover_image_url ? <img src={listing.cover_image_url} alt={listing.title} className="h-full w-full object-cover" /> : <div className="h-full w-full flex items-center justify-center text-4xl">{listing.categories?.icon ?? "💼"}</div>}
                     </div>
                     <div className="p-4">
                       <div className="flex items-center gap-2 mb-2">
-                        <div className="h-7 w-7 rounded-full bg-blue-400 flex items-center justify-center text-xs font-bold text-white">{(listing.profiles?.display_name ?? "S")[0].toUpperCase()}</div>
+                        <div className="h-7 w-7 rounded-full bg-[#edfbf2] flex items-center justify-center text-xs font-bold text-white">{(listing.profiles?.display_name ?? "S")[0].toUpperCase()}</div>
                         <span className="text-xs text-slate-500">{listing.profiles?.display_name ?? "Seller"}</span>
                         {listing.profiles?.trust_tier === "top" && <span className="ml-auto text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">Top Seller</span>}
                       </div>

@@ -43,7 +43,7 @@ export default async function SellerProfileEditPage({
   return (
     <main className="space-y-8">
       <div>
-        <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-blue-600">
+        <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-[#3ecf68]">
           Seller Dashboard
         </p>
         <h1 className="text-3xl font-bold text-slate-900">Edit Seller Profile</h1>
@@ -184,7 +184,7 @@ export default async function SellerProfileEditPage({
             <div className="flex flex-wrap gap-4">
               <button
                 type="submit"
-                className="rounded-2xl bg-blue-600 px-6 py-3 font-medium text-white"
+                className="rounded-2xl bg-[#3ecf68] px-6 py-3 font-medium text-white"
               >
                 Save Profile
               </button>

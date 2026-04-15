@@ -36,7 +36,7 @@ export default function BuyerRevisionPage() {
     <main className="min-h-screen bg-slate-50 px-6 py-16">
       <div className="mx-auto max-w-2xl space-y-8">
         <div>
-          <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-blue-600">Revision Request</p>
+          <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-[#3ecf68]">Revision Request</p>
           <h1 className="text-3xl font-bold text-slate-900">Request a Revision</h1>
         </div>
 
@@ -54,7 +54,7 @@ export default function BuyerRevisionPage() {
                 onChange={e => setRevisionTitle(e.target.value)}
                 placeholder="What needs to be changed? (optional)"
                 maxLength={100}
-                className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-[#3ecf68] focus:ring-2 focus:ring-[#3ecf68]/20 transition-all"
               />
             </div>
 
@@ -66,7 +66,7 @@ export default function BuyerRevisionPage() {
                 onChange={e => setDetails(e.target.value)}
                 placeholder="Clearly explain what should be revised and what part of the delivery does not match your requirements."
                 required
-                className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all resize-none"
+                className="w-full rounded-2xl border px-4 py-3 outline-none focus:border-[#3ecf68] focus:ring-2 focus:ring-[#3ecf68]/20 transition-all resize-none"
               />
               <p className="mt-1 text-xs text-slate-400">{details.length} characters</p>
             </div>
@@ -75,7 +75,7 @@ export default function BuyerRevisionPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="rounded-2xl bg-blue-600 px-6 py-3 font-medium text-white hover:bg-blue-700 transition-colors disabled:opacity-50"
+                className="rounded-2xl bg-[#3ecf68] px-6 py-3 font-medium text-white hover:bg-[#28a84e] transition-colors disabled:opacity-50"
               >
                 {loading ? 'Submitting…' : 'Submit Revision Request'}
               </button>

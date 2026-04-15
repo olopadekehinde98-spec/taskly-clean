@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
       listing_id: meta.listing_id,
       package_id: meta.package_id,
       order_status: 'active',
-      payment_status: 'escrowed',
+      payment_status: 'captured',
       currency: 'USD',
       subtotal_amount: subtotal,
       platform_fee_amount: platformFee,

@@ -85,7 +85,7 @@ export default async function AdminReviewsPage({
                     </td>
                     <td className="px-5 py-4 text-sm text-slate-600">
                       {r.listings?.slug ? (
-                        <a href={`/services/${r.listings.slug}`} target="_blank" className="hover:underline text-blue-600">{r.listings.title}</a>
+                        <a href={`/services/${r.listings.slug}`} target="_blank" className="hover:underline text-[#3ecf68]">{r.listings.title}</a>
                       ) : r.listings?.title ?? '—'}
                     </td>
                     <td className="px-5 py-4 text-sm text-slate-600">{r.reviewer?.display_name ?? r.reviewer?.email ?? '—'}</td>

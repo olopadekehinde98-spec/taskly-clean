@@ -13,7 +13,7 @@ export default function GigClickTracker({ listingId, href }: { listingId: string
     <a
       href={href}
       onClick={handleClick}
-      className="mb-3 block w-full rounded-2xl bg-blue-600 px-5 py-3 text-center font-semibold text-white hover:bg-blue-700 transition-colors"
+      className="mb-3 block w-full rounded-2xl bg-[#edfbf2] px-5 py-3 text-center font-semibold text-white hover:bg-[#edfbf2] transition-colors"
     >
       Order Now
     </a>

@@ -26,7 +26,6 @@ export async function POST(req: NextRequest) {
       .from('orders')
       .update({
         order_status: 'completed',
-        payment_status: 'released',
         completed_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })

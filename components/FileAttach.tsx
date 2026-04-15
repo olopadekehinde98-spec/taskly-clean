@@ -48,7 +48,7 @@ export default function FileAttach({
           {attachments.map(a => (
             <div key={a.url} className="flex items-center gap-1.5 rounded-xl border bg-slate-50 px-3 py-1.5 text-xs">
               <span>📎</span>
-              <a href={a.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline max-w-[140px] truncate">{a.name}</a>
+              <a href={a.url} target="_blank" rel="noopener noreferrer" className="text-[#3ecf68] hover:underline max-w-[140px] truncate">{a.name}</a>
               <button onClick={() => remove(a.url)} className="text-slate-400 hover:text-red-500 ml-1">✕</button>
             </div>
           ))}
@@ -59,7 +59,7 @@ export default function FileAttach({
         type="button"
         onClick={() => inputRef.current?.click()}
         disabled={uploading}
-        className="flex items-center gap-2 rounded-xl border border-dashed border-slate-300 px-4 py-2 text-xs font-medium text-slate-500 hover:border-blue-400 hover:text-blue-600 transition-all disabled:opacity-50"
+        className="flex items-center gap-2 rounded-xl border border-dashed border-slate-300 px-4 py-2 text-xs font-medium text-slate-500 hover:border-[#dae8df] hover:text-[#3ecf68] transition-all disabled:opacity-50"
       >
         {uploading ? '⏳ Uploading...' : '📎 Attach file'}
       </button>

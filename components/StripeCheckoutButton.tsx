@@ -41,7 +41,7 @@ export default function StripeCheckoutButton({ listingId, packageIndex, projectT
       <button
         onClick={handleCheckout}
         disabled={loading}
-        className="w-full rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 py-4 text-base font-bold text-white shadow-lg shadow-blue-500/25 hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+        className="w-full rounded-2xl bg-gradient-to-r from-[#3ecf68] to-[#163522] py-4 text-base font-bold text-white shadow-lg shadow-blue-500/25 hover:from-[#3ecf68] hover:to-[#163522] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {loading ? 'Redirecting to Stripe...' : `Pay ${totalDisplay} — Secure Checkout`}
       </button>

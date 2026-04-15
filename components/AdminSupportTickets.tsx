@@ -110,7 +110,7 @@ export default function AdminSupportTickets({ tickets }: { tickets: Ticket[] }) 
                 <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Original AI Chat</p>
                 <div className="space-y-2 max-h-36 overflow-y-auto rounded-2xl bg-slate-50 p-3 mb-4">
                   {selected.conversation.filter(m => m.role !== 'system').map((m, i) => (
-                    <div key={i} className={`text-xs p-2 rounded-xl ${m.role === 'user' ? 'bg-blue-50 text-blue-800' : 'bg-white text-slate-700 border'}`}>
+                    <div key={i} className={`text-xs p-2 rounded-xl ${m.role === 'user' ? 'bg-[#edfbf2] text-[#3ecf68]' : 'bg-white text-slate-700 border'}`}>
                       <span className="font-semibold capitalize">{m.role === 'user' ? 'Buyer' : 'AI'}: </span>{m.text ?? m.content}
                     </div>
                   ))}
@@ -125,9 +125,9 @@ export default function AdminSupportTickets({ tickets }: { tickets: Ticket[] }) 
                 {selected.thread.map((m, i) => (
                   <div key={i} className={`flex ${m.role === 'admin' ? 'justify-end' : 'justify-start'}`}>
                     <div className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${
-                      m.role === 'admin' ? 'bg-red-600 text-white' : 'bg-blue-50 text-blue-900 border border-blue-100'
+                      m.role === 'admin' ? 'bg-red-600 text-white' : 'bg-[#edfbf2] text-[#3ecf68] border border-[#dae8df]'
                     }`}>
-                      <p className={`text-[10px] font-bold mb-1 ${m.role === 'admin' ? 'text-red-200' : 'text-blue-500'}`}>
+                      <p className={`text-[10px] font-bold mb-1 ${m.role === 'admin' ? 'text-red-200' : 'text-[#3ecf68]'}`}>
                         {m.role === 'admin' ? '🛡️ You (Admin)' : '👤 Buyer'}
                       </p>
                       <p>{m.text}</p>
@@ -152,14 +152,14 @@ export default function AdminSupportTickets({ tickets }: { tickets: Ticket[] }) 
               onChange={e => setReply(e.target.value)}
               placeholder="Write your reply to the user..."
               rows={3}
-              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all resize-none"
+              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#dae8df] focus:ring-2 focus:ring-blue-500/20 transition-all resize-none"
             />
             <FileAttach attachments={attachments} onChange={setAttachments} bucket="attachments" />
             <div className="flex items-center gap-3">
               <select
                 value={status}
                 onChange={e => setStatus(e.target.value)}
-                className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-blue-500"
+                className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-[#dae8df]"
               >
                 <option value="open">Keep Open</option>
                 <option value="resolved">Mark Resolved</option>
@@ -167,7 +167,7 @@ export default function AdminSupportTickets({ tickets }: { tickets: Ticket[] }) 
               <button
                 onClick={sendReply}
                 disabled={loading || !reply.trim()}
-                className="ml-auto rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2 text-sm font-bold text-white hover:from-blue-700 hover:to-indigo-700 transition-all disabled:opacity-40"
+                className="ml-auto rounded-xl bg-gradient-to-r from-[#3ecf68] to-[#163522] px-5 py-2 text-sm font-bold text-white hover:from-[#3ecf68] hover:to-[#163522] transition-all disabled:opacity-40"
               >
                 {loading ? 'Sending...' : 'Send Reply →'}
               </button>
@@ -188,7 +188,7 @@ function TicketCard({ ticket, selected, onClick }: { ticket: Ticket; selected: b
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left rounded-2xl border p-4 transition-all mb-2 ${selected ? 'border-blue-500 bg-blue-50' : 'bg-white hover:bg-slate-50'}`}
+      className={`w-full text-left rounded-2xl border p-4 transition-all mb-2 ${selected ? 'border-[#dae8df] bg-[#edfbf2]' : 'bg-white hover:bg-slate-50'}`}
     >
       <div className="flex items-start justify-between gap-2">
         <p className="text-sm font-semibold text-slate-900 line-clamp-2">{ticket.summary}</p>
@@ -200,7 +200,7 @@ function TicketCard({ ticket, selected, onClick }: { ticket: Ticket; selected: b
         {getProfile(ticket.profiles)?.display_name ?? 'Guest'} · {new Date(ticket.created_at).toLocaleDateString()}
       </p>
       {(ticket.thread?.length ?? 0) > 0 && (
-        <p className="text-xs text-blue-600 mt-1">
+        <p className="text-xs text-[#3ecf68] mt-1">
           {ticket.thread.filter(m => m.role === 'buyer').length > 0 && (
             <span className="text-amber-600">● Buyer replied · </span>
           )}

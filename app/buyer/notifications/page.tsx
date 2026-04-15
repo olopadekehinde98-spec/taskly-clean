@@ -28,7 +28,7 @@ export default async function BuyerNotificationsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-blue-600">
+        <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-[#3ecf68]">
           Buyer Notifications
         </p>
         <h1 className="text-3xl font-bold text-slate-900">Notifications</h1>

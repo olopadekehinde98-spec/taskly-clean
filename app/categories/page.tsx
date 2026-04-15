@@ -25,7 +25,7 @@ export default async function CategoriesPage() {
     <main className="min-h-screen bg-slate-50">
       <section className="border-b bg-white">
         <div className="mx-auto max-w-7xl px-6 py-16">
-          <p className="mb-3 text-sm font-medium uppercase tracking-[0.2em] text-blue-600">
+          <p className="mb-3 text-sm font-medium uppercase tracking-[0.2em] text-[#3ecf68]">
             Marketplace Categories
           </p>
           <h1 className="mb-4 text-4xl font-bold text-slate-900">Explore service categories</h1>
@@ -52,7 +52,7 @@ export default async function CategoriesPage() {
                   href={`/services?category=${cat.slug}`}
                   className="rounded-3xl border bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
                 >
-                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-2xl">
+                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#edfbf2] text-2xl">
                     {cat.icon ?? '💼'}
                   </div>
                   <div className="mb-3 flex items-center justify-between">
@@ -64,7 +64,7 @@ export default async function CategoriesPage() {
                   {cat.description && (
                     <p className="mb-5 text-sm leading-7 text-slate-600">{cat.description}</p>
                   )}
-                  <span className="font-medium text-blue-600">Browse services →</span>
+                  <span className="font-medium text-[#3ecf68]">Browse services →</span>
                 </Link>
               )
             })}

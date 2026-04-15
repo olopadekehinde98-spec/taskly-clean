@@ -42,7 +42,7 @@ export default async function AdminAIConversationsPage() {
   return (
     <main className="space-y-8">
       <div>
-        <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-blue-600">Admin</p>
+        <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-[#3ecf68]">Admin</p>
         <h1 className="text-3xl font-bold text-slate-900">AI Conversations</h1>
         <p className="mt-1 text-sm text-slate-500">All AI chat sessions across support, assist loop, and admin AI.</p>
       </div>
@@ -55,7 +55,7 @@ export default async function AdminAIConversationsPage() {
             <details key={session.session_id} className="rounded-3xl border bg-white shadow-sm overflow-hidden">
               <summary className="flex cursor-pointer items-center justify-between px-6 py-4 hover:bg-slate-50">
                 <div className="flex items-center gap-4">
-                  <span className="rounded-full bg-indigo-100 px-3 py-1 text-xs font-medium text-indigo-700">
+                  <span className="rounded-full bg-[#0d2818] px-3 py-1 text-xs font-medium text-[#3ecf68]">
                     {featureLabel[session.feature] || session.feature}
                   </span>
                   <div>
@@ -74,13 +74,13 @@ export default async function AdminAIConversationsPage() {
                 {[...session.messages].reverse().map((m: any) => (
                   <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                     <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${
-                      m.role === 'user' ? 'bg-blue-600 text-white' : 'bg-white border text-slate-800'
+                      m.role === 'user' ? 'bg-[#3ecf68] text-white' : 'bg-white border text-slate-800'
                     }`}>
-                      <p className={`mb-1 text-xs font-medium ${m.role === 'user' ? 'text-blue-200' : 'text-slate-400'}`}>
+                      <p className={`mb-1 text-xs font-medium ${m.role === 'user' ? 'text-[#3ecf68]' : 'text-slate-400'}`}>
                         {m.role === 'user' ? 'User' : 'AI'}
                       </p>
                       <p className="leading-5 whitespace-pre-wrap">{m.message}</p>
-                      <p className={`mt-1 text-xs ${m.role === 'user' ? 'text-blue-300' : 'text-slate-400'}`}>
+                      <p className={`mt-1 text-xs ${m.role === 'user' ? 'text-[#3ecf68]' : 'text-slate-400'}`}>
                         {new Date(m.created_at).toLocaleTimeString()}
                       </p>
                     </div>

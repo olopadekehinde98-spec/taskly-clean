@@ -56,7 +56,7 @@ export default async function SellerMessagesPage() {
             const lastMsg = lastMsgMap[conv.id]
             return (
               <Link key={conv.id} href={`/dashboard/messages/${conv.id}`}
-                className={`block rounded-2xl border p-5 transition hover:shadow-sm ${unreadCount > 0 ? 'border-blue-200 bg-blue-50/60' : 'bg-slate-50'}`}>
+                className={`block rounded-2xl border p-5 transition hover:shadow-sm ${unreadCount > 0 ? 'border-[#dae8df] bg-[#edfbf2]/60' : 'bg-slate-50'}`}>
                 <div className="flex items-start gap-3">
                   <div className="h-10 w-10 rounded-full bg-gradient-to-r from-emerald-400 to-teal-500 flex items-center justify-center text-sm font-bold text-white shrink-0">
                     {(other?.display_name ?? 'U')[0].toUpperCase()}
@@ -68,7 +68,7 @@ export default async function SellerMessagesPage() {
                     </div>
                     {lastMsg && <p className="text-sm text-slate-600 line-clamp-1">{lastMsg.sender_id === user.id ? 'You: ' : ''}{lastMsg.body}</p>}
                   </div>
-                  {unreadCount > 0 && <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white shrink-0">{unreadCount}</span>}
+                  {unreadCount > 0 && <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#3ecf68] text-xs font-bold text-white shrink-0">{unreadCount}</span>}
                 </div>
               </Link>
             )

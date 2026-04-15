@@ -27,11 +27,11 @@ export default async function AdminDashboardPage() {
 
   const stats = [
     { label: 'Total Users', value: totalUsers ?? 0, color: 'text-slate-900', href: '/admin/users' },
-    { label: 'Active Sellers', value: totalSellers ?? 0, color: 'text-blue-600', href: '/admin/users' },
+    { label: 'Active Sellers', value: totalSellers ?? 0, color: 'text-[#3ecf68]', href: '/admin/users' },
     { label: 'Live Listings', value: liveListings ?? 0, color: 'text-emerald-600', href: '/admin/services' },
     { label: 'Pending Review', value: pendingListings ?? 0, color: 'text-amber-600', href: '/admin/moderation' },
     { label: 'Open Disputes', value: openDisputes ?? 0, color: 'text-red-600', href: '/admin/disputes' },
-    { label: 'Total Orders', value: totalOrders ?? 0, color: 'text-indigo-600', href: '/admin' },
+    { label: 'Total Orders', value: totalOrders ?? 0, color: 'text-[#3ecf68]', href: '/admin' },
   ]
 
   return (
@@ -69,7 +69,7 @@ export default async function AdminDashboardPage() {
         <section className="rounded-3xl border bg-white p-6 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-bold text-slate-900">Recent Listings</h2>
-            <Link href="/admin/services" className="text-sm text-blue-600 hover:underline">View all</Link>
+            <Link href="/admin/services" className="text-sm text-[#3ecf68] hover:underline">View all</Link>
           </div>
           {!recentListings || recentListings.length === 0 ? (
             <p className="text-sm text-slate-400 py-4 text-center">No listings yet</p>
@@ -95,7 +95,7 @@ export default async function AdminDashboardPage() {
         <section className="rounded-3xl border bg-white p-6 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-bold text-slate-900">Recent Users</h2>
-            <Link href="/admin/users" className="text-sm text-blue-600 hover:underline">View all</Link>
+            <Link href="/admin/users" className="text-sm text-[#3ecf68] hover:underline">View all</Link>
           </div>
           {!recentUsers || recentUsers.length === 0 ? (
             <p className="text-sm text-slate-400 py-4 text-center">No users yet</p>

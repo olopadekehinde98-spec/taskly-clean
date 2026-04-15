@@ -90,7 +90,7 @@ export default async function AdminViolationsPage() {
                     </div>
                     <p className="font-semibold text-slate-900">{u.display_name ?? 'No name'}</p>
                     <p className="text-sm text-slate-500">{u.email}</p>
-                    {u.username && <p className="text-xs text-blue-500">@{u.username}</p>}
+                    {u.username && <p className="text-xs text-[#3ecf68]">@{u.username}</p>}
 
                     {history.length > 0 && (
                       <div className="mt-3">

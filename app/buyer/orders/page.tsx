@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 const STATUS_STYLES: Record<string, string> = {
   pending_requirements: 'bg-amber-50 text-amber-700',
-  active:               'bg-blue-50 text-blue-700',
+  active:               'bg-[#edfbf2] text-[#28a84e]',
   delivered:            'bg-purple-50 text-purple-700',
   revision_requested:   'bg-orange-50 text-orange-700',
   completed:            'bg-emerald-50 text-emerald-700',
@@ -33,7 +33,7 @@ export default async function BuyerOrdersPage() {
     <div className="rounded-3xl border bg-white p-8 shadow-sm">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-3xl font-bold text-slate-900">My Orders</h1>
-        <Link href="/services" className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors">
+        <Link href="/services" className="rounded-xl bg-[#3ecf68] px-4 py-2 text-sm font-medium text-white hover:bg-[#28a84e] transition-colors">
           Browse Services
         </Link>
       </div>
@@ -43,7 +43,7 @@ export default async function BuyerOrdersPage() {
           <div className="text-4xl mb-3">📦</div>
           <h2 className="text-xl font-bold text-slate-900 mb-2">No orders yet</h2>
           <p className="text-slate-500 text-sm mb-6">Find a service and place your first order.</p>
-          <Link href="/services" className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700 transition-colors">
+          <Link href="/services" className="rounded-xl bg-[#3ecf68] px-5 py-2.5 text-sm font-medium text-white hover:bg-[#28a84e] transition-colors">
             Browse Services
           </Link>
         </div>
@@ -92,7 +92,7 @@ export default async function BuyerOrdersPage() {
                       {new Date(order.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-4 py-4">
-                      <Link href={`/buyer/orders/${order.id}`} className="font-medium text-blue-600 hover:underline text-sm">
+                      <Link href={`/buyer/orders/${order.id}`} className="font-medium text-[#3ecf68] hover:underline text-sm">
                         View
                       </Link>
                     </td>

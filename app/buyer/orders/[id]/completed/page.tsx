@@ -56,7 +56,7 @@ export default function BuyerOrderCompletedPage() {
           Payment has been released to the seller. Thank you for using Taskly!
         </p>
         <div className="flex flex-wrap justify-center gap-4">
-          <Link href={`/buyer/orders/${id}/review`} className="rounded-2xl bg-blue-600 px-6 py-3 font-medium text-white hover:bg-blue-700 transition-colors">
+          <Link href={`/buyer/orders/${id}/review`} className="rounded-2xl bg-[#3ecf68] px-6 py-3 font-medium text-white hover:bg-[#28a84e] transition-colors">
             Leave a Review →
           </Link>
           <Link href="/buyer/orders" className="rounded-2xl border px-6 py-3 font-medium text-slate-700 hover:bg-slate-50 transition-colors">

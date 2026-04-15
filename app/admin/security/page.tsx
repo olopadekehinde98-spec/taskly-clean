@@ -38,7 +38,7 @@ export default async function AdminSecurityPage() {
         </div>
         <div className="rounded-2xl border bg-white p-5 shadow-sm">
           <p className="text-sm text-slate-500">Security Events</p>
-          <p className="text-3xl font-bold text-indigo-600 mt-1">{securityLogs?.length ?? 0}</p>
+          <p className="text-3xl font-bold text-[#3ecf68] mt-1">{securityLogs?.length ?? 0}</p>
         </div>
       </div>
 
@@ -125,7 +125,7 @@ export default async function AdminSecurityPage() {
         </section>
       </div>
 
-      <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm text-blue-800">
+      <div className="rounded-2xl border border-[#dae8df] bg-[#edfbf2] p-4 text-sm text-[#0d2818]">
         <p className="font-semibold mb-1">🤖 Ask the Admin AI about security</p>
         <p>Go to the <Link href="/admin" className="underline font-medium">Admin Overview</Link> and ask: <em>"Are there any suspicious users?"</em> or <em>"Show me all flagged accounts"</em></p>
       </div>

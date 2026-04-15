@@ -4,7 +4,7 @@ export default function AcceptableUsePage() {
   return (
     <main className="mx-auto max-w-3xl px-6 py-16 space-y-8">
       <div>
-        <p className="text-sm font-medium uppercase tracking-widest text-blue-600 mb-2">Legal</p>
+        <p className="text-sm font-medium uppercase tracking-widest text-[#3ecf68] mb-2">Legal</p>
         <h1 className="text-4xl font-bold text-slate-900">Acceptable Use Policy</h1>
         <p className="mt-2 text-sm text-slate-500">Last updated: March 31, 2026</p>
       </div>
@@ -76,7 +76,7 @@ export default function AcceptableUsePage() {
       </section>
 
       <div className="rounded-2xl bg-slate-50 p-5 text-sm text-slate-500">
-        Report a violation at <a href="mailto:trust@tasklyclean.com" className="text-blue-600 hover:underline">trust@tasklyclean.com</a>
+        Report a violation at <a href="mailto:trust@tasklyclean.com" className="text-[#3ecf68] hover:underline">trust@tasklyclean.com</a>
       </div>
     </main>
   )

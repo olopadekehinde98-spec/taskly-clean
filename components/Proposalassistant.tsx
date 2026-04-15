@@ -64,7 +64,7 @@ export default function ProposalAssistant({ jobTitle, jobDescription, sellerSkil
         <button
           onClick={generateProposal}
           disabled={loading || !jobTitle}
-          className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-50 hover:bg-indigo-700 transition-colors"
+          className="rounded-xl bg-[#0d2818] px-4 py-2 text-sm font-medium text-white disabled:opacity-50 hover:bg-[#0d2818] transition-colors"
         >
           {loading ? 'Writing...' : '✨ Generate'}
         </button>
@@ -77,13 +77,13 @@ export default function ProposalAssistant({ jobTitle, jobDescription, sellerSkil
       {result && (
         <div className="space-y-4 border-t pt-4">
           <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-xl bg-indigo-50 p-3">
-              <p className="text-xs text-indigo-400 mb-1">Suggested Price</p>
-              <p className="text-lg font-bold text-indigo-700">${result.suggested_price}</p>
+            <div className="rounded-xl bg-[#0d2818] p-3">
+              <p className="text-xs text-[#3ecf68] mb-1">Suggested Price</p>
+              <p className="text-lg font-bold text-[#3ecf68]">${result.suggested_price}</p>
             </div>
-            <div className="rounded-xl bg-indigo-50 p-3">
-              <p className="text-xs text-indigo-400 mb-1">Delivery</p>
-              <p className="text-lg font-bold text-indigo-700">{result.suggested_delivery_days} days</p>
+            <div className="rounded-xl bg-[#0d2818] p-3">
+              <p className="text-xs text-[#3ecf68] mb-1">Delivery</p>
+              <p className="text-lg font-bold text-[#3ecf68]">{result.suggested_delivery_days} days</p>
             </div>
           </div>
 
@@ -99,7 +99,7 @@ export default function ProposalAssistant({ jobTitle, jobDescription, sellerSkil
             <ul className="space-y-1">
               {result.key_selling_points.map((p, i) => (
                 <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
-                  <span className="text-indigo-500 mt-0.5">✓</span>
+                  <span className="text-[#3ecf68] mt-0.5">✓</span>
                   {p}
                 </li>
               ))}
@@ -109,7 +109,7 @@ export default function ProposalAssistant({ jobTitle, jobDescription, sellerSkil
           {onApply && (
             <button
               onClick={() => onApply(result.proposal, result.suggested_price, result.suggested_delivery_days)}
-              className="w-full rounded-xl bg-indigo-600 py-2.5 text-sm font-medium text-white hover:bg-indigo-700 transition-colors"
+              className="w-full rounded-xl bg-[#0d2818] py-2.5 text-sm font-medium text-white hover:bg-[#0d2818] transition-colors"
             >
               Use This Proposal →
             </button>

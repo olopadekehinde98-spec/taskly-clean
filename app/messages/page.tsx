@@ -37,7 +37,7 @@ export default async function MessagesPage() {
             <div className="text-5xl mb-4">💬</div>
             <h2 className="text-xl font-bold text-slate-900 mb-2">No conversations yet</h2>
             <p className="text-slate-500 text-sm mb-6">Your conversations will appear here.</p>
-            <Link href="/services" className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700 transition-colors">
+            <Link href="/services" className="rounded-xl bg-[#3ecf68] px-5 py-2.5 text-sm font-medium text-white hover:bg-[#28a84e] transition-colors">
               Browse Services
             </Link>
           </div>
@@ -94,10 +94,10 @@ export default async function MessagesPage() {
               <Link
                 key={conv.id}
                 href={href}
-                className={`block rounded-2xl border p-5 transition hover:shadow-sm ${isUnread ? 'border-blue-200 bg-blue-50' : 'bg-white'}`}
+                className={`block rounded-2xl border p-5 transition hover:shadow-sm ${isUnread ? 'border-[#dae8df] bg-[#edfbf2]' : 'bg-white'}`}
               >
                 <div className="flex items-start gap-3">
-                  <div className="h-11 w-11 rounded-full bg-gradient-to-r from-blue-400 to-indigo-400 flex items-center justify-center text-sm font-bold text-white shrink-0">
+                  <div className="h-11 w-11 rounded-full bg-gradient-to-r [#3ecf68] flex items-center justify-center text-sm font-bold text-white shrink-0">
                     {(other?.display_name ?? '?')[0].toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -115,7 +115,7 @@ export default async function MessagesPage() {
                       </p>
                     )}
                   </div>
-                  {isUnread && <span className="h-2.5 w-2.5 rounded-full bg-blue-600 shrink-0 mt-2" />}
+                  {isUnread && <span className="h-2.5 w-2.5 rounded-full bg-[#3ecf68] shrink-0 mt-2" />}
                 </div>
               </Link>
             )

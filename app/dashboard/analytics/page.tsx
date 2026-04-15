@@ -132,7 +132,7 @@ export default async function SellerAnalyticsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-blue-600">Seller Analytics</p>
+        <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-[#3ecf68]">Seller Analytics</p>
         <h1 className="text-3xl font-bold text-slate-900">Performance Overview</h1>
         <p className="mt-1 text-sm text-slate-500">Real data from your listings and orders</p>
       </div>
@@ -151,12 +151,12 @@ export default async function SellerAnalyticsPage() {
         </div>
         <div className="rounded-3xl border bg-white p-6 shadow-sm">
           <p className="text-sm text-slate-500">Total Views</p>
-          <p className="mt-2 text-3xl font-bold text-blue-600">{totalViews}</p>
+          <p className="mt-2 text-3xl font-bold text-[#3ecf68]">{totalViews}</p>
           <p className="text-xs text-slate-400 mt-1">{totalClicks} order clicks</p>
         </div>
         <div className="rounded-3xl border bg-white p-6 shadow-sm">
           <p className="text-sm text-slate-500">This Month</p>
-          <p className="mt-2 text-3xl font-bold text-indigo-600">${monthRev.toFixed(2)}</p>
+          <p className="mt-2 text-3xl font-bold text-[#3ecf68]">${monthRev.toFixed(2)}</p>
           <p className="text-xs text-slate-400 mt-1">{monthOrders?.length ?? 0} orders (30d)</p>
         </div>
       </div>
@@ -214,11 +214,11 @@ export default async function SellerAnalyticsPage() {
                       <p className="mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wide">{period}</p>
                       <div className="grid grid-cols-2 gap-2">
                         <div>
-                          <p className="text-lg font-bold text-blue-600">{views}</p>
+                          <p className="text-lg font-bold text-[#3ecf68]">{views}</p>
                           <p className="text-xs text-slate-500">Views</p>
                         </div>
                         <div>
-                          <p className="text-lg font-bold text-indigo-600">{clicks}</p>
+                          <p className="text-lg font-bold text-[#3ecf68]">{clicks}</p>
                           <p className="text-xs text-slate-500">Clicks</p>
                         </div>
                       </div>
@@ -233,7 +233,7 @@ export default async function SellerAnalyticsPage() {
                     <p className="text-xs text-slate-500">Total Views</p>
                   </div>
                   <div>
-                    <p className="text-xl font-bold text-indigo-600">{l.clicks.all}</p>
+                    <p className="text-xl font-bold text-[#3ecf68]">{l.clicks.all}</p>
                     <p className="text-xs text-slate-500">Total Clicks</p>
                   </div>
                   <div>
