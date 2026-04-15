@@ -14,9 +14,9 @@ export default function NavbarMobile({ isSeller, isAdmin, isLoggedIn }: Props) {
 
   return (
     <>
-      {/* Hamburger button — only on small screens */}
+      {/* Hamburger button */}
       <button
-        className="flex lg:hidden h-9 w-9 items-center justify-center rounded-xl text-slate-600 hover:bg-slate-100"
+        className="flex lg:hidden h-9 w-9 items-center justify-center rounded-xl text-white/65 hover:bg-white/10"
         onClick={() => setOpen(o => !o)}
         aria-label="Toggle menu"
       >
@@ -33,40 +33,37 @@ export default function NavbarMobile({ isSeller, isAdmin, isLoggedIn }: Props) {
 
       {/* Dropdown */}
       {open && (
-        <div
-          className="fixed inset-0 z-40 lg:hidden"
-          onClick={() => setOpen(false)}
-        >
-          <div className="absolute inset-0 bg-black/20" />
+        <div className="fixed inset-0 z-40 lg:hidden" onClick={() => setOpen(false)}>
+          <div className="absolute inset-0 bg-black/40" />
           <nav
-            className="absolute left-0 right-0 top-[57px] bg-white border-b shadow-lg px-4 py-3 space-y-1"
+            className="absolute left-0 right-0 top-[57px] bg-[#163522] border-b border-white/10 shadow-xl px-4 py-3 space-y-1"
             onClick={e => e.stopPropagation()}
           >
-            <Link href="/services" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-100">
+            <Link href="/services" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-white/70 hover:bg-white/10 hover:text-white">
               Browse Services
             </Link>
-            <Link href="/categories" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-100">
+            <Link href="/categories" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-white/70 hover:bg-white/10 hover:text-white">
               Categories
             </Link>
 
             {isLoggedIn && !isAdmin && (
               <>
-                <Link href="/buyer" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-100">
+                <Link href="/buyer" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-white/70 hover:bg-white/10 hover:text-white">
                   My Orders
                 </Link>
-                <Link href="/messages" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-100">
+                <Link href="/messages" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-white/70 hover:bg-white/10 hover:text-white">
                   Messages
                 </Link>
-                <Link href="/buyer/notifications" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-100">
+                <Link href="/buyer/notifications" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-white/70 hover:bg-white/10 hover:text-white">
                   Notifications
                 </Link>
                 {isSeller && (
-                  <Link href="/dashboard" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100">
+                  <Link href="/dashboard" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-[#3ecf68] bg-[#3ecf68]/10 hover:bg-[#3ecf68]/20">
                     Seller Hub
                   </Link>
                 )}
                 {!isSeller && (
-                  <Link href="/start-selling" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100">
+                  <Link href="/start-selling" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-semibold text-[#3ecf68] bg-[#3ecf68]/10 hover:bg-[#3ecf68]/20">
                     Start Selling
                   </Link>
                 )}
@@ -74,17 +71,17 @@ export default function NavbarMobile({ isSeller, isAdmin, isLoggedIn }: Props) {
             )}
 
             {isAdmin && (
-              <Link href="/admin" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100">
+              <Link href="/admin" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-semibold text-red-400 bg-red-900/30 hover:bg-red-900/50">
                 Admin Panel
               </Link>
             )}
 
             {!isLoggedIn && (
               <>
-                <Link href="/login" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-100">
+                <Link href="/login" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-medium text-white/70 hover:bg-white/10 hover:text-white">
                   Sign In
                 </Link>
-                <Link href="/signup" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 text-center">
+                <Link href="/signup" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-3 text-sm font-bold text-[#0d2818] bg-[#3ecf68] hover:bg-[#52e07a] text-center">
                   Get Started
                 </Link>
               </>
