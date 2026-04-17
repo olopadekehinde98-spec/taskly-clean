@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
@@ -80,18 +81,18 @@ export default async function CategoryDetailsPage({ params }: Props) {
                   href={`/services/${listing.slug ?? listing.id}`}
                   className="group rounded-2xl bg-white border overflow-hidden hover:shadow-md transition-shadow"
                 >
-                  <div className="aspect-video bg-gradient-to-br from-[#3ecf68] to-[#163522] overflow-hidden">
+                  <div className="aspect-video bg-gradient-to-br from-[#3ecf68] to-[#163522] overflow-hidden relative">
                     {listing.cover_image_url ? (
-                      <img src={listing.cover_image_url} alt={listing.title} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      <Image src={listing.cover_image_url} alt={listing.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
                     ) : (
                       <div className="h-full w-full flex items-center justify-center text-4xl">{(category as any).icon ?? '💼'}</div>
                     )}
                   </div>
                   <div className="p-4">
                     <div className="flex items-center gap-2 mb-2">
-                      <div className="h-7 w-7 rounded-full bg-gradient-to-br from-[#3ecf68] to-[#163522] flex items-center justify-center text-xs font-bold text-white overflow-hidden">
+                      <div className="h-7 w-7 rounded-full bg-gradient-to-br from-[#3ecf68] to-[#163522] flex items-center justify-center text-xs font-bold text-white overflow-hidden relative">
                         {listing.profiles?.avatar_url ? (
-                          <img src={listing.profiles.avatar_url} alt={sellerName} className="h-full w-full object-cover" />
+                          <Image src={listing.profiles.avatar_url} alt={sellerName} fill className="object-cover" />
                         ) : sellerName[0].toUpperCase()}
                       </div>
                       <span className="text-xs text-slate-500">{sellerName}</span>

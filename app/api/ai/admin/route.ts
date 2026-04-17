@@ -230,7 +230,7 @@ You can identify users from the platform data above and give precise instruction
     await supabase.from('ai_conversations').insert([
       { user_id: user.id, session_id: sid, role: 'user', message, feature: 'admin_chat' },
       { user_id: user.id, session_id: sid, role: 'assistant', message: text, feature: 'admin_chat' },
-    ]).then(({ error: e }) => { if (e) console.error('admin ai persist error:', e.message) })
+    ])
 
     return NextResponse.json({ result: text, session_id: sid })
   } catch (err: any) {

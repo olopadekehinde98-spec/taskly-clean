@@ -1,11 +1,53 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import SaveListingButton from '@/components/SaveListingButton'
 import GigViewTracker from '@/components/GigViewTracker'
 import GigClickTracker from '@/components/GigClickTracker'
+import type { Metadata } from 'next'
+
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://taskly-clean.vercel.app'
 
 type Props = { params: Promise<{ slug: string }> }
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params
+  const supabase = await createClient()
+  const { data: listing } = await supabase
+    .from('listings')
+    .select('title, short_description, cover_image_url, profiles!listings_seller_id_fkey(display_name)')
+    .eq('slug', slug)
+    .eq('listing_status', 'live')
+    .single()
+
+  if (!listing) return { title: 'Service not found — Taskly' }
+
+  const seller = (listing as any).profiles
+  const title = `${listing.title} — Taskly`
+  const description = listing.short_description?.slice(0, 155) || `Hire a freelancer on Taskly for ${listing.title}.`
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${BASE_URL}/services/${slug}`,
+      siteName: 'Taskly',
+      images: listing.cover_image_url
+        ? [{ url: listing.cover_image_url, width: 1200, height: 630, alt: listing.title }]
+        : [],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: listing.cover_image_url ? [listing.cover_image_url] : [],
+    },
+  }
+}
 
 export default async function ServiceDetailsPage({ params }: Props) {
   const { slug } = await params
@@ -68,9 +110,9 @@ export default async function ServiceDetailsPage({ params }: Props) {
         {/* Left column */}
         <div className="space-y-6">
           {/* Cover image */}
-          <div className="h-64 w-full overflow-hidden rounded-3xl bg-gradient-to-br from-[#3ecf68] to-[#163522] sm:h-80">
+          <div className="h-64 w-full overflow-hidden rounded-3xl bg-gradient-to-br from-[#3ecf68] to-[#163522] sm:h-80 relative">
             {(listing as any).cover_image_url ? (
-              <img src={(listing as any).cover_image_url} alt={(listing as any).title} className="h-full w-full object-cover" />
+              <Image src={(listing as any).cover_image_url} alt={(listing as any).title} fill className="object-cover" />
             ) : (
               <div className="flex h-full w-full items-center justify-center text-6xl">
                 {(listing as any).categories?.icon ?? '💼'}
@@ -90,9 +132,9 @@ export default async function ServiceDetailsPage({ params }: Props) {
 
             {/* Seller info */}
             <div className="mb-5 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#3ecf68] to-[#163522] text-sm font-bold text-white overflow-hidden">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#3ecf68] to-[#163522] text-sm font-bold text-white overflow-hidden relative">
                 {seller?.avatar_url ? (
-                  <img src={seller.avatar_url} alt={sellerName} className="h-full w-full object-cover" />
+                  <Image src={seller.avatar_url} alt={sellerName} fill className="object-cover" />
                 ) : (
                   sellerName[0]?.toUpperCase()
                 )}

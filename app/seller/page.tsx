@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
@@ -40,7 +41,7 @@ export default async function SellerIndexPage() {
               >
                 <div className="flex items-center gap-4 mb-4">
                   {seller.avatar_url ? (
-                    <img src={seller.avatar_url} alt={seller.display_name} className="h-12 w-12 rounded-full object-cover" />
+                    <Image src={seller.avatar_url} alt={seller.display_name ?? seller.username ?? 'Seller'} width={48} height={48} className="h-12 w-12 rounded-full object-cover" />
                   ) : (
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#d4f5e4] text-xl font-bold text-[#3ecf68]">
                       {(seller.display_name ?? 'S')[0].toUpperCase()}

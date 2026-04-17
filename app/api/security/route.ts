@@ -131,7 +131,7 @@ export async function POST(req: NextRequest) {
         action_type: 'security_flag',
         ip_address: ip,
         action: `SECURITY_FLAG: ${label} from IP ${ip} (${country}${city !== 'Unknown' ? ', ' + city : ''})${ipData?.fraud_score ? ` fraud=${ipData.fraud_score}` : ''}${edgeGeo.cfThreatScore > 0 ? ` cf_threat=${edgeGeo.cfThreatScore}` : ''} via ${ipData?.source ?? 'edge'}`,
-      }).then(({ error }) => { if (error) console.error('Security audit log failed:', error.message) })
+      })
 
       await supabase.from('profiles').update({ account_status: 'flagged' })
         .eq('id', user.id).eq('account_status', 'active')

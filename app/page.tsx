@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default async function HomePage() {
   const supabase = await createClient()
@@ -167,7 +168,7 @@ export default async function HomePage() {
                   >
                     <div className="aspect-video bg-[#edfbf2] overflow-hidden relative">
                       {listing.cover_image_url ? (
-                        <img src={listing.cover_image_url} alt={listing.title} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                        <Image src={listing.cover_image_url} alt={listing.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="h-full w-full flex items-center justify-center text-5xl">
                           {listing.categories?.icon ?? '💼'}
@@ -179,9 +180,9 @@ export default async function HomePage() {
                     </div>
                     <div className="p-4">
                       <div className="flex items-center gap-2 mb-2">
-                        <div className="h-6 w-6 rounded-full bg-[#3ecf68] flex items-center justify-center text-xs font-bold text-[#0d2818] overflow-hidden shrink-0">
+                        <div className="h-6 w-6 rounded-full bg-[#3ecf68] flex items-center justify-center text-xs font-bold text-[#0d2818] overflow-hidden shrink-0 relative">
                           {seller?.avatar_url ? (
-                            <img src={seller.avatar_url} alt="" className="h-full w-full object-cover" />
+                            <Image src={seller.avatar_url} alt={seller?.display_name ?? 'Seller'} fill className="object-cover" />
                           ) : (
                             (seller?.display_name ?? 'S')[0].toUpperCase()
                           )}

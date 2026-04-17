@@ -51,7 +51,7 @@ export async function login(formData: FormData) {
       ip_address: ip,
       user_agent: userAgent,
       reason: 'User login',
-    }).then(({ error }) => { if (error) console.error('Audit log failed:', error.message) })
+    })
 
     if (profile?.is_admin) {
       revalidatePath('/', 'layout')

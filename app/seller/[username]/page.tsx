@@ -1,9 +1,47 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import type { Metadata } from 'next'
+
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://taskly-clean.vercel.app'
 
 type Props = {
   params: Promise<{ username: string }>
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { username } = await params
+  const supabase = await createClient()
+  const { data: seller } = await supabase
+    .from('profiles')
+    .select('display_name, bio, avatar_url, professional_title')
+    .eq('username', username)
+    .single()
+
+  if (!seller) return { title: 'Seller not found — Taskly' }
+
+  const name = seller.display_name || username
+  const title = `${name} — Freelancer on Taskly`
+  const description = seller.bio?.slice(0, 155) || `Hire ${name} on Taskly — quality freelance services.`
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${BASE_URL}/seller/${username}`,
+      siteName: 'Taskly',
+      images: seller.avatar_url ? [{ url: seller.avatar_url, width: 400, height: 400, alt: name }] : [],
+      type: 'profile',
+    },
+    twitter: {
+      card: 'summary',
+      title,
+      description,
+      images: seller.avatar_url ? [seller.avatar_url] : [],
+    },
+  }
 }
 
 function getBadgeClasses(level: string) {

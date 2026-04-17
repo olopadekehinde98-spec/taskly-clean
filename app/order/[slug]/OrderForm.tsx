@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 
 type Package = { id: string; tier: string; name: string; price_usd: number; delivery_days: number; description: string; revisions: number }
 
@@ -71,7 +72,7 @@ export default function OrderForm({
         {/* Listing header */}
         <div className="mb-6 flex items-start gap-4">
           {listing.cover_image_url ? (
-            <img src={listing.cover_image_url} alt={listing.title} className="h-16 w-16 rounded-2xl object-cover shrink-0" />
+            <Image src={listing.cover_image_url} alt={listing.title} width={64} height={64} className="h-16 w-16 rounded-2xl object-cover shrink-0" />
           ) : (
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#d4f5e4] text-2xl shrink-0">
               {(listing.categories as any)?.icon ?? '💼'}

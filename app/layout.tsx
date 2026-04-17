@@ -3,9 +3,24 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import SupportChatbot from "@/components/SupportChatbot"
 
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://taskly-clean.vercel.app'
+
 export const metadata = {
-  title: "Taskly",
+  title: { default: "Taskly", template: "%s — Taskly" },
   description: "The freelance marketplace built for quality and trust.",
+  metadataBase: new URL(BASE_URL),
+  openGraph: {
+    siteName: "Taskly",
+    type: "website" as const,
+    title: "Taskly",
+    description: "The freelance marketplace built for quality and trust.",
+    url: BASE_URL,
+  },
+  twitter: {
+    card: "summary_large_image" as const,
+    title: "Taskly",
+    description: "The freelance marketplace built for quality and trust.",
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

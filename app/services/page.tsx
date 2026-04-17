@@ -1,5 +1,6 @@
 ﻿import { createClient } from "@/lib/supabase/server"
 import Link from "next/link"
+import Image from "next/image"
 
 export default async function ServicesPage({ searchParams }: { searchParams: Promise<{ search?: string; category?: string }> }) {
   const { search, category } = await searchParams
@@ -51,8 +52,8 @@ export default async function ServicesPage({ searchParams }: { searchParams: Pro
                 const pkg = listing.listing_packages?.find((p: any) => p.tier === "basic") ?? listing.listing_packages?.[0]
                 return (
                   <Link key={listing.id} href={`/services/${listing.slug ?? listing.id}`} className="group rounded-2xl bg-white border overflow-hidden hover:shadow-md transition-shadow">
-                    <div className="aspect-video bg-gradient-to-br from-[#3ecf68] to-[#163522] overflow-hidden">
-                      {listing.cover_image_url ? <img src={listing.cover_image_url} alt={listing.title} className="h-full w-full object-cover" /> : <div className="h-full w-full flex items-center justify-center text-4xl">{listing.categories?.icon ?? "💼"}</div>}
+                    <div className="aspect-video bg-gradient-to-br from-[#3ecf68] to-[#163522] overflow-hidden relative">
+                      {listing.cover_image_url ? <Image src={listing.cover_image_url} alt={listing.title} fill className="object-cover" /> : <div className="h-full w-full flex items-center justify-center text-4xl">{listing.categories?.icon ?? "💼"}</div>}
                     </div>
                     <div className="p-4">
                       <div className="flex items-center gap-2 mb-2">

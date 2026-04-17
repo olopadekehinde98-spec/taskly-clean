@@ -110,9 +110,7 @@ RULES:
         metadata: { context },
         created_at: now,
       },
-    ]).then(({ error }) => {
-      if (error) console.error('ai_conversations insert failed:', error.message)
-    })
+    ])
 
     return NextResponse.json({ reply, session_id: sid })
   } catch (err: any) {

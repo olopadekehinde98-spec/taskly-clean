@@ -40,7 +40,8 @@ export async function updateUserStatus(formData: FormData) {
     action_type: action,
     reason,
     target_type: 'user',
-  }).then(({ error }) => { if (error) console.error('Audit log failed:', error.message) })
+  })
+
 
   revalidatePath('/admin/users')
   revalidatePath('/admin')
@@ -71,7 +72,8 @@ export async function updateListingStatus(formData: FormData) {
     action_type: action,
     reason,
     target_type: 'listing',
-  }).then(({ error }) => { if (error) console.error('Audit log failed:', error.message) })
+  })
+
 
   revalidatePath('/admin/services')
   revalidatePath('/admin/moderation')
@@ -93,7 +95,8 @@ export async function flagUser(formData: FormData) {
     action_type: 'flag',
     reason,
     target_type: 'user',
-  }).then(({ error }) => { if (error) console.error('Audit log failed:', error.message) })
+  })
+
 
   revalidatePath('/admin/users')
   revalidatePath('/admin/security')
@@ -116,7 +119,8 @@ export async function unflagUser(formData: FormData) {
     action_type: 'unflag',
     reason,
     target_type: 'user',
-  }).then(({ error }) => { if (error) console.error('Audit log failed:', error.message) })
+  })
+
 
   revalidatePath('/admin/users')
   revalidatePath('/admin/security')
@@ -145,7 +149,8 @@ export async function resolveDispute(formData: FormData) {
     action_type: 'resolve_dispute',
     reason: `Decision: ${decision}. ${note}`,
     target_type: 'dispute',
-  }).then(({ error }) => { if (error) console.error('Audit log failed:', error.message) })
+  })
+
 
   revalidatePath('/admin/disputes')
 }

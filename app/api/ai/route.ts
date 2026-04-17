@@ -110,10 +110,10 @@ SAFETY & TRUST:
       // Store support chat conversation in DB (admin-viewable)
       if (user) {
         const sid = payload.session_id || crypto.randomUUID()
-        supabase.from('ai_conversations').insert([
+        await supabase.from('ai_conversations').insert([
           { user_id: user.id, session_id: sid, role: 'user', message: payload.message, feature: 'support_chat', metadata: {} },
           { user_id: user.id, session_id: sid, role: 'assistant', message: cleanText, feature: 'support_chat', metadata: { escalate, summary } },
-        ]).then(({ error }) => { if (error) console.error('support_chat store failed:', error.message) })
+        ])
       }
 
       return NextResponse.json({ result: cleanText, escalate, summary })
