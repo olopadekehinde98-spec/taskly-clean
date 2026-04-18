@@ -88,8 +88,41 @@ export default async function ServiceDetailsPage({ params }: Props) {
   const rating = Number((listing as any).average_rating ?? 0)
   const reviews = Number((listing as any).total_reviews ?? 0)
 
+  const serviceSchema: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: (listing as any).title,
+    description: (listing as any).short_description || (listing as any).title,
+    url: `${BASE_URL}/services/${slug}`,
+    provider: {
+      '@type': 'Person',
+      name: sellerName,
+      url: sellerUsername ? `${BASE_URL}/seller/${sellerUsername}` : undefined,
+    },
+    category: categoryName,
+    ...(basicPkg && {
+      offers: {
+        '@type': 'Offer',
+        price: Number(basicPkg.price_usd).toFixed(2),
+        priceCurrency: 'USD',
+        availability: 'https://schema.org/InStock',
+      },
+    }),
+    ...(reviews > 0 && {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: rating.toFixed(1),
+        reviewCount: reviews,
+        bestRating: 5,
+        worstRating: 1,
+      },
+    }),
+    ...(listing as any).cover_image_url && { image: (listing as any).cover_image_url },
+  }
+
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-10">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }} />
       {/* Track this gig view silently */}
       {!isPreview && <GigViewTracker listingId={(listing as any).id} />}
 

@@ -39,8 +39,22 @@ export default async function HomePage() {
     .order('sort_order')
     .limit(8)
 
+  const websiteSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Taskly',
+    url: 'https://taskly-clean.vercel.app',
+    description: 'Trusted freelance marketplace — hire skilled freelancers for any project.',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: { '@type': 'EntryPoint', urlTemplate: 'https://taskly-clean.vercel.app/services?search={search_term_string}' },
+      'query-input': 'required name=search_term_string',
+    },
+  }
+
   return (
     <main className="min-h-screen bg-[#fdfaf4]">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }} />
 
       {/* ── HERO ── */}
       <section className="relative overflow-hidden bg-[#0d2818] text-white">

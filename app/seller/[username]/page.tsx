@@ -93,8 +93,20 @@ export default async function SellerPage({ params }: Props) {
   const rankScore = 88
   const nextLevel = 'Elite Seller'
 
+  const personSchema: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: displayName,
+    url: `${BASE_URL}/seller/${seller.username}`,
+    description: bio,
+    jobTitle: professionalTitle,
+    ...(seller.avatar_url && { image: seller.avatar_url }),
+    ...(skills.length > 0 && { knowsAbout: skills }),
+  }
+
   return (
     <main className="min-h-screen bg-slate-50 px-6 py-10">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }} />
       <div className="mx-auto max-w-7xl">
         <div className="grid gap-8 lg:grid-cols-[320px_1fr]">
           <aside className="h-fit rounded-3xl border bg-white p-6 shadow-sm">
