@@ -1,8 +1,19 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
+import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: "Browse Freelancers",
+  description: "Discover top-rated freelancers on Taskly. Browse skilled sellers across every category and hire the perfect professional for your next project.",
+  keywords: [
+    "browse freelancers", "find skilled freelancers online", "top rated freelancers",
+    "hire a freelancer", "freelancer profiles", "freelancers for hire",
+    "skilled professionals for hire",
+  ],
+}
 
 export default async function SellerIndexPage() {
   const supabase = await createClient()

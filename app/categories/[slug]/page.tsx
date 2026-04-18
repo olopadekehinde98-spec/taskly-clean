@@ -2,8 +2,38 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import type { Metadata } from 'next'
 
 type Props = { params: Promise<{ slug: string }> }
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params
+  const supabase = await createClient()
+  const { data: category } = await supabase
+    .from('categories')
+    .select('name, description')
+    .eq('slug', slug)
+    .single()
+
+  if (!category) return { title: 'Category not found' }
+
+  const name = category.name
+  const title = `Freelance ${name} Services`
+  const description = category.description
+    || `Hire skilled ${name} freelancers on Taskly. Browse top-rated ${name} services and get your project done right.`
+
+  return {
+    title,
+    description,
+    keywords: [
+      `freelance ${name}`, `${name} freelancer`, `${name} services`,
+      `hire a ${name} freelancer`, `affordable ${name} services`,
+      `best ${name} freelancers`, `${name} for hire`,
+    ],
+    openGraph: { title, description, type: 'website' },
+    twitter: { card: 'summary', title, description },
+  }
+}
 
 export default async function CategoryDetailsPage({ params }: Props) {
   const { slug } = await params

@@ -1,6 +1,17 @@
 ﻿import { createClient } from "@/lib/supabase/server"
 import Link from "next/link"
 import Image from "next/image"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Browse Freelance Services",
+  description: "Browse hundreds of freelance services on Taskly — design, development, writing, video, marketing and more. Find the right freelancer for your project today.",
+  keywords: [
+    "browse freelance services", "freelance services online", "hire a freelancer",
+    "graphic design services", "web development freelancer", "freelance writing services",
+    "affordable freelance services", "best freelance services",
+  ],
+}
 
 export default async function ServicesPage({ searchParams }: { searchParams: Promise<{ search?: string; category?: string }> }) {
   const { search, category } = await searchParams

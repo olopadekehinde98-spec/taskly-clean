@@ -1,6 +1,17 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import Image from 'next/image'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: "Taskly — Hire Freelancers Online",
+  description: "Find and hire top freelancers for any job. Taskly connects you with skilled professionals in design, development, writing, video editing, and more.",
+  keywords: [
+    "hire freelancers", "freelance marketplace", "freelancers for hire",
+    "fiverr alternative", "upwork alternative", "freelance services",
+    "post a job and hire freelancers", "trusted freelance platform",
+  ],
+}
 
 export default async function HomePage() {
   const supabase = await createClient()

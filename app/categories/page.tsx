@@ -1,5 +1,16 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: "Freelance Categories",
+  description: "Explore all freelance service categories on Taskly — from graphic design and web development to writing, video editing, and digital marketing.",
+  keywords: [
+    "freelance categories", "freelance graphic design", "freelance web development",
+    "freelance writing services", "freelance video editing", "freelance digital marketing",
+    "freelance services by category",
+  ],
+}
 
 export default async function CategoriesPage() {
   const supabase = await createClient()
